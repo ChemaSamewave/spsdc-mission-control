@@ -109,13 +109,17 @@ const AppState = {
       sampleDoc: 'RFP Olympus MTC / National Final Guidelines'
     }
   ],
-  submissions: []
+  submissions: [],
+  registeredStudents: [],
+  activeStudent: null
 };
 
 // Inicialización de la aplicación
 document.addEventListener('DOMContentLoaded', () => {
   initClocks();
   initCountdown();
+  loadRegisteredStudents();
+  loadStudentSession();
   loadSubmissions();
   renderSprints();
   setupEventListeners();
@@ -242,27 +246,160 @@ function setSubmissionModality(modality) {
   const inputAuthors = document.getElementById('subAuthors');
   const authorsHint = document.getElementById('authorsHint');
 
+  const student = AppState.activeStudent;
+
   if (modality === 'individual') {
     if (btnGroup) btnGroup.classList.remove('active');
     if (btnIndiv) btnIndiv.classList.add('active');
     if (hiddenInput) hiddenInput.value = 'individual';
 
     if (labelTeam) labelTeam.textContent = 'Nombre y Apellidos del Alumno *';
-    if (inputTeam) inputTeam.placeholder = 'Ej: Lucía Gómez Fernández';
     if (labelAuthors) labelAuthors.textContent = 'Curso y Grupo Académico *';
-    if (inputAuthors) inputAuthors.placeholder = 'Ej: 4º ESO B (o 1º Bachillerato A)';
-    if (authorsHint) authorsHint.textContent = 'Especifica tu curso escolar para registrar tu entrega individual en el expediente.';
+
+    if (student) {
+      if (inputTeam) {
+        inputTeam.value = student.name;
+        inputTeam.readOnly = true;
+        inputTeam.style.backgroundColor = 'rgba(6,182,212,0.08)';
+        inputTeam.style.borderColor = 'var(--cyan-core)';
+      }
+      if (inputAuthors) {
+        inputAuthors.value = student.grade;
+        inputAuthors.readOnly = true;
+        inputAuthors.style.backgroundColor = 'rgba(6,182,212,0.08)';
+        inputAuthors.style.borderColor = 'var(--cyan-core)';
+      }
+      if (authorsHint) authorsHint.textContent = '🔒 Datos individuales y curso preconfigurados automáticamente según tu clave oficial.';
+    } else {
+      if (inputTeam) {
+        inputTeam.placeholder = 'Ej: Lucía Gómez Fernández';
+        inputTeam.readOnly = false;
+        inputTeam.style.backgroundColor = '';
+        inputTeam.style.borderColor = '';
+      }
+      if (inputAuthors) {
+        inputAuthors.placeholder = 'Ej: 4º ESO B (o 1º Bachillerato A)';
+        inputAuthors.readOnly = false;
+        inputAuthors.style.backgroundColor = '';
+        inputAuthors.style.borderColor = '';
+      }
+      if (authorsHint) authorsHint.textContent = 'Especifica tu curso escolar para registrar tu entrega individual en el expediente.';
+    }
   } else {
     if (btnGroup) btnGroup.classList.add('active');
     if (btnIndiv) btnIndiv.classList.remove('active');
     if (hiddenInput) hiddenInput.value = 'group';
 
     if (labelTeam) labelTeam.textContent = 'Nombre del Equipo / Grupo *';
-    if (inputTeam) inputTeam.placeholder = 'Ej: Equipo Aurora - Escuadrón Apolo';
     if (labelAuthors) labelAuthors.textContent = 'Nombres y Apellidos de los Integrantes *';
-    if (inputAuthors) inputAuthors.placeholder = 'Ej: Lucía Gómez (Líder), David Romero, Carlos Vega...';
-    if (authorsHint) authorsHint.textContent = 'Indica todos los miembros del equipo que firman el trabajo.';
+
+    if (inputTeam) {
+      inputTeam.readOnly = false;
+      inputTeam.style.backgroundColor = '';
+      inputTeam.style.borderColor = '';
+      if (student && inputTeam.value === student.name) {
+        inputTeam.value = '';
+      }
+      inputTeam.placeholder = 'Ej: Equipo Aurora - Escuadrón Apolo';
+    }
+
+    if (inputAuthors) {
+      inputAuthors.readOnly = false;
+      inputAuthors.style.backgroundColor = '';
+      inputAuthors.style.borderColor = '';
+      if (student) {
+        if (!inputAuthors.value || inputAuthors.value === student.grade) {
+          inputAuthors.value = `${student.name} (Líder), `;
+        }
+        if (authorsHint) authorsHint.textContent = '👥 Tu nombre ya figura como líder. Añade los nombres y apellidos de tus compañeros de equipo.';
+      } else {
+        inputAuthors.placeholder = 'Ej: Lucía Gómez (Líder), David Romero, Carlos Vega...';
+        if (authorsHint) authorsHint.textContent = 'Indica todos los miembros del equipo que firman el trabajo.';
+      }
+    }
   }
+}
+
+// CONTROL DE ACCESO POR CLAVE DE ALUMNO (BUZÓN DE ENTREGA)
+function loadStudentSession() {
+  const saved = localStorage.getItem('spsdc_student_session');
+  if (saved) {
+    try {
+      const student = JSON.parse(saved);
+      const exists = AppState.registeredStudents.find(s => s.key === student.key);
+      if (exists) {
+        AppState.activeStudent = exists;
+        showStudentLoggedInUI(exists);
+        return;
+      }
+    } catch (e) {
+      localStorage.removeItem('spsdc_student_session');
+    }
+  }
+  showStudentLoggedOutUI();
+}
+
+function loginStudentWithKey(keyParam) {
+  const inputEl = document.getElementById('studentKeyInput');
+  const rawKey = keyParam || (inputEl ? inputEl.value : '');
+  const cleanKey = (rawKey || '').trim().toUpperCase();
+
+  if (!cleanKey) {
+    alert('Por favor, introduce tu clave personal de alumno.');
+    return;
+  }
+
+  const student = AppState.registeredStudents.find(s => s.key.toUpperCase() === cleanKey);
+  if (!student) {
+    alert(`❌ Clave "${cleanKey}" no reconocida en el Censo Oficial.\n\nPor favor, contacta con tu profesor para que te inscriba en la plataforma.`);
+    return;
+  }
+
+  AppState.activeStudent = student;
+  localStorage.setItem('spsdc_student_session', JSON.stringify(student));
+  showStudentLoggedInUI(student);
+
+  alert(`🚀 ¡Identificación exitosa!\n\nBienvenido/a, ${student.name}.\nColegio: ${student.schoolName}\nCurso: ${student.grade}\n\nTus datos individuales ya están preconfigurados.`);
+}
+
+function logoutStudent() {
+  AppState.activeStudent = null;
+  localStorage.removeItem('spsdc_student_session');
+  showStudentLoggedOutUI();
+}
+
+function showStudentLoggedInUI(student) {
+  const gate = document.getElementById('studentGatePanel');
+  const mainContent = document.getElementById('submissionMainContent');
+  const nameEl = document.getElementById('bannerStudentName');
+  const infoEl = document.getElementById('bannerStudentInfo');
+  const schoolSelect = document.getElementById('subSchool');
+
+  if (gate) gate.style.display = 'none';
+  if (mainContent) mainContent.style.display = 'block';
+
+  if (nameEl) nameEl.textContent = student.name;
+  if (infoEl) infoEl.textContent = `${student.schoolName} • ${student.grade} • Clave Oficial: ${student.key}`;
+
+  if (schoolSelect) {
+    schoolSelect.value = student.schoolId;
+    schoolSelect.disabled = true;
+  }
+
+  const curMod = document.getElementById('subModality') ? document.getElementById('subModality').value : 'group';
+  setSubmissionModality(curMod);
+}
+
+function showStudentLoggedOutUI() {
+  const gate = document.getElementById('studentGatePanel');
+  const mainContent = document.getElementById('submissionMainContent');
+  const schoolSelect = document.getElementById('subSchool');
+  const inputKey = document.getElementById('studentKeyInput');
+
+  if (gate) gate.style.display = 'block';
+  if (mainContent) mainContent.style.display = 'none';
+  if (schoolSelect) schoolSelect.disabled = false;
+  if (inputKey) inputKey.value = '';
 }
 
 function handleSprintSelectionChange() {
@@ -374,7 +511,7 @@ function readFileAsBase64(file) {
 
 async function submitWork() {
   const modality = document.getElementById('subModality') ? document.getElementById('subModality').value : 'group';
-  const school = document.getElementById('subSchool').value;
+  const school = AppState.activeStudent ? AppState.activeStudent.schoolId : document.getElementById('subSchool').value;
   const sprintId = document.getElementById('subSprint').value;
   const dept = document.getElementById('subDept').value;
   const teamOrStudentName = document.getElementById('subTeamName').value.trim();
@@ -422,6 +559,7 @@ async function submitWork() {
     const uploadPayload = {
       id: subId,
       modality: modality,
+      studentKey: AppState.activeStudent ? AppState.activeStudent.key : null,
       school: schoolObj ? schoolObj.name : school,
       sprint: sprintObj ? sprintObj.code : `Sprint_${sprintId}`,
       dept: deptObj ? deptObj.name : dept,
@@ -487,6 +625,7 @@ async function submitWork() {
       id: subId,
       timestamp: new Date().toLocaleString('es-ES'),
       modality: modality,
+      studentKey: AppState.activeStudent ? AppState.activeStudent.key : null,
       schoolId: school,
       schoolName: schoolObj ? schoolObj.name : school,
       sprintId: Number(sprintId),
@@ -634,7 +773,7 @@ function loadSubmissions() {
   }
 }
 
-// PANEL DE JURADO (EVALUACIÓN)
+// PANEL DE JURADO (EVALUACIÓN & CENSO)
 function unlockJury() {
   const pinInput = document.getElementById('juryPinInput').value;
   if (pinInput === '2026') {
@@ -643,10 +782,288 @@ function unlockJury() {
     document.getElementById('juryGatePanel').style.display = 'none';
     document.getElementById('juryMainContent').style.display = 'block';
     renderJurySubmissions();
+    renderRegisteredStudentsTable();
     renderLeaderboard();
   } else {
     alert('PIN incorrecto. Acceso restringido exclusivamente a profesores y miembros del jurado.');
   }
+}
+
+// Navegación interna entre pestañas del panel de Jurado
+function switchJurySubTab(tabName) {
+  const tabs = ['eval', 'students', 'leaderboard'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    const container = document.getElementById(`subtabJury${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    if (btn) {
+      if (t === tabName) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+    if (container) {
+      container.style.display = (t === tabName) ? 'block' : 'none';
+    }
+  });
+
+  if (tabName === 'students') {
+    renderRegisteredStudentsTable();
+  } else if (tabName === 'eval') {
+    renderJurySubmissions();
+  } else if (tabName === 'leaderboard') {
+    renderLeaderboard();
+  }
+}
+
+// GESTIÓN DEL CENSO DE ALUMNOS INSCRITOS
+function loadRegisteredStudents() {
+  const saved = localStorage.getItem('spsdc_registered_students');
+  if (saved) {
+    try {
+      AppState.registeredStudents = JSON.parse(saved);
+    } catch (e) {
+      AppState.registeredStudents = [];
+    }
+  }
+
+  // Si no hay alumnos, crear plantilla inicial representativa de los 4 colegios y cursos
+  if (AppState.registeredStudents.length === 0) {
+    AppState.registeredStudents = [
+      { key: 'ALU-COL1-01', firstName: 'Lucía', lastName: 'Gómez Fernández', name: 'Lucía Gómez Fernández', schoolId: 'col1', schoolName: 'Colegio 01 (Sede Local)', grade: '4º ESO', createdAt: '23/09/2026' },
+      { key: 'ALU-COL1-02', firstName: 'Marcos', lastName: 'Pérez Salazar', name: 'Marcos Pérez Salazar', schoolId: 'col1', schoolName: 'Colegio 01 (Sede Local)', grade: '1º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-COL1-03', firstName: 'David', lastName: 'Romero Gil', name: 'David Romero Gil', schoolId: 'col1', schoolName: 'Colegio 01 (Sede Local)', grade: '2º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-COL2-01', firstName: 'Elena', lastName: 'Santos Vega', name: 'Elena Santos Vega', schoolId: 'col2', schoolName: 'Colegio 02 (Alianza Norte)', grade: '4º ESO', createdAt: '23/09/2026' },
+      { key: 'ALU-COL2-02', firstName: 'Carlos', lastName: 'Vidal Rivas', name: 'Carlos Vidal Rivas', schoolId: 'col2', schoolName: 'Colegio 02 (Alianza Norte)', grade: '1º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-COL2-03', firstName: 'Marina', lastName: 'Soler Bravo', name: 'Marina Soler Bravo', schoolId: 'col2', schoolName: 'Colegio 02 (Alianza Norte)', grade: '2º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-COL3-01', firstName: 'Mateo', lastName: 'Navas Ruíz', name: 'Mateo Navas Ruíz', schoolId: 'col3', schoolName: 'Colegio 03 (Alianza Centro)', grade: '4º ESO', createdAt: '23/09/2026' },
+      { key: 'ALU-COL3-02', firstName: 'Clara', lastName: 'Domínguez Cano', name: 'Clara Domínguez Cano', schoolId: 'col3', schoolName: 'Colegio 03 (Alianza Centro)', grade: '1º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-COL3-03', firstName: 'Jorge', lastName: 'Alarcón Gil', name: 'Jorge Alarcón Gil', schoolId: 'col3', schoolName: 'Colegio 03 (Alianza Centro)', grade: '2º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-COL4-01', firstName: 'Sofía', lastName: 'Morales Chen', name: 'Sofía Morales Chen', schoolId: 'col4', schoolName: 'Colegio 04 (Alianza Sur)', grade: '4º ESO', createdAt: '23/09/2026' },
+      { key: 'ALU-COL4-02', firstName: 'Adrián', lastName: 'Lozano Blanco', name: 'Adrián Lozano Blanco', schoolId: 'col4', schoolName: 'Colegio 04 (Alianza Sur)', grade: '1º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-COL4-03', firstName: 'Valeria', lastName: 'Nieto Ríos', name: 'Valeria Nieto Ríos', schoolId: 'col4', schoolName: 'Colegio 04 (Alianza Sur)', grade: '2º Bachillerato', createdAt: '23/09/2026' }
+    ];
+    saveRegisteredStudents();
+  }
+}
+
+function saveRegisteredStudents() {
+  localStorage.setItem('spsdc_registered_students', JSON.stringify(AppState.registeredStudents));
+}
+
+function generateStudentKey(schoolId) {
+  const schoolNum = (schoolId || 'col1').replace('col', '');
+  const existingForSchool = AppState.registeredStudents.filter(s => s.schoolId === schoolId);
+  const nextNum = existingForSchool.length + 1;
+  const keyCandidate = `ALU-COL${schoolNum}-${String(nextNum).padStart(2, '0')}`;
+  
+  if (AppState.registeredStudents.some(s => s.key === keyCandidate)) {
+    return `ALU-COL${schoolNum}-${Date.now().toString().slice(-3)}`;
+  }
+  return keyCandidate;
+}
+
+function handleRegisterStudent(e) {
+  if (e) e.preventDefault();
+
+  const firstName = document.getElementById('regStudentFirstName').value.trim();
+  const lastName = document.getElementById('regStudentLastName').value.trim();
+  const schoolId = document.getElementById('regStudentSchool').value;
+  const grade = document.getElementById('regStudentGrade').value;
+  const customKey = document.getElementById('regStudentCustomKey').value.trim().toUpperCase();
+
+  if (!firstName || !lastName) {
+    alert('Por favor, indica nombre y apellidos del alumno.');
+    return;
+  }
+
+  const schoolObj = AppState.schools.find(s => s.id === schoolId);
+  const finalKey = customKey || generateStudentKey(schoolId);
+
+  // Comprobar si la clave ya existe
+  if (AppState.registeredStudents.some(s => s.key === finalKey)) {
+    alert(`La clave "${finalKey}" ya está en uso. Por favor, especifica otra clave o déjala vacía para autogenerar.`);
+    return;
+  }
+
+  const newStudent = {
+    key: finalKey,
+    firstName: firstName,
+    lastName: lastName,
+    name: `${firstName} ${lastName}`,
+    schoolId: schoolId,
+    schoolName: schoolObj ? schoolObj.name : schoolId,
+    grade: grade,
+    createdAt: new Date().toLocaleDateString('es-ES')
+  };
+
+  AppState.registeredStudents.push(newStudent);
+  saveRegisteredStudents();
+
+  // Reset del formulario
+  document.getElementById('studentRegistrationForm').reset();
+  renderRegisteredStudentsTable();
+
+  alert(`✅ ¡ALUMNO INSCRITO CON ÉXITO!\n\n` +
+        `Estudiante: ${newStudent.name}\n` +
+        `Colegio: ${newStudent.schoolName}\n` +
+        `Curso: ${newStudent.grade}\n` +
+        `CLAVE ASIGNADA: ${newStudent.key}\n\n` +
+        `Entrega esta clave al alumno para que pueda acceder al Buzón.`);
+}
+
+function renderRegisteredStudentsTable() {
+  const tbody = document.getElementById('registeredStudentsBody');
+  if (!tbody) return;
+
+  const schoolFilter = document.getElementById('filterStudentSchool') ? document.getElementById('filterStudentSchool').value : 'all';
+  const gradeFilter = document.getElementById('filterStudentGrade') ? document.getElementById('filterStudentGrade').value : 'all';
+  const search = document.getElementById('searchStudentQuery') ? document.getElementById('searchStudentQuery').value.trim().toLowerCase() : '';
+
+  let list = AppState.registeredStudents;
+  if (schoolFilter !== 'all') list = list.filter(s => s.schoolId === schoolFilter);
+  if (gradeFilter !== 'all') list = list.filter(s => s.grade === gradeFilter);
+  if (search) {
+    list = list.filter(s => s.name.toLowerCase().includes(search) || s.key.toLowerCase().includes(search));
+  }
+
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:26px;">No hay alumnos registrados con estos criterios.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(s => {
+    // Contar entregas realizadas por este alumno
+    const subCount = AppState.submissions.filter(sub => {
+      if (sub.studentKey && sub.studentKey === s.key) return true;
+      if (sub.authors && sub.authors.includes(s.name)) return true;
+      if (sub.teamName && sub.teamName.includes(s.name)) return true;
+      return false;
+    }).length;
+
+    return `
+      <tr>
+        <td>
+          <span class="key-badge">${s.key}</span>
+          <button type="button" class="btn-hud btn-hud-secondary" style="padding:2px 8px; font-size:0.72rem; margin-left:6px;" onclick="copyStudentKey('${s.key}')" title="Copiar clave">
+            📋 Copiar
+          </button>
+        </td>
+        <td><strong>${s.name}</strong></td>
+        <td><span style="font-size:0.85rem; color:var(--text-secondary);">${s.schoolName}</span></td>
+        <td><span class="pill-badge">${s.grade}</span></td>
+        <td><span style="font-size:0.8rem; color:var(--text-muted);">${s.createdAt || '23/09/2026'}</span></td>
+        <td>
+          <span class="sprint-badge ${subCount > 0 ? 'badge-active' : 'badge-upcoming'}">
+            ${subCount} ${subCount === 1 ? 'entrega' : 'entregas'}
+          </span>
+        </td>
+        <td>
+          <button type="button" class="btn-hud btn-hud-secondary" style="padding:4px 10px; font-size:0.75rem; color:var(--rose-danger);" onclick="deleteRegisteredStudent('${s.key}')">
+            🗑️ Baja
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function copyStudentKey(key) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(key).then(() => {
+      alert(`📋 Clave "${key}" copiada al portapapeles. Puedes entregársela al alumno.`);
+    }).catch(() => {
+      prompt('Copia esta clave de alumno:', key);
+    });
+  } else {
+    prompt('Copia esta clave de alumno:', key);
+  }
+}
+
+function deleteRegisteredStudent(key) {
+  const student = AppState.registeredStudents.find(s => s.key === key);
+  if (!student) return;
+
+  if (confirm(`¿Estás seguro de que deseas dar de baja a ${student.name} (${student.key})?`)) {
+    AppState.registeredStudents = AppState.registeredStudents.filter(s => s.key !== key);
+    saveRegisteredStudents();
+    renderRegisteredStudentsTable();
+  }
+}
+
+function toggleBatchStudentImport() {
+  const box = document.getElementById('batchImportContainer');
+  if (box) {
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function handleBatchImportStudents() {
+  const textarea = document.getElementById('batchStudentsInput');
+  if (!textarea) return;
+
+  const raw = textarea.value.trim();
+  if (!raw) {
+    alert('Pega al menos una línea con datos de alumno.');
+    return;
+  }
+
+  const lines = raw.split('\n');
+  let addedCount = 0;
+
+  lines.forEach(line => {
+    const parts = line.split(',').map(p => p.trim());
+    if (parts.length >= 2) {
+      const fullName = parts[0];
+      let schoolNum = parts[1].replace(/[^1-4]/g, '') || '1';
+      let schoolId = `col${schoolNum}`;
+      let grade = parts[2] || '4º ESO';
+
+      if (grade.includes('4')) grade = '4º ESO';
+      else if (grade.includes('1')) grade = '1º Bachillerato';
+      else if (grade.includes('2')) grade = '2º Bachillerato';
+
+      const schoolObj = AppState.schools.find(s => s.id === schoolId);
+      const key = generateStudentKey(schoolId);
+
+      AppState.registeredStudents.push({
+        key: key,
+        name: fullName,
+        firstName: fullName.split(' ')[0],
+        lastName: fullName.split(' ').slice(1).join(' '),
+        schoolId: schoolId,
+        schoolName: schoolObj ? schoolObj.name : schoolId,
+        grade: grade,
+        createdAt: new Date().toLocaleDateString('es-ES')
+      });
+      addedCount++;
+    }
+  });
+
+  saveRegisteredStudents();
+  renderRegisteredStudentsTable();
+  textarea.value = '';
+  toggleBatchStudentImport();
+
+  alert(`🎉 ¡Lote procesado con éxito!\nSe han inscrito ${addedCount} nuevos alumnos con sus claves oficiales generadas.`);
+}
+
+function exportStudentsToCSV() {
+  if (AppState.registeredStudents.length === 0) {
+    alert('No hay alumnos registrados para exportar.');
+    return;
+  }
+
+  let csv = 'Clave;Nombre Completo;Colegio;Curso;Fecha de Alta\n';
+  AppState.registeredStudents.forEach(s => {
+    csv += `"${s.key}";"${s.name}";"${s.schoolName}";"${s.grade}";"${s.createdAt || ''}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Censo_Alumnos_SPSDC_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function renderJurySubmissions() {

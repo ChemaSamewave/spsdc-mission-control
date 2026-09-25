@@ -186,16 +186,52 @@
 
     <!-- VISTA 3: BUZÓN DE ENTREGA (UPLOAD BAY) -->
     <section id="submissions" class="view-section">
-      <div class="section-header">
-        <div class="section-tag">ENTREGA DE PROYECTOS</div>
-        <h2 class="section-title">Buzón de Misión Multiformato</h2>
-        <p class="section-subtitle">
-          Sube tus archivos de ingeniería (PDF, PowerPoint, Excel, renders de Blender) o pega tu enlace interactivo de TinkerCAD y Google Slides.
+      <!-- PANEL DE VALIDACIÓN POR CLAVE DE ALUMNO (GATE) -->
+      <div id="studentGatePanel" class="hud-panel jury-gate">
+        <div style="font-size:3rem; margin-bottom:12px;">🔑</div>
+        <h3 style="font-family:var(--font-hud); font-size:1.4rem; color:#fff; margin-bottom:8px;">
+          Acceso al Buzón de Entrega de Proyectos
+        </h3>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px; max-width:480px; margin-left:auto; margin-right:auto;">
+          Para garantizar la autenticidad de las propuestas, introduce tu clave personal de alumno participante (asignada por tu profesor) para acceder al buzón.
         </p>
+        <div class="form-group" style="max-width:320px; margin:0 auto 16px auto;">
+          <input type="text" id="studentKeyInput" class="form-control" style="text-align:center; font-family:var(--font-hud); font-size:1.25rem; letter-spacing:3px; text-transform:uppercase;" placeholder="EJ: ALU-COL1-01" onkeyup="if(event.key==='Enter') loginStudentWithKey()">
+        </div>
+        <button class="btn-hud btn-hud-primary" style="width:100%; max-width:320px; margin:0 auto; justify-content:center;" onclick="loginStudentWithKey()">
+          🚀 Validar Clave y Entrar
+        </button>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:16px;">
+          ¿No tienes clave? Pídesela al profesor coordinador de tu colegio.
+        </div>
       </div>
 
-      <div class="form-grid">
-        <div class="hud-panel">
+      <!-- CONTENIDO PRINCIPAL DEL BUZÓN (DESBLOQUEADO TRAS CLAVE) -->
+      <div id="submissionMainContent" style="display:none;">
+        <div id="studentActiveBanner" class="hud-panel" style="margin-bottom:20px; background:rgba(6,182,212,0.08); border-color:var(--cyan-core); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="font-size:2rem;">👨‍🚀</div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--cyan-core); font-weight:700; letter-spacing:1px;">INGENIERO PARTICIPANTE ACTIVO</div>
+              <div style="font-size:1.15rem; color:#fff; font-weight:700;" id="bannerStudentName">Cargando...</div>
+              <div style="font-size:0.82rem; color:var(--text-secondary);" id="bannerStudentInfo">...</div>
+            </div>
+          </div>
+          <button type="button" class="btn-hud btn-hud-secondary" style="padding:6px 14px; font-size:0.75rem;" onclick="logoutStudent()">
+            🔄 Cambiar Alumno
+          </button>
+        </div>
+
+        <div class="section-header">
+          <div class="section-tag">ENTREGA DE PROYECTOS</div>
+          <h2 class="section-title">Buzón de Misión Multiformato</h2>
+          <p class="section-subtitle">
+            Sube tus archivos de ingeniería (PDF, PowerPoint, Excel, renders de Blender) o pega tu enlace interactivo de TinkerCAD y Google Slides.
+          </p>
+        </div>
+
+        <div class="form-grid">
+          <div class="hud-panel">
           <form id="submissionForm">
             <!-- SELECTOR DE MODALIDAD: INDIVIDUAL O EN EQUIPO -->
             <div class="form-group" style="margin-bottom: 22px;">
@@ -331,6 +367,7 @@
           </div>
         </div>
       </div>
+      </div><!-- /#submissionMainContent -->
     </section>
 
     <!-- VISTA 4: CALCULADORAS AEROESPACIALES -->
@@ -581,70 +618,202 @@
           </p>
         </div>
 
-        <!-- Filtros rápidos -->
-        <div class="hud-panel" style="margin-bottom:24px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-          <div style="font-family:var(--font-hud); font-size:0.85rem; color:var(--text-secondary);">FILTRAR ENTREGAS:</div>
-          <select id="juryFilterSchool" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
-            <option value="all">Todos los Colegios</option>
-            <option value="col1">Colegio 01</option>
-            <option value="col2">Colegio 02</option>
-            <option value="col3">Colegio 03</option>
-            <option value="col4">Colegio 04</option>
-          </select>
-          <select id="juryFilterSprint" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
-            <option value="all">Todos los Sprints</option>
-            <option value="1">Sprint 1</option>
-            <option value="2">Sprint 2</option>
-            <option value="3">Sprint 3</option>
-            <option value="4">Sprint 4</option>
-            <option value="5">Sprint 5</option>
-          </select>
-          <select id="juryFilterModality" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
-            <option value="all">Todas las Modalidades</option>
-            <option value="group">Solo Equipos 👥</option>
-            <option value="individual">Solo Individuales 👤</option>
-          </select>
+        <!-- Pestañas internas del panel de jurado -->
+        <div class="subnav-tabs">
+          <button class="subnav-tab active" id="tabBtnEval" onclick="switchJurySubTab('eval')">
+            ⚖️ Evaluaciones & Entregas
+          </button>
+          <button class="subnav-tab" id="tabBtnStudents" onclick="switchJurySubTab('students')">
+            🎓 Censo e Inscripción de Alumnos (Claves)
+          </button>
+          <button class="subnav-tab" id="tabBtnLeaderboard" onclick="switchJurySubTab('leaderboard')">
+            🏆 Ranking por Colegios
+          </button>
         </div>
 
-        <!-- Tabla de entregas -->
-        <div class="hud-panel" style="overflow-x:auto;">
-          <table class="submissions-table">
-            <thead>
-              <tr>
-                <th>ID / Fecha</th>
-                <th>Modalidad</th>
-                <th>Equipo / Alumno</th>
-                <th>Colegio</th>
-                <th>Sprint / Dept</th>
-                <th>Archivos / Enlaces</th>
-                <th>Estado / Nota</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody id="jurySubmissionsBody">
-              <!-- Renderizado dinámico -->
-            </tbody>
-          </table>
+        <!-- SUBTAB 1: EVALUACIÓN DE ENTREGAS -->
+        <div id="subtabJuryEval">
+          <!-- Filtros rápidos -->
+          <div class="hud-panel" style="margin-bottom:24px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+            <div style="font-family:var(--font-hud); font-size:0.85rem; color:var(--text-secondary);">FILTRAR ENTREGAS:</div>
+            <select id="juryFilterSchool" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
+              <option value="all">Todos los Colegios</option>
+              <option value="col1">Colegio 01</option>
+              <option value="col2">Colegio 02</option>
+              <option value="col3">Colegio 03</option>
+              <option value="col4">Colegio 04</option>
+            </select>
+            <select id="juryFilterSprint" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
+              <option value="all">Todos los Sprints</option>
+              <option value="1">Sprint 1</option>
+              <option value="2">Sprint 2</option>
+              <option value="3">Sprint 3</option>
+              <option value="4">Sprint 4</option>
+              <option value="5">Sprint 5</option>
+            </select>
+            <select id="juryFilterModality" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
+              <option value="all">Todas las Modalidades</option>
+              <option value="group">Solo Equipos 👥</option>
+              <option value="individual">Solo Individuales 👤</option>
+            </select>
+          </div>
+
+          <!-- Tabla de entregas -->
+          <div class="hud-panel" style="overflow-x:auto;">
+            <table class="submissions-table">
+              <thead>
+                <tr>
+                  <th>ID / Fecha</th>
+                  <th>Modalidad</th>
+                  <th>Equipo / Alumno</th>
+                  <th>Colegio</th>
+                  <th>Sprint / Dept</th>
+                  <th>Archivos / Enlaces</th>
+                  <th>Estado / Nota</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="jurySubmissionsBody">
+                <!-- Renderizado dinámico -->
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <!-- Leaderboard / Clasificación por Colegios -->
-        <div class="hud-panel" style="margin-top:30px;">
-          <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff; margin-bottom:14px;">
-            🏆 Clasificación y Progreso por Colegios
-          </h3>
-          <table class="submissions-table">
-            <thead>
-              <tr>
-                <th>Puesto</th>
-                <th>Colegio</th>
-                <th>Entregas Realizadas</th>
-                <th>Puntuación Media</th>
-              </tr>
-            </thead>
-            <tbody id="leaderboardBody">
-              <!-- Renderizado dinámico -->
-            </tbody>
-          </table>
+        <!-- SUBTAB 2: CENSO E INSCRIPCIÓN DE ALUMNOS (CLAVES OFICIALES) -->
+        <div id="subtabJuryStudents" style="display:none;">
+          <div class="hud-panel" style="margin-bottom:24px;">
+            <div class="section-tag">REGISTRO DE INGENIEROS PARTICIPANTES</div>
+            <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff; margin-bottom:6px;">
+              ➕ Inscribir Alumno Oficial
+            </h3>
+            <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:18px;">
+              Da de alta a los estudiantes para asignarles una <strong>clave personal</strong>. Al introducirla en el Buzón, sus datos individuales (nombre, apellidos, colegio y curso) quedan <strong>preconfigurados automáticamente</strong>.
+            </p>
+
+            <form id="studentRegistrationForm" onsubmit="handleRegisterStudent(event)">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label class="form-label" for="regStudentFirstName">Nombre *</label>
+                  <input type="text" id="regStudentFirstName" class="form-control" placeholder="Ej: Lucía" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="regStudentLastName">Apellidos *</label>
+                  <input type="text" id="regStudentLastName" class="form-control" placeholder="Ej: Gómez Fernández" required>
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label class="form-label" for="regStudentSchool">Colegio de Origen *</label>
+                  <select id="regStudentSchool" class="form-control" required>
+                    <option value="col1">Colegio 01 (Sede Local)</option>
+                    <option value="col2">Colegio 02 (Alianza Norte)</option>
+                    <option value="col3">Colegio 03 (Alianza Centro)</option>
+                    <option value="col4">Colegio 04 (Alianza Sur)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="regStudentGrade">Curso Académico *</label>
+                  <select id="regStudentGrade" class="form-control" required>
+                    <option value="4º ESO">4º ESO</option>
+                    <option value="1º Bachillerato">1º Bachillerato</option>
+                    <option value="2º Bachillerato">2º Bachillerato</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row-2" style="align-items:flex-end;">
+                <div class="form-group" style="margin-bottom:0;">
+                  <label class="form-label" for="regStudentCustomKey">Clave Personalizada (Opcional)</label>
+                  <input type="text" id="regStudentCustomKey" class="form-control" placeholder="Dejar vacío para autogenerar (ej: ALU-COL1-007)">
+                </div>
+                <button type="submit" class="btn-hud btn-hud-primary" style="height:48px; justify-content:center;">
+                  ➕ Inscribir y Generar Clave
+                </button>
+              </div>
+            </form>
+
+            <!-- Inscripción por lotes -->
+            <div style="margin-top:20px; border-top:1px dashed var(--border-subtle); padding-top:16px;">
+              <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem;" onclick="toggleBatchStudentImport()">
+                📋 Inscripción Rápida por Lotes (Pegar listado de alumnos)
+              </button>
+              <div id="batchImportContainer" style="display:none; margin-top:14px;">
+                <label class="form-label" for="batchStudentsInput">Pega una lista (Formato: Nombre y Apellidos, Colegio (1-4), Curso):</label>
+                <textarea id="batchStudentsInput" class="form-control" rows="4" placeholder="Lucía Gómez, 1, 4º ESO&#10;David Romero, 1, 1º Bachillerato&#10;Elena Santos, 2, 4º ESO&#10;Mateo Navas, 3, 2º Bachillerato"></textarea>
+                <button type="button" class="btn-hud btn-hud-amber" style="margin-top:10px;" onclick="handleBatchImportStudents()">
+                  🚀 Procesar e Inscribir Lote
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filtros del Censo -->
+          <div class="hud-panel" style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+              <div style="font-family:var(--font-hud); font-size:0.85rem; color:var(--text-secondary);">FILTRAR CENSO:</div>
+              <select id="filterStudentSchool" class="form-control" style="width:auto;" onchange="renderRegisteredStudentsTable()">
+                <option value="all">Todos los Colegios</option>
+                <option value="col1">Colegio 01</option>
+                <option value="col2">Colegio 02</option>
+                <option value="col3">Colegio 03</option>
+                <option value="col4">Colegio 04</option>
+              </select>
+              <select id="filterStudentGrade" class="form-control" style="width:auto;" onchange="renderRegisteredStudentsTable()">
+                <option value="all">Todos los Cursos</option>
+                <option value="4º ESO">4º ESO</option>
+                <option value="1º Bachillerato">1º Bachillerato</option>
+                <option value="2º Bachillerato">2º Bachillerato</option>
+              </select>
+              <input type="text" id="searchStudentQuery" class="form-control" style="width:190px;" placeholder="Buscar nombre o clave..." oninput="renderRegisteredStudentsTable()">
+            </div>
+            <button class="btn-hud btn-hud-secondary" onclick="exportStudentsToCSV()">
+              📥 Exportar Claves a CSV
+            </button>
+          </div>
+
+          <!-- Tabla del censo oficial -->
+          <div class="hud-panel" style="overflow-x:auto;">
+            <table class="submissions-table">
+              <thead>
+                <tr>
+                  <th>Clave de Acceso</th>
+                  <th>Alumno</th>
+                  <th>Colegio</th>
+                  <th>Curso</th>
+                  <th>Fecha de Alta</th>
+                  <th>Entregas</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="registeredStudentsBody">
+                <!-- Renderizado dinámico -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUBTAB 3: RANKING POR COLEGIOS -->
+        <div id="subtabJuryLeaderboard" style="display:none;">
+          <div class="hud-panel">
+            <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff; margin-bottom:14px;">
+              🏆 Clasificación y Progreso por Colegios
+            </h3>
+            <table class="submissions-table">
+              <thead>
+                <tr>
+                  <th>Puesto</th>
+                  <th>Colegio</th>
+                  <th>Entregas Realizadas</th>
+                  <th>Puntuación Media</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardBody">
+                <!-- Renderizado dinámico -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
