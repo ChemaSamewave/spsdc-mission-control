@@ -184,6 +184,10 @@ function navigateTo(viewId) {
   if (targetSec) targetSec.classList.add('active');
   if (targetTab) targetTab.classList.add('active');
 
+  if (viewId === 'december') {
+    initSimulationModule();
+  }
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -547,6 +551,7 @@ function unlockJury() {
   const pinInput = document.getElementById('juryPinInput').value;
   if (pinInput === '2026') {
     AppState.juryAuthenticated = true;
+    AppState.organizerAuthenticated = true;
     document.getElementById('juryGatePanel').style.display = 'none';
     document.getElementById('juryMainContent').style.display = 'block';
     renderJurySubmissions();
@@ -797,8 +802,16 @@ let stageTimerInterval = null;
 let stageSecondsLeft = 9 * 3600; // 9 horas (08:30 a 17:30)
 let stageTimerRunning = false;
 
+// Estado de organizador y publicación
+AppState.organizerAuthenticated = false;
+AppState.publishedRoster = localStorage.getItem('spsdc_roster_published') === 'true';
+
 function initSimulationModule() {
   updateStageClockDisplay();
+  if (AppState.organizerAuthenticated || AppState.juryAuthenticated) {
+    toggleOrganizerControlsUI(true);
+  }
+  renderCompaniesRoster();
 }
 
 function updateStageClockDisplay() {
@@ -876,28 +889,111 @@ function generateMixedCompanies() {
     [roster[i], roster[j]] = [roster[j], roster[i]];
   }
 
-  // Repartir en 4 empresas equitativamente
+  // Repartir en 4 empresas equitativamente (30 por empresa)
   const distributed = companies.map(comp => ({ ...comp, members: [] }));
   roster.forEach((student, idx) => {
     distributed[idx % 4].members.push(student);
   });
 
+  AppState.distributedCompanies = distributed;
+  localStorage.setItem('spsdc_mixed_companies', JSON.stringify(distributed));
+
+  renderCompaniesRoster();
+
+  alert('🤝 ¡Mezcla intercolegial generada con éxito!\n120 alumnos repartidos equitativamente en las 4 empresas aeroespaciales (30 alumnos por empresa).\n\nPara que los alumnos la vean en sus dispositivos, haz clic en "📢 Publicar Equipos a Alumnos".');
+}
+
+// Renderizado de las compañías (Protegido si no está publicado)
+function renderCompaniesRoster() {
   const container = document.getElementById('companiesRosterContainer');
   if (!container) return;
 
+  const isOrganizer = AppState.organizerAuthenticated || AppState.juryAuthenticated;
+  const isPublished = AppState.publishedRoster;
+
+  // Si no está publicado y el usuario NO es organizador:
+  if (!isPublished && !isOrganizer) {
+    container.innerHTML = `
+      <div class="company-card" style="border-top: 4px solid #38bdf8;">
+        <h4>CONDOR COMPANY</h4>
+        <div style="color:var(--text-muted); font-size:0.85rem;">Hábitat rotatorio centrípeto y reactores nucleares.</div>
+        <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:14px; background:rgba(6,182,212,0.1); padding:10px; border-radius:6px;">
+          ⏳ Distribución de ingenieros en preparación por el Comité Organizador.
+        </div>
+      </div>
+      <div class="company-card" style="border-top: 4px solid #f59e0b;">
+        <h4>SAPIEN (木漏れ日)</h4>
+        <div style="color:var(--text-muted); font-size:0.85rem;">Robótica avanzada de carga y visión espacial.</div>
+        <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:14px; background:rgba(6,182,212,0.1); padding:10px; border-radius:6px;">
+          ⏳ Distribución de ingenieros en preparación por el Comité Organizador.
+        </div>
+      </div>
+      <div class="company-card" style="border-top: 4px solid #10b981;">
+        <h4>BOSCOM CORP</h4>
+        <div style="color:var(--text-muted); font-size:0.85rem;">Infraestructura orbital y red de comunicaciones.</div>
+        <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:14px; background:rgba(6,182,212,0.1); padding:10px; border-radius:6px;">
+          ⏳ Distribución de ingenieros en preparación por el Comité Organizador.
+        </div>
+      </div>
+      <div class="company-card" style="border-top: 4px solid #a855f7;">
+        <h4>PONTIFEX AEROSPACE</h4>
+        <div style="color:var(--text-muted); font-size:0.85rem;">Propulsión iónica y ensamblaje modular.</div>
+        <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:14px; background:rgba(6,182,212,0.1); padding:10px; border-radius:6px;">
+          ⏳ Distribución de ingenieros en preparación por el Comité Organizador.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Si está publicado o es organizador:
+  let distributed = AppState.distributedCompanies;
+  if (!distributed || distributed.length === 0) {
+    const saved = localStorage.getItem('spsdc_mixed_companies');
+    if (saved) {
+      try {
+        distributed = JSON.parse(saved);
+        AppState.distributedCompanies = distributed;
+      } catch (e) {
+        distributed = null;
+      }
+    }
+  }
+
+  if (!distributed || distributed.length === 0) {
+    if (isOrganizer) {
+      container.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align:center; padding:30px; background:rgba(30,41,59,0.5); border:1px dashed var(--amber-alert); border-radius:8px;">
+          <div style="font-size:2rem; margin-bottom:8px;">🎲</div>
+          <strong style="color:var(--amber-alert); font-family:var(--font-hud);">AÚN NO SE HAN SORTEADO LOS EQUIPOS</strong>
+          <p style="color:var(--text-secondary); font-size:0.9rem; margin-top:6px;">
+            Haz clic en <strong>"🎲 Sortear / Mezclar Equipos"</strong> en la barra superior de organizador para repartir los 120 alumnos entre las 4 compañías.
+          </p>
+        </div>
+      `;
+    }
+    return;
+  }
+
   container.innerHTML = distributed.map(comp => {
-    // Contar cuántos de cada colegio hay
     const countBySchool = {};
-    comp.members.forEach(m => {
+    (comp.members || []).forEach(m => {
       countBySchool[m.school] = (countBySchool[m.school] || 0) + 1;
     });
 
+    const statusBadge = isPublished
+      ? `<span style="display:inline-block; font-size:0.75rem; background:rgba(16,185,129,0.2); color:#10b981; border:1px solid #10b981; padding:2px 8px; border-radius:12px;">🟢 PUBLICADO</span>`
+      : `<span style="display:inline-block; font-size:0.75rem; background:rgba(245,158,11,0.2); color:#f59e0b; border:1px solid #f59e0b; padding:2px 8px; border-radius:12px;">🔒 BORRADOR</span>`;
+
     return `
       <div class="company-card" style="border-top: 4px solid ${comp.color};">
-        <h4>${comp.name}</h4>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <h4 style="margin:0;">${comp.name}</h4>
+          ${isOrganizer ? statusBadge : ''}
+        </div>
         <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">${comp.theme}</div>
         <div style="background:rgba(12,17,29,0.8); padding:10px; border-radius:6px; font-size:0.8rem; margin-bottom:12px;">
-          <strong>Mix Intercolegial (${comp.members.length} ingenieros):</strong>
+          <strong>Mix Intercolegial (${(comp.members || []).length} ingenieros):</strong>
           <ul style="margin-left:16px; margin-top:4px; color:var(--text-secondary);">
             ${Object.entries(countBySchool).map(([sch, cnt]) => `<li>${sch}: <strong>${cnt} alumnos</strong></li>`).join('')}
           </ul>
@@ -905,12 +1001,81 @@ function generateMixedCompanies() {
         <div style="max-height: 200px; overflow-y: auto; font-size:0.8rem; color:var(--text-secondary);">
           <strong>Directorio del equipo:</strong>
           <ol style="margin-left:18px; margin-top:6px;">
-            ${comp.members.map(m => `<li>${m.name}</li>`).join('')}
+            ${(comp.members || []).map(m => `<li>${m.name}</li>`).join('')}
           </ol>
         </div>
       </div>
     `;
   }).join('');
-
-  alert('🤝 ¡Mezcla intercolegial generada con éxito!\n120 alumnos repartidos equitativamente en las 4 empresas aeroespaciales (30 alumnos por empresa).');
 }
+
+// CONTROL DE ACCESO EXCLUSIVO DE ORGANIZADORES PARA DICIEMBRE
+function handleOrganizerAccess() {
+  if (AppState.organizerAuthenticated || AppState.juryAuthenticated) {
+    toggleOrganizerControlsUI(true);
+    renderCompaniesRoster();
+    return;
+  }
+
+  const pin = prompt('Introduce el PIN de Organizador / Profesor:');
+  if (pin === '2026') {
+    AppState.organizerAuthenticated = true;
+    toggleOrganizerControlsUI(true);
+    renderCompaniesRoster();
+    alert('🔓 Acceso de Organizador concedido. Ya tienes el control del reloj y el sorteo de equipos.');
+  } else if (pin !== null) {
+    alert('PIN incorrecto. Acceso restringido exclusivamente a organizadores.');
+  }
+}
+
+function toggleOrganizerControlsUI(show) {
+  const toolbar = document.getElementById('organizerToolbar');
+  const clockControls = document.getElementById('organizerClockControls');
+  const lockIcon = document.getElementById('organizerLockStatus');
+  const btnToggle = document.getElementById('btnOrganizerToggle');
+
+  if (toolbar) toolbar.style.display = show ? 'block' : 'none';
+  if (clockControls) clockControls.style.display = show ? 'flex' : 'none';
+  if (lockIcon) lockIcon.textContent = show ? '🔓' : '🔒';
+  if (btnToggle) btnToggle.innerHTML = show ? '🔓 Modo Organizador Activo' : '🔒 Acceso Organizadores';
+
+  updatePublishButtonUI();
+}
+
+function togglePublishRoster() {
+  if (!AppState.organizerAuthenticated && !AppState.juryAuthenticated) return;
+
+  AppState.publishedRoster = !AppState.publishedRoster;
+  localStorage.setItem('spsdc_roster_published', AppState.publishedRoster ? 'true' : 'false');
+  updatePublishButtonUI();
+  renderCompaniesRoster();
+
+  if (AppState.publishedRoster) {
+    alert('📢 ¡Equipos publicados!\nLos alumnos ya pueden ver la composición de las 4 compañías aeroespaciales en sus pantallas.');
+  } else {
+    alert('🔒 Equipos ocultados a los alumnos.\nAhora los alumnos solo verán el mensaje de preparación.');
+  }
+}
+
+function updatePublishButtonUI() {
+  const btn = document.getElementById('btnPublishRoster');
+  if (btn) {
+    btn.innerHTML = AppState.publishedRoster 
+      ? '👁️ Ocultar Equipos a Alumnos' 
+      : '📢 Publicar Equipos a Alumnos';
+  }
+}
+
+function launchStageFullscreen() {
+  const el = document.getElementById('december');
+  if (!el) return;
+
+  if (!document.fullscreenElement) {
+    el.requestFullscreen().catch(err => {
+      alert('Error al activar pantalla completa: ' + err.message);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+

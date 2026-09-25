@@ -428,22 +428,49 @@
 
     <!-- VISTA 5: LA GRAN SIMULACIÓN DE DICIEMBRE -->
     <section id="december" class="view-section">
-      <div class="section-header">
-        <div class="section-tag">EL CLÍMAX DE LA OPERACIÓN</div>
-        <h2 class="section-title">Gran Simulación Intercolegial (Fase Local)</h2>
-        <p class="section-subtitle">
-          El evento presencial donde los 120 alumnos de los 4 colegios se fusionan en 4 grandes empresas aeroespaciales para resolver un RFP en una jornada intensiva.
-        </p>
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+        <div>
+          <div class="section-tag">EL CLÍMAX DE LA OPERACIÓN</div>
+          <h2 class="section-title">Gran Simulación Intercolegial (Fase Local)</h2>
+          <p class="section-subtitle">
+            El evento presencial donde los 120 alumnos de los 4 colegios se fusionan en 4 grandes empresas aeroespaciales para resolver un RFP en una jornada intensiva.
+          </p>
+        </div>
+        <button class="btn-hud btn-hud-secondary" id="btnOrganizerToggle" onclick="handleOrganizerAccess()">
+          <span id="organizerLockStatus">🔒</span> Acceso Organizadores
+        </button>
       </div>
 
-      <!-- Reloj de Competición en Vivo para Proyectar en Pantalla Gigante -->
+      <!-- Barra de herramientas del organizador (Oculta por defecto) -->
+      <div id="organizerToolbar" class="hud-panel" style="display:none; background:rgba(30,41,59,0.9); border-color:var(--amber-alert); margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+          <div>
+            <strong style="color:var(--amber-alert); font-family:var(--font-hud);">🛠️ PANEL DE CONTROL DE LA SIMULACIÓN ACTIVO</strong>
+            <div style="font-size:0.85rem; color:var(--text-secondary); margin-top:2px;">Controles exclusivos para profesores y comité organizador.</div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn-hud btn-hud-amber" onclick="generateMixedCompanies()">
+              🎲 Sortear / Mezclar Equipos
+            </button>
+            <button class="btn-hud btn-hud-secondary" id="btnPublishRoster" onclick="togglePublishRoster()">
+              📢 Publicar Equipos a Alumnos
+            </button>
+            <button class="btn-hud btn-hud-primary" onclick="launchStageFullscreen()">
+              📽️ Modo Proyector Auditorio (F)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reloj de Competición en Vivo -->
       <div class="hud-panel stage-clock-view">
         <div style="font-family:var(--font-hud); font-size:1rem; letter-spacing:3px; color:var(--amber-alert);">
           MISSION STAGE LIVE CLOCK • TIEMPO RESTANTE PARA DEADLINE
         </div>
         <div class="stage-timer-giant" id="stageGiantClock">09:00:00</div>
         
-        <div style="display:flex; justify-content:center; gap:16px; margin-bottom:20px;">
+        <!-- Controles del reloj (Solo visibles para organizadores) -->
+        <div id="organizerClockControls" style="display:none; justify-content:center; gap:16px; margin-bottom:20px;">
           <button class="btn-hud btn-hud-primary" id="btnToggleStageTimer" onclick="toggleStageTimer()">
             ▶️ Iniciar Reloj de Misión
           </button>
@@ -456,46 +483,43 @@
         </div>
 
         <div style="font-size:0.85rem; color:var(--text-muted);">
-          Cronograma de la jornada: <strong>08:30</strong> Apertura • <strong>13:00</strong> Almuerzo • <strong>17:30</strong> DEADLINE • <strong>18:00</strong> Presentaciones ante Jurado
+          Cronograma oficial: <strong>08:30</strong> Apertura • <strong>13:00</strong> Almuerzo • <strong>17:30</strong> DEADLINE DE ENTREGA • <strong>18:00</strong> Defensas ante Jurado
         </div>
       </div>
 
-      <!-- Herramienta de Mezcla de Alumnos en Empresas -->
+      <!-- Muro de las 4 Empresas Simuladas -->
       <div class="hud-panel" style="margin-top:30px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
           <div>
             <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff;">
-              🤝 Matchmaker Intercolegial: Mezcla de los 4 Colegios
+              🤝 Compañías Aeroespaciales de la Simulación
             </h3>
             <p style="color:var(--text-secondary); font-size:0.9rem; margin-top:4px;">
-              Genera la distribución equilibrada de los 120 alumnos en las 4 compañías aeroespaciales (30 alumnos por empresa).
+              Los 120 alumnos de los 4 colegios trabajarán integrados en estas 4 empresas contratistas (30 ingenieros por empresa).
             </p>
           </div>
-          <button class="btn-hud btn-hud-amber" onclick="generateMixedCompanies()">
-            🎲 Mezclar y Formar 4 Empresas
-          </button>
         </div>
 
         <div class="companies-grid" id="companiesRosterContainer">
           <div class="company-card" style="border-top: 4px solid #38bdf8;">
             <h4>CONDOR COMPANY</h4>
             <div style="color:var(--text-muted); font-size:0.85rem;">Hábitat rotatorio centripeto y reactores nucleares.</div>
-            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;">Haz clic en 'Mezclar' para repartir alumnos.</div>
+            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;" class="roster-status-text">Distribución de ingenieros en preparación por el Comité Organizador.</div>
           </div>
           <div class="company-card" style="border-top: 4px solid #f59e0b;">
             <h4>SAPIEN (木漏れ日)</h4>
             <div style="color:var(--text-muted); font-size:0.85rem;">Robótica avanzada de carga y visión espacial.</div>
-            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;">Haz clic en 'Mezclar' para repartir alumnos.</div>
+            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;" class="roster-status-text">Distribución de ingenieros en preparación por el Comité Organizador.</div>
           </div>
           <div class="company-card" style="border-top: 4px solid #10b981;">
             <h4>BOSCOM CORP</h4>
             <div style="color:var(--text-muted); font-size:0.85rem;">Infraestructura orbital y red de comunicaciones.</div>
-            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;">Haz clic en 'Mezclar' para repartir alumnos.</div>
+            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;" class="roster-status-text">Distribución de ingenieros en preparación por el Comité Organizador.</div>
           </div>
           <div class="company-card" style="border-top: 4px solid #a855f7;">
             <h4>PONTIFEX AEROSPACE</h4>
             <div style="color:var(--text-muted); font-size:0.85rem;">Propulsión iónica y ensamblaje modular.</div>
-            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;">Haz clic en 'Mezclar' para repartir alumnos.</div>
+            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;" class="roster-status-text">Distribución de ingenieros en preparación por el Comité Organizador.</div>
           </div>
         </div>
       </div>

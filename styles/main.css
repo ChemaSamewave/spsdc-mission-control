@@ -916,3 +916,24 @@ body {
     font-size: 3.5rem;
   }
 }
+
+/* FULLSCREEN AUDITORIUM PROJECTION */
+#december:fullscreen {
+  background: #060913;
+  color: #f8fafc;
+  padding: 30px 40px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+}
+
+#december:fullscreen .stage-timer-giant {
+  font-size: 6.5rem;
+  margin: 15px 0;
+}
+
+#december:fullscreen .companies-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
