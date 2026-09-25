@@ -3,18 +3,21 @@
  * Plataforma de entrenamiento y gestión para la Spanish Space Design Competition
  */
 
+// Configuración predeterminada de los 4 colegios participantes
+const DEFAULT_SCHOOLS = [
+  { id: 'col1', name: 'ANDEL', shortCode: 'ANDEL' },
+  { id: 'col2', name: 'FUENLLANA', shortCode: 'FUEN' },
+  { id: 'col3', name: 'J.H. NEWMAN', shortCode: 'NEWMAN' },
+  { id: 'col4', name: 'EL PRADO', shortCode: 'PRADO' }
+];
+
 // Estado global de la aplicación
 const AppState = {
   activeView: 'dashboard',
   juryAuthenticated: false,
   targetDrivePath: 'H:\\Mi unidad\\SPSIN COLEGIOS',
   cloudWebhookUrl: 'https://script.google.com/macros/s/AKfycbzozxziqZdtsx5QE_UPYEW3s_3Cc7ncfKdbaI_Ula1TF_UOUo17l5gl3cvaQd7BbOt6/exec',
-  schools: [
-    { id: 'col1', name: 'Colegio 01 (Sede Local)' },
-    { id: 'col2', name: 'Colegio 02 (Alianza Norte)' },
-    { id: 'col3', name: 'Colegio 03 (Alianza Centro)' },
-    { id: 'col4', name: 'Colegio 04 (Alianza Sur)' }
-  ],
+  schools: JSON.parse(JSON.stringify(DEFAULT_SCHOOLS)),
   departments: [
     { id: 'structural', name: 'Structural Engineering (El Esqueleto)' },
     { id: 'operations', name: 'Operations & Infrastructure (Los Órganos)' },
@@ -118,6 +121,8 @@ const AppState = {
 document.addEventListener('DOMContentLoaded', () => {
   initClocks();
   initCountdown();
+  loadSchoolsConfig();
+  populateSchoolDropdowns();
   loadRegisteredStudents();
   loadStudentSession();
   loadSubmissions();
@@ -349,7 +354,16 @@ function loginStudentWithKey(keyParam) {
     return;
   }
 
-  const student = AppState.registeredStudents.find(s => s.key.toUpperCase() === cleanKey);
+  let student = AppState.registeredStudents.find(s => s.key.toUpperCase() === cleanKey);
+  
+  // Soporte de alias retrocompatible (ej: si introducen ALU-COL1-01 busca el alumno de col1 correspondiente)
+  if (!student) {
+    if (cleanKey.includes('COL1-01') || cleanKey.includes('ANDEL-01')) student = AppState.registeredStudents.find(s => s.schoolId === 'col1');
+    else if (cleanKey.includes('COL2-01') || cleanKey.includes('FUEN-01')) student = AppState.registeredStudents.find(s => s.schoolId === 'col2');
+    else if (cleanKey.includes('COL3-01') || cleanKey.includes('NEWMAN-01')) student = AppState.registeredStudents.find(s => s.schoolId === 'col3');
+    else if (cleanKey.includes('COL4-01') || cleanKey.includes('PRADO-01')) student = AppState.registeredStudents.find(s => s.schoolId === 'col4');
+  }
+
   if (!student) {
     alert(`❌ Clave "${cleanKey}" no reconocida en el Censo Oficial.\n\nPor favor, contacta con tu profesor para que te inscriba en la plataforma.`);
     return;
@@ -710,7 +724,7 @@ function loadSubmissions() {
         timestamp: '23/09/2026, 18:30:15',
         modality: 'group',
         schoolId: 'col1',
-        schoolName: 'Colegio 01 (Sede Local)',
+        schoolName: 'ANDEL',
         sprintId: 1,
         sprintName: 'Structural Engineering: El Esqueleto',
         deptId: 'structural',
@@ -720,7 +734,7 @@ function loadSubmissions() {
         externalLink: 'https://www.tinkercad.com/things/example-station-3d',
         notes: 'Diseño toroide con radio de 250m a 1.9 rpm (0.98G). Casco triple con blindaje de agua.',
         fileNames: ['AeroNova_Calculos_Gravedad.xlsx', 'Render_Toroide_Blender.png'],
-        targetDriveFolder: 'H:\\Mi unidad\\SPSIN COLEGIOS\\Colegio 01\\SPRINT-01',
+        targetDriveFolder: 'H:\\Mi unidad\\SPSIN COLEGIOS\\ANDEL\\SPRINT-01',
         status: 'Evaluada',
         score: 92,
         rubric: { technical: 9, feasibility: 9, innovation: 10, presentation: 9 },
@@ -731,7 +745,7 @@ function loadSubmissions() {
         timestamp: '23/09/2026, 19:15:40',
         modality: 'group',
         schoolId: 'col2',
-        schoolName: 'Colegio 02 (Alianza Norte)',
+        schoolName: 'FUENLLANA',
         sprintId: 1,
         sprintName: 'Structural Engineering: El Esqueleto',
         deptId: 'structural',
@@ -741,7 +755,7 @@ function loadSubmissions() {
         externalLink: 'https://docs.google.com/presentation/d/example',
         notes: 'Propuesta de cilindros concéntricos contrarrotatorios para compensar momento angular.',
         fileNames: ['Pioneer_Propuesta_Estructural.pdf'],
-        targetDriveFolder: 'H:\\Mi unidad\\SPSIN COLEGIOS\\Colegio 02\\SPRINT-01',
+        targetDriveFolder: 'H:\\Mi unidad\\SPSIN COLEGIOS\\FUENLLANA\\SPRINT-01',
         status: 'Pendiente',
         score: null,
         rubric: null,
@@ -752,7 +766,7 @@ function loadSubmissions() {
         timestamp: '24/09/2026, 11:20:05',
         modality: 'individual',
         schoolId: 'col3',
-        schoolName: 'Colegio 03 (Alianza Centro)',
+        schoolName: 'J.H. NEWMAN',
         sprintId: 1,
         sprintName: 'Structural Engineering: El Esqueleto',
         deptId: 'structural',
@@ -762,7 +776,7 @@ function loadSubmissions() {
         externalLink: '',
         notes: 'Estudio individual comparativo de aleaciones Al-Li vs blindaje de polietileno frente a radiación cósmica (GCR).',
         fileNames: ['Estudio_Materiales_MateoNavas.pdf'],
-        targetDriveFolder: 'H:\\Mi unidad\\SPSIN COLEGIOS\\Colegio 03\\SPRINT-01',
+        targetDriveFolder: 'H:\\Mi unidad\\SPSIN COLEGIOS\\J.H. NEWMAN\\SPRINT-01',
         status: 'Pendiente',
         score: null,
         rubric: null,
@@ -770,6 +784,12 @@ function loadSubmissions() {
       }
     ];
     saveSubmissions();
+  } else {
+    // Sincronizar nombres si cambiaron
+    AppState.submissions.forEach(sub => {
+      const sch = AppState.schools.find(s => s.id === sub.schoolId);
+      if (sch) sub.schoolName = sch.name;
+    });
   }
 }
 
@@ -813,6 +833,148 @@ function switchJurySubTab(tabName) {
   }
 }
 
+// GESTIÓN Y CONFIGURACIÓN DINÁMICA DE COLEGIOS
+function loadSchoolsConfig() {
+  const saved = localStorage.getItem('spsdc_schools_config');
+  if (saved) {
+    try {
+      AppState.schools = JSON.parse(saved);
+    } catch (e) {
+      AppState.schools = JSON.parse(JSON.stringify(DEFAULT_SCHOOLS));
+    }
+  } else {
+    AppState.schools = JSON.parse(JSON.stringify(DEFAULT_SCHOOLS));
+    saveSchoolsConfig();
+  }
+}
+
+function saveSchoolsConfig() {
+  localStorage.setItem('spsdc_schools_config', JSON.stringify(AppState.schools));
+}
+
+function populateSchoolDropdowns() {
+  const selects = [
+    { id: 'subSchool', includeAll: false },
+    { id: 'regStudentSchool', includeAll: false },
+    { id: 'juryFilterSchool', includeAll: true },
+    { id: 'filterStudentSchool', includeAll: true }
+  ];
+
+  selects.forEach(({ id, includeAll }) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const currentVal = el.value;
+    let html = '';
+    if (includeAll) {
+      html += '<option value="all">Todos los Colegios</option>';
+    }
+    AppState.schools.forEach(sch => {
+      html += `<option value="${sch.id}">${sch.name}</option>`;
+    });
+    el.innerHTML = html;
+    if (currentVal && (currentVal === 'all' || AppState.schools.some(s => s.id === currentVal))) {
+      el.value = currentVal;
+    }
+  });
+
+  const summaryEl = document.getElementById('schoolsListSummary');
+  if (summaryEl) {
+    summaryEl.textContent = AppState.schools.map(s => s.name).join(' • ');
+  }
+
+  for (let i = 1; i <= 4; i++) {
+    const input = document.getElementById(`editSchoolName${i}`);
+    if (input && AppState.schools[i - 1]) {
+      input.value = AppState.schools[i - 1].name;
+    }
+  }
+}
+
+function toggleSchoolEditor(forceOpen) {
+  const container = document.getElementById('schoolEditorContainer');
+  if (!container) return;
+  if (forceOpen === true) {
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else {
+    container.style.display = container.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function saveEditedSchoolNames() {
+  const newNames = [];
+  for (let i = 1; i <= 4; i++) {
+    const input = document.getElementById(`editSchoolName${i}`);
+    const val = input ? input.value.trim() : '';
+    if (!val) {
+      alert(`Por favor, introduce un nombre válido para el Colegio ${i}.`);
+      return;
+    }
+    newNames.push(val);
+  }
+
+  AppState.schools.forEach((sch, idx) => {
+    sch.name = newNames[idx];
+    sch.shortCode = newNames[idx].replace(/[^a-zA-Z0-9]/g, '').slice(0, 6).toUpperCase();
+  });
+
+  saveSchoolsConfig();
+
+  // Actualizar nombres en los alumnos registrados
+  AppState.registeredStudents.forEach(st => {
+    const sch = AppState.schools.find(s => s.id === st.schoolId);
+    if (sch) st.schoolName = sch.name;
+  });
+  saveRegisteredStudents();
+
+  // Actualizar nombres en las entregas
+  AppState.submissions.forEach(sub => {
+    const sch = AppState.schools.find(s => s.id === sub.schoolId);
+    if (sch) sub.schoolName = sch.name;
+  });
+  saveSubmissions();
+
+  populateSchoolDropdowns();
+  renderRegisteredStudentsTable();
+  renderJurySubmissions();
+  renderLeaderboard();
+
+  if (AppState.activeStudent) {
+    const sch = AppState.schools.find(s => s.id === AppState.activeStudent.schoolId);
+    if (sch) AppState.activeStudent.schoolName = sch.name;
+    showStudentLoggedInUI(AppState.activeStudent);
+  }
+
+  toggleSchoolEditor(false);
+  alert('✅ Nombres de colegios actualizados y guardados correctamente en todo el sistema.');
+}
+
+function resetToDefaultSchools() {
+  if (confirm('¿Restablecer los nombres de los 4 colegios a los originales (ANDEL, FUENLLANA, J.H. NEWMAN, EL PRADO)?')) {
+    AppState.schools = JSON.parse(JSON.stringify(DEFAULT_SCHOOLS));
+    saveSchoolsConfig();
+
+    AppState.registeredStudents.forEach(st => {
+      const sch = AppState.schools.find(s => s.id === st.schoolId);
+      if (sch) st.schoolName = sch.name;
+    });
+    saveRegisteredStudents();
+
+    AppState.submissions.forEach(sub => {
+      const sch = AppState.schools.find(s => s.id === sub.schoolId);
+      if (sch) sub.schoolName = sch.name;
+    });
+    saveSubmissions();
+
+    populateSchoolDropdowns();
+    renderRegisteredStudentsTable();
+    renderJurySubmissions();
+    renderLeaderboard();
+    toggleSchoolEditor(false);
+    alert('🔄 Nombres de colegios restablecidos a ANDEL, FUENLLANA, J.H. NEWMAN y EL PRADO.');
+  }
+}
+
 // GESTIÓN DEL CENSO DE ALUMNOS INSCRITOS
 function loadRegisteredStudents() {
   const saved = localStorage.getItem('spsdc_registered_students');
@@ -827,20 +989,26 @@ function loadRegisteredStudents() {
   // Si no hay alumnos, crear plantilla inicial representativa de los 4 colegios y cursos
   if (AppState.registeredStudents.length === 0) {
     AppState.registeredStudents = [
-      { key: 'ALU-COL1-01', firstName: 'Lucía', lastName: 'Gómez Fernández', name: 'Lucía Gómez Fernández', schoolId: 'col1', schoolName: 'Colegio 01 (Sede Local)', grade: '4º ESO', createdAt: '23/09/2026' },
-      { key: 'ALU-COL1-02', firstName: 'Marcos', lastName: 'Pérez Salazar', name: 'Marcos Pérez Salazar', schoolId: 'col1', schoolName: 'Colegio 01 (Sede Local)', grade: '1º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-COL1-03', firstName: 'David', lastName: 'Romero Gil', name: 'David Romero Gil', schoolId: 'col1', schoolName: 'Colegio 01 (Sede Local)', grade: '2º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-COL2-01', firstName: 'Elena', lastName: 'Santos Vega', name: 'Elena Santos Vega', schoolId: 'col2', schoolName: 'Colegio 02 (Alianza Norte)', grade: '4º ESO', createdAt: '23/09/2026' },
-      { key: 'ALU-COL2-02', firstName: 'Carlos', lastName: 'Vidal Rivas', name: 'Carlos Vidal Rivas', schoolId: 'col2', schoolName: 'Colegio 02 (Alianza Norte)', grade: '1º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-COL2-03', firstName: 'Marina', lastName: 'Soler Bravo', name: 'Marina Soler Bravo', schoolId: 'col2', schoolName: 'Colegio 02 (Alianza Norte)', grade: '2º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-COL3-01', firstName: 'Mateo', lastName: 'Navas Ruíz', name: 'Mateo Navas Ruíz', schoolId: 'col3', schoolName: 'Colegio 03 (Alianza Centro)', grade: '4º ESO', createdAt: '23/09/2026' },
-      { key: 'ALU-COL3-02', firstName: 'Clara', lastName: 'Domínguez Cano', name: 'Clara Domínguez Cano', schoolId: 'col3', schoolName: 'Colegio 03 (Alianza Centro)', grade: '1º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-COL3-03', firstName: 'Jorge', lastName: 'Alarcón Gil', name: 'Jorge Alarcón Gil', schoolId: 'col3', schoolName: 'Colegio 03 (Alianza Centro)', grade: '2º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-COL4-01', firstName: 'Sofía', lastName: 'Morales Chen', name: 'Sofía Morales Chen', schoolId: 'col4', schoolName: 'Colegio 04 (Alianza Sur)', grade: '4º ESO', createdAt: '23/09/2026' },
-      { key: 'ALU-COL4-02', firstName: 'Adrián', lastName: 'Lozano Blanco', name: 'Adrián Lozano Blanco', schoolId: 'col4', schoolName: 'Colegio 04 (Alianza Sur)', grade: '1º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-COL4-03', firstName: 'Valeria', lastName: 'Nieto Ríos', name: 'Valeria Nieto Ríos', schoolId: 'col4', schoolName: 'Colegio 04 (Alianza Sur)', grade: '2º Bachillerato', createdAt: '23/09/2026' }
+      { key: 'ALU-ANDEL-01', firstName: 'Lucía', lastName: 'Gómez Fernández', name: 'Lucía Gómez Fernández', schoolId: 'col1', schoolName: 'ANDEL', grade: '4º ESO', createdAt: '23/09/2026' },
+      { key: 'ALU-ANDEL-02', firstName: 'Marcos', lastName: 'Pérez Salazar', name: 'Marcos Pérez Salazar', schoolId: 'col1', schoolName: 'ANDEL', grade: '1º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-ANDEL-03', firstName: 'David', lastName: 'Romero Gil', name: 'David Romero Gil', schoolId: 'col1', schoolName: 'ANDEL', grade: '2º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-FUEN-01', firstName: 'Elena', lastName: 'Santos Vega', name: 'Elena Santos Vega', schoolId: 'col2', schoolName: 'FUENLLANA', grade: '4º ESO', createdAt: '23/09/2026' },
+      { key: 'ALU-FUEN-02', firstName: 'Carlos', lastName: 'Vidal Rivas', name: 'Carlos Vidal Rivas', schoolId: 'col2', schoolName: 'FUENLLANA', grade: '1º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-FUEN-03', firstName: 'Marina', lastName: 'Soler Bravo', name: 'Marina Soler Bravo', schoolId: 'col2', schoolName: 'FUENLLANA', grade: '2º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-NEWMAN-01', firstName: 'Mateo', lastName: 'Navas Ruíz', name: 'Mateo Navas Ruíz', schoolId: 'col3', schoolName: 'J.H. NEWMAN', grade: '4º ESO', createdAt: '23/09/2026' },
+      { key: 'ALU-NEWMAN-02', firstName: 'Clara', lastName: 'Domínguez Cano', name: 'Clara Domínguez Cano', schoolId: 'col3', schoolName: 'J.H. NEWMAN', grade: '1º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-NEWMAN-03', firstName: 'Jorge', lastName: 'Alarcón Gil', name: 'Jorge Alarcón Gil', schoolId: 'col3', schoolName: 'J.H. NEWMAN', grade: '2º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-PRADO-01', firstName: 'Sofía', lastName: 'Morales Chen', name: 'Sofía Morales Chen', schoolId: 'col4', schoolName: 'EL PRADO', grade: '4º ESO', createdAt: '23/09/2026' },
+      { key: 'ALU-PRADO-02', firstName: 'Adrián', lastName: 'Lozano Blanco', name: 'Adrián Lozano Blanco', schoolId: 'col4', schoolName: 'EL PRADO', grade: '1º Bachillerato', createdAt: '23/09/2026' },
+      { key: 'ALU-PRADO-03', firstName: 'Valeria', lastName: 'Nieto Ríos', name: 'Valeria Nieto Ríos', schoolId: 'col4', schoolName: 'EL PRADO', grade: '2º Bachillerato', createdAt: '23/09/2026' }
     ];
     saveRegisteredStudents();
+  } else {
+    // Sincronizar nombres actuales de colegios con los alumnos existentes
+    AppState.registeredStudents.forEach(st => {
+      const sch = AppState.schools.find(s => s.id === st.schoolId);
+      if (sch) st.schoolName = sch.name;
+    });
   }
 }
 
@@ -849,13 +1017,26 @@ function saveRegisteredStudents() {
 }
 
 function generateStudentKey(schoolId) {
-  const schoolNum = (schoolId || 'col1').replace('col', '');
+  const school = AppState.schools.find(s => s.id === schoolId);
+  let prefix = 'COL1';
+  if (school) {
+    if (school.shortCode) {
+      prefix = school.shortCode;
+    } else {
+      prefix = school.name.split(' ')[0].replace(/[^A-Za-z0-9]/g, '').slice(0, 6).toUpperCase();
+    }
+  } else {
+    prefix = (schoolId || 'col1').toUpperCase();
+  }
+  if (prefix === 'FUENLLANA') prefix = 'FUEN';
+  if (prefix === 'ELPRADO') prefix = 'PRADO';
+
   const existingForSchool = AppState.registeredStudents.filter(s => s.schoolId === schoolId);
   const nextNum = existingForSchool.length + 1;
-  const keyCandidate = `ALU-COL${schoolNum}-${String(nextNum).padStart(2, '0')}`;
+  const keyCandidate = `ALU-${prefix}-${String(nextNum).padStart(2, '0')}`;
   
   if (AppState.registeredStudents.some(s => s.key === keyCandidate)) {
-    return `ALU-COL${schoolNum}-${Date.now().toString().slice(-3)}`;
+    return `ALU-${prefix}-${Date.now().toString().slice(-3)}`;
   }
   return keyCandidate;
 }
@@ -1012,10 +1193,22 @@ function handleBatchImportStudents() {
     const parts = line.split(',').map(p => p.trim());
     if (parts.length >= 2) {
       const fullName = parts[0];
-      let schoolNum = parts[1].replace(/[^1-4]/g, '') || '1';
-      let schoolId = `col${schoolNum}`;
-      let grade = parts[2] || '4º ESO';
+      let schoolId = 'col1';
+      const schoolToken = (parts[1] || '').toLowerCase();
+      if (schoolToken.includes('andel') || schoolToken === '1' || schoolToken === 'col1') {
+        schoolId = 'col1';
+      } else if (schoolToken.includes('fuen') || schoolToken === '2' || schoolToken === 'col2') {
+        schoolId = 'col2';
+      } else if (schoolToken.includes('newman') || schoolToken === '3' || schoolToken === 'col3') {
+        schoolId = 'col3';
+      } else if (schoolToken.includes('prado') || schoolToken === '4' || schoolToken === 'col4') {
+        schoolId = 'col4';
+      } else {
+        const found = AppState.schools.find(s => s.name.toLowerCase().includes(schoolToken));
+        schoolId = found ? found.id : 'col1';
+      }
 
+      let grade = parts[2] || '4º ESO';
       if (grade.includes('4')) grade = '4º ESO';
       else if (grade.includes('1')) grade = '1º Bachillerato';
       else if (grade.includes('2')) grade = '2º Bachillerato';
