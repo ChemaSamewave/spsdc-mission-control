@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPSDC MISSION CONTROL | Alianza 4 Colegios 2026</title>
+  
+  <!-- Tipografía Aeroespacial Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    @keyframes spinStation {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. BARRA SUPERIOR DE TELEMETRÍA Y ESTADO -->
+  <div class="top-status-bar">
+    <div class="status-indicator">
+      <div class="pulse-dot"></div>
+      <span>MISIÓN: <strong>OPERACIÓN ÓRBITA 2026</strong> • SISTEMA OPERATIVO ACTIVO</span>
+    </div>
+    <div class="clock-group">
+      <div class="clock-item">UTC: <span id="utcClock">00:00:00</span></div>
+      <div class="clock-item">LOCAL: <span id="localClock">00:00:00</span></div>
+      <div class="clock-item">SYNC: <span>H:\Mi unidad\SPSIN COLEGIOS</span></div>
+    </div>
+  </div>
+
+  <!-- 2. CABECERA PRINCIPAL Y MENÚ DE NAVEGACIÓN -->
+  <header class="mission-header">
+    <div class="brand-wrapper">
+      <div class="logo-badge">🛰️ SPSDC</div>
+      <div class="brand-text">
+        <h1>MISSION <span>CONTROL</span></h1>
+        <p>Centro de Entrenamiento y Gestión Intercolegial • 4 Colegios</p>
+      </div>
+    </div>
+
+    <nav class="mission-nav">
+      <button class="nav-tab active" data-view="dashboard">🚀 Centro de Misión</button>
+      <button class="nav-tab" data-view="sprints">📋 Sprints 1 a 5</button>
+      <button class="nav-tab" data-view="submissions">📤 Buzón de Entrega</button>
+      <button class="nav-tab" data-view="calculators">🛠️ Calculadoras</button>
+      <button class="nav-tab" data-view="december">🤝 Simulación Diciembre</button>
+      <button class="nav-tab" data-view="jury">⚖️ Panel Jurado</button>
+      <button class="nav-tab" style="color:var(--amber-alert);" onclick="window.open('Presentacion_Lanzamiento_Operacion_Orbita.html', '_blank')">📽️ Presentación Alumnos</button>
+    </nav>
+  </header>
+
+  <!-- 3. CONTENEDOR PRINCIPAL DE LAS VISTAS -->
+  <main class="app-container">
+
+    <!-- VISTA 1: DASHBOARD / CENTRO DE MISIÓN -->
+    <section id="dashboard" class="view-section active">
+      <div class="hero-grid">
+        <div class="hero-main">
+          <div>
+            <div class="hero-badge-row">
+              <span class="pill-badge">FASE CLASIFICATORIA LOCAL</span>
+              <span class="pill-badge amber">120 ALUMNOS • 4 COLEGIOS</span>
+            </div>
+            <h2>OPERACIÓN ÓRBITA:<br>Rumbo a la <span>SPSDC 2026</span></h2>
+            <p>
+              Plataforma de alta fidelidad para el entrenamiento de los 4 colegios aliados. A través de 4 sprints técnicos y una gran simulación intercolegial en diciembre, los estudiantes diseñarán asentamientos y vehículos espaciales con estándares de ingeniería de la NASA y la ESA.
+            </p>
+          </div>
+          <div class="hero-cta-row">
+            <button class="btn-hud btn-hud-primary" onclick="navigateTo('submissions')">
+              📤 Realizar Entrega de Sprint
+            </button>
+            <button class="btn-hud btn-hud-secondary" onclick="navigateTo('sprints')">
+              📋 Ver Hoja de Ruta de Sprints
+            </button>
+            <button class="btn-hud btn-hud-amber" onclick="window.open('Presentacion_Lanzamiento_Operacion_Orbita.html', '_blank')">
+              📽️ Abrir Diapositivas para Clase
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel de Cuenta Atrás a Diciembre -->
+        <div class="countdown-panel">
+          <div class="cd-header">⏳ CUENTA ATRÁS: GRAN SIMULACIÓN INTERCOLEGIAL</div>
+          <div class="cd-grid">
+            <div class="cd-box">
+              <div class="cd-num" id="cdDays">00</div>
+              <div class="cd-label">Días</div>
+            </div>
+            <div class="cd-box">
+              <div class="cd-num" id="cdHours">00</div>
+              <div class="cd-label">Horas</div>
+            </div>
+            <div class="cd-box">
+              <div class="cd-num" id="cdMinutes">00</div>
+              <div class="cd-label">Min</div>
+            </div>
+            <div class="cd-box">
+              <div class="cd-num" id="cdSeconds">00</div>
+              <div class="cd-label">Seg</div>
+            </div>
+          </div>
+          <div class="cd-subtext">
+            Diciembre 2025 • Fase Local Intercolegial<br>
+            <strong style="color:var(--cyan-core);">Mezcla de alumnos en 4 grandes compañías aeroespaciales</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Métricas de Misión -->
+      <div class="stats-strip">
+        <div class="stat-card">
+          <div class="stat-icon">🏫</div>
+          <div>
+            <div class="stat-val">4</div>
+            <div class="stat-desc">Colegios Participantes</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👩‍🚀</div>
+          <div>
+            <div class="stat-val">120</div>
+            <div class="stat-desc">Ingenieros Formándose</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div>
+            <div class="stat-val">Sprint 1</div>
+            <div class="stat-desc">Hito Activo (Estructuras)</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📂</div>
+          <div>
+            <div class="stat-val">Drive Sync</div>
+            <div class="stat-desc">H:\Mi unidad\SPSIN COLEGIOS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner de Sprint Activo -->
+      <div class="hud-panel" style="background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(56,189,248,0.1)); border-color: var(--cyan-core);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <span class="pill-badge">SPRINT 1 EN CURSO • SEPTIEMBRE</span>
+            <h3 style="font-family:var(--font-hud); font-size:1.4rem; color:#fff; margin-top:6px;">
+              Structural Engineering: El Esqueleto de la Estación
+            </h3>
+            <p style="color:var(--text-secondary); font-size:0.92rem; margin-top:4px;">
+              Entregar el diseño básico del hábitat (toroide vs cilindro), cálculo de gravedad artificial centrípeta (g) y blindaje de casco.
+            </p>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn-hud btn-hud-secondary" onclick="navigateTo('calculators')">
+              🛠️ Abrir Calculadora de Gravedad
+            </button>
+            <button class="btn-hud btn-hud-primary" onclick="prepareSubmissionFor(1)">
+              📤 Subir Entrega
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: SPRINTS Y BRIEFINGS TÉCNICOS -->
+    <section id="sprints" class="view-section">
+      <div class="section-header">
+        <div class="section-tag">HOJA DE RUTA ACADÉMICA</div>
+        <h2 class="section-title">Calendario de Sprints (Septiembre a Diciembre)</h2>
+        <p class="section-subtitle">
+          Cada sprint entrena a los alumnos en un departamento clave de la competición, garantizando una preparación completa para la simulación final.
+        </p>
+      </div>
+
+      <div class="sprints-grid" id="sprintsGrid">
+        <!-- Renderizado dinámico desde app.js -->
+      </div>
+    </section>
+
+    <!-- VISTA 3: BUZÓN DE ENTREGA (UPLOAD BAY) -->
+    <section id="submissions" class="view-section">
+      <div class="section-header">
+        <div class="section-tag">ENTREGA DE PROYECTOS</div>
+        <h2 class="section-title">Buzón de Misión Multiformato</h2>
+        <p class="section-subtitle">
+          Sube tus archivos de ingeniería (PDF, PowerPoint, Excel, renders de Blender) o pega tu enlace interactivo de TinkerCAD y Google Slides.
+        </p>
+      </div>
+
+      <div class="form-grid">
+        <div class="hud-panel">
+          <form id="submissionForm">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="subSchool">Colegio de Origen</label>
+                <select id="subSchool" class="form-control" required>
+                  <option value="col1">Colegio 01 (Sede Local)</option>
+                  <option value="col2">Colegio 02 (Alianza Norte)</option>
+                  <option value="col3">Colegio 03 (Alianza Centro)</option>
+                  <option value="col4">Colegio 04 (Alianza Sur)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="subSprint">Sprint a Entregar</label>
+                <select id="subSprint" class="form-control" required>
+                  <option value="1">Sprint 1: Structural Engineering (El Esqueleto)</option>
+                  <option value="2">Sprint 2: Operations & Infrastructure (Los Órganos)</option>
+                  <option value="3">Sprint 3: Human Factors & Safety (La Vida)</option>
+                  <option value="4">Sprint 4: Automation, Robotics & Business</option>
+                  <option value="5">Sprint 5: Gran Simulación de Diciembre</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="subDept">Departamento de Especialidad</label>
+                <select id="subDept" class="form-control" required>
+                  <option value="structural">Structural Engineering</option>
+                  <option value="operations">Operations & Infrastructure</option>
+                  <option value="human_factors">Human Factors & Safety</option>
+                  <option value="automation">Automation & Robotics</option>
+                  <option value="business">Business & Cost</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="subTeamName">Nombre del Equipo / Identificador</label>
+                <input type="text" id="subTeamName" class="form-control" placeholder="Ej: Equipo Aurora - Grupo A" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="subAuthors">Nombres de los Integrantes</label>
+              <input type="text" id="subAuthors" class="form-control" placeholder="Ej: Lucía Gómez, David Romero, Carlos Vega...">
+            </div>
+
+            <!-- Drag and drop zone -->
+            <div class="form-group">
+              <label class="form-label">Archivos del Proyecto (PDF, PPTX, XLSX, Renders .PNG/.JPG, 3D .STL)</label>
+              <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-icon">📁</div>
+                <div style="font-family:var(--font-hud); font-size:0.95rem; color:#fff; margin-bottom:4px;">
+                  Arrastra y suelta aquí tus archivos o haz clic para examinar
+                </div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">
+                  Formatos aceptados: PowerPoint (.pptx), PDF (.pdf), Excel (.xlsx), Renders Blender (.png, .jpg), Modelos 3D (.stl, .obj)
+                </div>
+                <input type="file" id="fileUploadInput" multiple style="display:none;" accept=".pdf,.pptx,.ppt,.xlsx,.xls,.png,.jpg,.jpeg,.stl,.obj,.zip">
+              </div>
+              <div id="selectedFilesList"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="subExternalLink">Enlace 3D TinkerCAD o Presentación Google Slides (Opcional)</label>
+              <input type="url" id="subExternalLink" class="form-control" placeholder="https://www.tinkercad.com/things/... o https://docs.google.com/presentation/...">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="subNotes">Resumen Ejecutivo / Decisiones Clave de Diseño</label>
+              <textarea id="subNotes" class="form-control" rows="3" placeholder="Explica brevemente tu solución: dimensiones, masa estimada, por qué elegisteis esa geometría, etc."></textarea>
+            </div>
+
+            <button type="submit" class="btn-hud btn-hud-primary" style="width:100%; justify-content:center; padding:14px;">
+              🚀 Enviar Entrega al Cuartel General
+            </button>
+          </form>
+        </div>
+
+        <!-- Columna lateral: Información de Google Drive -->
+        <div>
+          <div class="hud-panel">
+            <h3 style="font-family:var(--font-hud); font-size:1.15rem; color:#fff; margin-bottom:12px;">
+              ☁️ Sincronización Google Drive
+            </h3>
+            <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.5;">
+              Para mantener todo ordenado y seguro en tu ordenador, las entregas se sincronizan de forma limpia y aislada dentro de tu carpeta dedicada:
+            </p>
+            <div class="drive-path-box">
+              H:\Mi unidad\SPSIN COLEGIOS
+            </div>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.5;">
+              🔒 <strong>Seguridad garantizada:</strong> No se toca ninguna de tus carpetas compartidas ni otros directorios personales. Los archivos se estructuran automáticamente por Colegio y por Sprint.
+            </p>
+          </div>
+
+          <div class="hud-panel" style="margin-top:20px;">
+            <h3 style="font-family:var(--font-hud); font-size:1.15rem; color:#fff; margin-bottom:12px;">
+              ⚖️ Rúbrica de Corrección
+            </h3>
+            <div style="font-size:0.85rem; color:var(--text-secondary); display:flex; flex-direction:column; gap:8px;">
+              <div><strong>1. Rigor Técnico (25%):</strong> Cálculos de física, fórmulas correctas y dimensionamiento.</div>
+              <div><strong>2. Viabilidad y RFP (25%):</strong> Responde al pliego oficial sin violar leyes físicas.</div>
+              <div><strong>3. Innovación (25%):</strong> Soluciones ingeniosas de diseño y materiales.</div>
+              <div><strong>4. Presentación (25%):</strong> Planos limpios, renders 3D acotados y claridad.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 4: CALCULADORAS AEROESPACIALES -->
+    <section id="calculators" class="view-section">
+      <div class="section-header">
+        <div class="section-tag">HERRAMIENTAS DE INGENIERÍA</div>
+        <h2 class="section-title">Calculadoras de Diseño Espacial</h2>
+        <p class="section-subtitle">
+          Verifica tus cálculos de física rotatoria (gravedad y límite de mareo Coriolis) y consumos del sistema de soporte vital (ECLSS).
+        </p>
+      </div>
+
+      <div class="calc-grid">
+        <!-- 1. Calculadora de Gravedad Artificial -->
+        <div class="hud-panel">
+          <h3 style="font-family:var(--font-hud); font-size:1.25rem; color:#fff; margin-bottom:14px;">
+            🪐 Gravedad Artificial Centrípeta (a = ω²·r)
+          </h3>
+
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label class="form-label" style="margin:0;">Radio del Hábitat (r):</label>
+              <strong style="color:var(--cyan-core);" id="valRadiusDisplay">250 m</strong>
+            </div>
+            <input type="range" id="calcRadius" class="rubric-slider" min="20" max="1000" step="5" value="250">
+          </div>
+
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label class="form-label" style="margin:0;">Velocidad de Giro (rpm):</label>
+              <strong style="color:var(--cyan-core);" id="valRpmDisplay">1.9 rpm</strong>
+            </div>
+            <input type="range" id="calcRpm" class="rubric-slider" min="0.5" max="8.0" step="0.1" value="1.9">
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px;">
+            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle);">
+              <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Gravedad Resultante:</div>
+              <div style="font-family:var(--font-hud); font-size:1.5rem; color:var(--cyan-core); font-weight:800;" id="resGravity">
+                0.98 G
+              </div>
+            </div>
+            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle);">
+              <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Velocidad Tangencial:</div>
+              <div style="font-family:var(--font-hud); font-size:1.5rem; color:var(--text-primary); font-weight:800;" id="resVelocity">
+                49.7 m/s
+              </div>
+            </div>
+          </div>
+
+          <!-- Indicador Coriolis -->
+          <div id="coriolisAlert" class="coriolis-indicator coriolis-green">
+            🟢 ZONA ÓPTIMA (&lt; 2 rpm): Sin efectos de mareo o cinetosis.
+          </div>
+
+          <!-- Animación del anillo -->
+          <div class="gravity-visualizer" style="margin-top:20px;">
+            <div class="station-ring" id="animRing">
+              <div class="station-hub"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Calculadora de Soporte Vital (ECLSS) -->
+        <div class="hud-panel">
+          <h3 style="font-family:var(--font-hud); font-size:1.25rem; color:#fff; margin-bottom:14px;">
+            🌱 Soporte Vital y Consumibles (ECLSS)
+          </h3>
+
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label class="form-label" style="margin:0;">Población de la Estación:</label>
+              <strong style="color:var(--cyan-core);" id="eclssCrewDisplay">80 astronautas</strong>
+            </div>
+            <input type="range" id="eclssCrew" class="rubric-slider" min="10" max="500" step="5" value="80">
+          </div>
+
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label class="form-label" style="margin:0;">Días de Operación / Reserva:</label>
+              <strong style="color:var(--cyan-core);" id="eclssDaysDisplay">30 días</strong>
+            </div>
+            <input type="range" id="eclssDays" class="rubric-slider" min="5" max="365" step="5" value="30">
+          </div>
+
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label class="form-label" style="margin:0;">Tasa de Reciclaje de Agua:</label>
+              <strong style="color:var(--cyan-core);" id="eclssRecycleDisplay">95%</strong>
+            </div>
+            <input type="range" id="eclssRecycle" class="rubric-slider" min="50" max="99" step="1" value="95">
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:24px;">
+            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#fff;">Oxígeno Neto Necesario:</strong>
+                <div style="font-size:0.8rem; color:var(--text-muted);">0.84 kg O₂ por persona / día</div>
+              </div>
+              <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--cyan-core);" id="resO2">2,016 kg O₂</div>
+            </div>
+
+            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#fff;">Agua Total con Reciclaje:</strong>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Consumo bruto 27.5 L / pers / día</div>
+              </div>
+              <div style="font-family:var(--font-hud); font-size:1.3rem; color:#34d399;" id="resWater">3,300 L</div>
+            </div>
+
+            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#fff;">Alimentos Deshidratados:</strong>
+                <div style="font-size:0.8rem; color:var(--text-muted);">0.62 kg comida seca / pers / día</div>
+              </div>
+              <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--amber-alert);" id="resFood">1,488 kg</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 5: LA GRAN SIMULACIÓN DE DICIEMBRE -->
+    <section id="december" class="view-section">
+      <div class="section-header">
+        <div class="section-tag">EL CLÍMAX DE LA OPERACIÓN</div>
+        <h2 class="section-title">Gran Simulación Intercolegial (Fase Local)</h2>
+        <p class="section-subtitle">
+          El evento presencial donde los 120 alumnos de los 4 colegios se fusionan en 4 grandes empresas aeroespaciales para resolver un RFP en una jornada intensiva.
+        </p>
+      </div>
+
+      <!-- Reloj de Competición en Vivo para Proyectar en Pantalla Gigante -->
+      <div class="hud-panel stage-clock-view">
+        <div style="font-family:var(--font-hud); font-size:1rem; letter-spacing:3px; color:var(--amber-alert);">
+          MISSION STAGE LIVE CLOCK • TIEMPO RESTANTE PARA DEADLINE
+        </div>
+        <div class="stage-timer-giant" id="stageGiantClock">09:00:00</div>
+        
+        <div style="display:flex; justify-content:center; gap:16px; margin-bottom:20px;">
+          <button class="btn-hud btn-hud-primary" id="btnToggleStageTimer" onclick="toggleStageTimer()">
+            ▶️ Iniciar Reloj de Misión
+          </button>
+          <button class="btn-hud btn-hud-secondary" onclick="resetStageTimer(9)">
+            🔄 Reiniciar (9 Horas)
+          </button>
+          <button class="btn-hud btn-hud-secondary" onclick="resetStageTimer(4)">
+            ⏱️ Modalidad Media Jornada (4 Horas)
+          </button>
+        </div>
+
+        <div style="font-size:0.85rem; color:var(--text-muted);">
+          Cronograma de la jornada: <strong>08:30</strong> Apertura • <strong>13:00</strong> Almuerzo • <strong>17:30</strong> DEADLINE • <strong>18:00</strong> Presentaciones ante Jurado
+        </div>
+      </div>
+
+      <!-- Herramienta de Mezcla de Alumnos en Empresas -->
+      <div class="hud-panel" style="margin-top:30px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff;">
+              🤝 Matchmaker Intercolegial: Mezcla de los 4 Colegios
+            </h3>
+            <p style="color:var(--text-secondary); font-size:0.9rem; margin-top:4px;">
+              Genera la distribución equilibrada de los 120 alumnos en las 4 compañías aeroespaciales (30 alumnos por empresa).
+            </p>
+          </div>
+          <button class="btn-hud btn-hud-amber" onclick="generateMixedCompanies()">
+            🎲 Mezclar y Formar 4 Empresas
+          </button>
+        </div>
+
+        <div class="companies-grid" id="companiesRosterContainer">
+          <div class="company-card" style="border-top: 4px solid #38bdf8;">
+            <h4>CONDOR COMPANY</h4>
+            <div style="color:var(--text-muted); font-size:0.85rem;">Hábitat rotatorio centripeto y reactores nucleares.</div>
+            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;">Haz clic en 'Mezclar' para repartir alumnos.</div>
+          </div>
+          <div class="company-card" style="border-top: 4px solid #f59e0b;">
+            <h4>SAPIEN (木漏れ日)</h4>
+            <div style="color:var(--text-muted); font-size:0.85rem;">Robótica avanzada de carga y visión espacial.</div>
+            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;">Haz clic en 'Mezclar' para repartir alumnos.</div>
+          </div>
+          <div class="company-card" style="border-top: 4px solid #10b981;">
+            <h4>BOSCOM CORP</h4>
+            <div style="color:var(--text-muted); font-size:0.85rem;">Infraestructura orbital y red de comunicaciones.</div>
+            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;">Haz clic en 'Mezclar' para repartir alumnos.</div>
+          </div>
+          <div class="company-card" style="border-top: 4px solid #a855f7;">
+            <h4>PONTIFEX AEROSPACE</h4>
+            <div style="color:var(--text-muted); font-size:0.85rem;">Propulsión iónica y ensamblaje modular.</div>
+            <div style="font-size:0.85rem; color:var(--cyan-core); margin-top:10px;">Haz clic en 'Mezclar' para repartir alumnos.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 6: PANEL DE JURADO (PROFESORES) -->
+    <section id="jury" class="view-section">
+      <!-- Acceso protegido por PIN -->
+      <div id="juryGatePanel" class="hud-panel jury-gate">
+        <div style="font-size:3rem; margin-bottom:12px;">⚖️</div>
+        <h3 style="font-family:var(--font-hud); font-size:1.4rem; color:#fff; margin-bottom:8px;">
+          Acceso Exclusivo para Profesores y Jurado
+        </h3>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px;">
+          Introduce el PIN de evaluación para acceder al panel de corrección, rúbricas y ranking intercolegial.
+        </p>
+        <div class="form-group">
+          <input type="password" id="juryPinInput" class="form-control" style="text-align:center; font-family:var(--font-hud); font-size:1.3rem; letter-spacing:4px;" placeholder="PIN (def: 2026)">
+        </div>
+        <button class="btn-hud btn-hud-primary" style="width:100%; justify-content:center;" onclick="unlockJury()">
+          🔓 Desbloquear Panel del Jurado
+        </button>
+      </div>
+
+      <!-- Contenido desbloqueado para el Jurado -->
+      <div id="juryMainContent" style="display:none;">
+        <div class="section-header">
+          <div class="section-tag">CONTROL DE EVALUACIÓN</div>
+          <h2 class="section-title">Panel del Jurado Intercolegial</h2>
+          <p class="section-subtitle">
+            Revisión de entregas de los 4 colegios, aplicación de la rúbrica oficial de la SPSDC / EUSDC y cálculo de puntuaciones.
+          </p>
+        </div>
+
+        <!-- Filtros rápidos -->
+        <div class="hud-panel" style="margin-bottom:24px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+          <div style="font-family:var(--font-hud); font-size:0.85rem; color:var(--text-secondary);">FILTRAR ENTREGAS:</div>
+          <select id="juryFilterSchool" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
+            <option value="all">Todos los Colegios</option>
+            <option value="col1">Colegio 01</option>
+            <option value="col2">Colegio 02</option>
+            <option value="col3">Colegio 03</option>
+            <option value="col4">Colegio 04</option>
+          </select>
+          <select id="juryFilterSprint" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
+            <option value="all">Todos los Sprints</option>
+            <option value="1">Sprint 1</option>
+            <option value="2">Sprint 2</option>
+            <option value="3">Sprint 3</option>
+            <option value="4">Sprint 4</option>
+            <option value="5">Sprint 5</option>
+          </select>
+        </div>
+
+        <!-- Tabla de entregas -->
+        <div class="hud-panel" style="overflow-x:auto;">
+          <table class="submissions-table">
+            <thead>
+              <tr>
+                <th>ID / Fecha</th>
+                <th>Equipo / Colegio</th>
+                <th>Sprint</th>
+                <th>Departamento</th>
+                <th>Archivos / Enlaces</th>
+                <th>Estado / Nota</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="jurySubmissionsBody">
+              <!-- Renderizado dinámico -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Leaderboard / Clasificación por Colegios -->
+        <div class="hud-panel" style="margin-top:30px;">
+          <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff; margin-bottom:14px;">
+            🏆 Clasificación y Progreso por Colegios
+          </h3>
+          <table class="submissions-table">
+            <thead>
+              <tr>
+                <th>Puesto</th>
+                <th>Colegio</th>
+                <th>Entregas Realizadas</th>
+                <th>Puntuación Media</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardBody">
+              <!-- Renderizado dinámico -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL FLOTANTE DE EVALUACIÓN CON RÚBRICA OFICIAL -->
+  <div class="modal-overlay" id="evalModal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+        <div>
+          <span class="pill-badge">RÚBRICA OFICIAL SPSDC / EUSDC</span>
+          <h3 id="modalSubTitle" style="font-family:var(--font-hud); font-size:1.3rem; color:#fff; margin-top:6px;">
+            Evaluando Entrega
+          </h3>
+        </div>
+        <button onclick="closeEvaluationModal()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">✕</button>
+      </div>
+
+      <div id="modalSubDetails" style="background:rgba(12,17,29,0.8); padding:12px; border-radius:8px; font-size:0.85rem; color:var(--text-secondary); margin-bottom:20px; line-height:1.6;">
+        <!-- Información de la entrega -->
+      </div>
+
+      <!-- Sliders de la Rúbrica -->
+      <div class="rubric-row">
+        <div class="rubric-header">
+          <label style="font-weight:600; color:#fff;">1. Rigor Técnico y Fórmulas (25%)</label>
+          <span id="valTechnical" style="color:var(--cyan-core); font-family:var(--font-hud); font-weight:700;">7 / 10</span>
+        </div>
+        <input type="range" id="rubTechnical" class="rubric-slider" min="1" max="10" step="1" value="7" oninput="updateRubricDisplay()">
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Física de rotación, fórmulas aplicadas, coherencia de magnitudes.</div>
+      </div>
+
+      <div class="rubric-row">
+        <div class="rubric-header">
+          <label style="font-weight:600; color:#fff;">2. Viabilidad y Cumplimiento del RFP (25%)</label>
+          <span id="valFeasibility" style="color:var(--cyan-core); font-family:var(--font-hud); font-weight:700;">7 / 10</span>
+        </div>
+        <input type="range" id="rubFeasibility" class="rubric-slider" min="1" max="10" step="1" value="7" oninput="updateRubricDisplay()">
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Cumple los requisitos obligatorios del pliego sin violar principios físicos.</div>
+      </div>
+
+      <div class="rubric-row">
+        <div class="rubric-header">
+          <label style="font-weight:600; color:#fff;">3. Innovación y Soluciones Creativas (25%)</label>
+          <span id="valInnovation" style="color:var(--cyan-core); font-family:var(--font-hud); font-weight:700;">7 / 10</span>
+        </div>
+        <input type="range" id="rubInnovation" class="rubric-slider" min="1" max="10" step="1" value="7" oninput="updateRubricDisplay()">
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Aportaciones originales bien argumentadas en blindaje, reciclaje o geometría.</div>
+      </div>
+
+      <div class="rubric-row">
+        <div class="rubric-header">
+          <label style="font-weight:600; color:#fff;">4. Calidad Gráfica y Presentación (25%)</label>
+          <span id="valPresentation" style="color:var(--cyan-core); font-family:var(--font-hud); font-weight:700;">7 / 10</span>
+        </div>
+        <input type="range" id="rubPresentation" class="rubric-slider" min="1" max="10" step="1" value="7" oninput="updateRubricDisplay()">
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Planos acotados, renders 3D limpios en Blender/TinkerCAD y diapositivas claras.</div>
+      </div>
+
+      <div style="background:rgba(56,189,248,0.1); border:1px solid var(--border-subtle); padding:14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin:20px 0;">
+        <span style="font-family:var(--font-hud); color:#fff;">PUNTUACIÓN GLOBAL PONDERADA:</span>
+        <span id="totalRubricScore" style="font-family:var(--font-hud); font-size:1.8rem; font-weight:900; color:var(--cyan-core);">70 / 100</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="rubFeedback">Feedback Técnico para los Alumnos</label>
+        <textarea id="rubFeedback" class="form-control" rows="3" placeholder="Indica los puntos fuertes y los aspectos a mejorar de cara a la simulación final..."></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button class="btn-hud btn-hud-secondary" onclick="closeEvaluationModal()">Cancelar</button>
+        <button class="btn-hud btn-hud-primary" onclick="saveEvaluation()">💾 Guardar Evaluación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script principal -->
+  <script src="app.js"></script>
+</body>
+</html>

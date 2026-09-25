@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPERACIÓN ÓRBITA | SPSDC 2026 - Presentación de Lanzamiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-space: #07090e;
+      --bg-panel: rgba(14, 20, 32, 0.85);
+      --border-panel: rgba(56, 189, 248, 0.25);
+      --accent-cyan: #38bdf8;
+      --accent-blue: #2563eb;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-display: 'Orbitron', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-space);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+        radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 100px 150px, rgba(255,255,255,0.7), rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 250px 80px, #38bdf8, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 400px 300px, rgba(255,255,255,0.6), rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 600px 200px, #f59e0b, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 800px 450px, rgba(255,255,255,0.8), rgba(0,0,0,0));
+      background-size: 100% 100%, 100% 100%, 550px 550px, 450px 450px, 600px 600px, 500px 500px, 700px 700px, 650px 650px;
+    }
+
+    /* Top Mission Header */
+    header {
+      padding: 12px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      background: rgba(7, 9, 14, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-orbita {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 1.5px;
+      box-shadow: 0 0 15px rgba(2, 132, 199, 0.5);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .brand-title span {
+      color: var(--accent-cyan);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-action {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-panel);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border: none;
+      font-weight: 600;
+    }
+
+    .slide-counter {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      color: var(--accent-cyan);
+      letter-spacing: 1px;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-panel);
+    }
+
+    /* Slides Container */
+    .deck-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 40px;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92%;
+      max-width: 1200px;
+      height: 82vh;
+      max-height: 680px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 16px;
+      padding: 48px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.1);
+      backdrop-filter: blur(16px);
+      display: none;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Slide Typography & Elements */
+    .slide-tag {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slide-tag::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .slide-title span {
+      color: var(--accent-cyan);
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Grid layouts for slides */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      height: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 12px;
+      padding: 22px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.15);
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .card-text {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .highlight-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: auto;
+    }
+
+    /* Slide 1 Hero */
+    .hero-center {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 20px;
+    }
+
+    .hero-pretitle {
+      font-family: var(--font-display);
+      color: var(--accent-amber);
+      letter-spacing: 4px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 3.6rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      text-shadow: 0 0 40px rgba(56, 189, 248, 0.4);
+    }
+
+    .hero-subtitle {
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      max-width: 780px;
+      line-height: 1.6;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .stat-item {
+      text-align: center;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-panel);
+      padding: 16px 28px;
+      border-radius: 12px;
+    }
+
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Timeline Stepper */
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 40px;
+      right: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, #38bdf8, #2563eb, #f59e0b, #10b981);
+      z-index: 1;
+    }
+
+    .timeline-step {
+      position: relative;
+      z-index: 2;
+      background: #0f172a;
+      border: 2px solid var(--accent-cyan);
+      border-radius: 12px;
+      padding: 16px;
+      width: 18%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .timeline-node {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-cyan);
+      color: #000;
+      font-family: var(--font-display);
+      font-weight: 800;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
+    .timeline-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .timeline-date {
+      color: var(--accent-amber);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .timeline-desc {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      line-height: 1.35;
+    }
+
+    /* Navigation bar at bottom */
+    footer {
+      padding: 14px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(7, 9, 14, 0.8);
+      border-top: 1px solid rgba(56, 189, 248, 0.15);
+      z-index: 50;
+    }
+
+    .nav-hints {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      display: flex;
+      gap: 16px;
+    }
+
+    .key-badge {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid var(--border-panel);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      box-shadow: 0 0 12px var(--accent-cyan);
+    }
+
+    /* Print styles for exporting to PDF */
+    @media print {
+      body {
+        overflow: visible;
+        background: #07090e !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      header, footer, .header-actions {
+        display: none !important;
+      }
+
+      .deck-container {
+        padding: 0 !important;
+        display: block !important;
+      }
+
+      .slide {
+        display: flex !important;
+        opacity: 1 !important;
+        transform: none !important;
+        position: relative !important;
+        page-break-after: always;
+        break-after: page;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: none !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+        border: none !important;
+        margin: 0 !important;
+        padding: 36px 48px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand">
+      <div class="badge-orbita">OPERACIÓN ÓRBITA</div>
+      <div class="brand-title">SPSDC <span>2026</span> • Alianza 4 Colegios</div>
+    </div>
+    <div class="header-actions">
+      <div class="slide-counter" id="slideIndicator">SLIDE 01 / 10</div>
+      <button class="btn-action" onclick="toggleFullscreen()">⛶ Pantalla Completa (F)</button>
+      <button class="btn-action btn-primary" onclick="window.print()">🖨️ Exportar a PDF</button>
+    </div>
+  </header>
+
+  <!-- Deck Slides Container -->
+  <div class="deck-container">
+
+    <!-- SLIDE 1: PORTADA -->
+    <div class="slide active" id="slide-1">
+      <div class="hero-center">
+        <div class="hero-pretitle">MISIÓN ESPACIAL EDUCATIVA • 2025 - 2026</div>
+        <h1 class="hero-title">OPERACIÓN <span style="color:var(--accent-cyan);">ÓRBITA</span></h1>
+        <p class="hero-subtitle">
+          El programa de entrenamiento aeroespacial de élite para preparar a 4 colegios hacia la <strong>Spanish Space Design Competition (SPSDC)</strong> y abrir las puertas a la fase europea y la NASA.
+        </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-num">4</div>
+            <div class="stat-label">Colegios Aliados</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">120</div>
+            <div class="stat-label">Alumnos Ingenieros</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">4</div>
+            <div class="stat-label">Sprints de Entrenamiento</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">1</div>
+            <div class="stat-label">Gran Simulación Final</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: ¿QUÉ ES LA SPSDC? -->
+    <div class="slide" id="slide-2">
+      <div class="slide-tag">01 • El Reto Aeroespacial</div>
+      <h2 class="slide-title">¿Qué es la <span>SPSDC</span> y cómo funciona?</h2>
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-icon">🚀</div>
+            <div class="card-title">Simulación Real</div>
+            <p class="card-text">
+              No es un trabajo de clase tradicional. Los estudiantes se convierten en ingenieros de una <strong>empresa contratista aeroespacial</strong> que compite por un contrato multimillonario.
+            </p>
+            <div class="highlight-pill">Aprender Haciendo</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🪐</div>
+            <div class="card-title">Reto de Frontera (RFP)</div>
+            <p class="card-text">
+              Diseñar un asentamiento o vehículo de carga espacial para cientos de habitantes en la Luna, Marte o el espacio profundo (gravedad, soporte vital, robótica y viabilidad).
+            </p>
+            <div class="highlight-pill">Ingeniería Real</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🌍</div>
+            <div class="card-title">Ruta Internacional</div>
+            <p class="card-text">
+              La fase nacional da acceso a la <strong>EUSDC (Fase Europea)</strong> y la gran final mundial en el <strong>Kennedy Space Center de la NASA</strong> en Florida.
+            </p>
+            <div class="highlight-pill">Pasaporte a la NASA</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 10px; background: rgba(56, 189, 248, 0.08); border-color: rgba(56, 189, 248, 0.4);">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <strong style="color:var(--accent-cyan); font-family:var(--font-display);">EL ESLABÓN 2026:</strong>
+              <span style="color:var(--text-muted); margin-left: 8px;">Este año nuestro colegio se une a otros 3 colegios de referencia para entrenar juntos y simular la competición oficial antes de la final.</span>
+            </div>
+            <div class="badge-orbita">ALIANZA 4 COLES</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: EL RFP -->
+    <div class="slide" id="slide-3">
+      <div class="slide-tag">02 • El Pliego de Condiciones</div>
+      <h2 class="slide-title">El <span>RFP</span> (Request for Proposal): Las Reglas del Juego</h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-icon">📋</div>
+            <div class="card-title">¿Qué es un RFP?</div>
+            <p class="card-text">
+              Es el documento formal emitido por el "Cliente" (la <em>Foundation Society</em>) que especifica cada necesidad técnica obligatoria:
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.9rem; margin-left: 20px; line-height: 1.7;">
+              <li>Masa máxima y capacidad de carga útil.</li>
+              <li>Requisitos de gravedad artificial centrípeta (g).</li>
+              <li>Soporte de vida para la tripulación (oxígeno, agua, comida).</li>
+              <li>Nivel de blindaje frente a radiación cósmica y tormentas solares.</li>
+              <li>Presupuesto y calendario de construcción por fases.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-icon">🏆</div>
+            <div class="card-title">Empresas Legendarias de SPSDC</div>
+            <p class="card-text">
+              Los proyectos ganadores de las últimas ediciones demuestran el nivel de lo que sois capaces de construir:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+              <div style="background: rgba(15, 23, 42, 0.9); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #38bdf8;">
+                <strong style="color:#fff;">CONDOR COMPANY:</strong> <span style="color:#94a3b8; font-size:0.85rem;">Hábitat rotatorio centripeto con energía nuclear.</span>
+              </div>
+              <div style="background: rgba(15, 23, 42, 0.9); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+                <strong style="color:#fff;">SAPIEN (木漏れ日):</strong> <span style="color:#94a3b8; font-size:0.85rem;">Sensores LiDAR y robótica autónoma avanzada para carga.</span>
+              </div>
+              <div style="background: rgba(15, 23, 42, 0.9); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #10b981;">
+                <strong style="color:#fff;">PONTIFEX:</strong> <span style="color:#94a3b8; font-size:0.85rem;">Construcción modular en órbita y propulsión iónica.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: LOS 5 DEPARTAMENTOS -->
+    <div class="slide" id="slide-4">
+      <div class="slide-tag">03 • Estructura de la Empresa</div>
+      <h2 class="slide-title">Los <span>5 Departamentos Técnicos</span>: Encuentra tu Rol</h2>
+      <div class="slide-content">
+        <div class="grid-5">
+          <div class="card">
+            <div class="card-icon">🏗️</div>
+            <div class="card-title" style="font-size:0.95rem;">Estructura</div>
+            <p class="card-text" style="font-size:0.82rem;">
+              <strong>"El Esqueleto"</strong><br>
+              Geometría del hábitat, gravedad por rotación, materiales espaciales y blindaje contra radiación.
+            </p>
+            <span class="highlight-pill">Física • CAD 3D</span>
+          </div>
+          <div class="card">
+            <div class="card-icon">⚡</div>
+            <div class="card-title" style="font-size:0.95rem;">Operaciones</div>
+            <p class="card-text" style="font-size:0.82rem;">
+              <strong>"Los Órganos"</strong><br>
+              Reactores nucleares/solar, reciclaje de agua/aire (ECLSS), puertos de carga y combustible.
+            </p>
+            <span class="highlight-pill">Energía • Química</span>
+          </div>
+          <div class="card">
+            <div class="card-icon">🧬</div>
+            <div class="card-title" style="font-size:0.95rem;">Human Factors</div>
+            <p class="card-text" style="font-size:0.82rem;">
+              <strong>"La Vida"</strong><br>
+              Distribución urbana, camarotes, zonas verdes, psicología de aislamiento y naves de evacuación.
+            </p>
+            <span class="highlight-pill">Salud • Arquitectura</span>
+          </div>
+          <div class="card">
+            <div class="card-icon">🤖</div>
+            <div class="card-title" style="font-size:0.95rem;">Automatización</div>
+            <p class="card-text" style="font-size:0.82rem;">
+              <strong>"El Cerebro"</strong><br>
+              Robots externos para mantenimiento en vacío, drones de carga, computación e inteligencia artificial.
+            </p>
+            <span class="highlight-pill">Robótica • Software</span>
+          </div>
+          <div class="card">
+            <div class="card-icon">📊</div>
+            <div class="card-title" style="font-size:0.95rem;">Negocio & Costes</div>
+            <p class="card-text" style="font-size:0.82rem;">
+              <strong>"El Dinero"</strong><br>
+              Presupuesto realista, cronograma de construcción (Gantt), viabilidad comercial y retorno de inversión.
+            </p>
+            <span class="highlight-pill">Finanzas • Liderazgo</span>
+          </div>
+        </div>
+        <div style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 12px;">
+          💡 <em>En cada colegio rotaréis y os especializaréis en lo que más os apasione: ciencia, matemáticas, diseño 3D, arte o comunicación.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: CALENDARIO DE SPRINTS -->
+    <div class="slide" id="slide-5">
+      <div class="slide-tag">04 • Plan de Entrenamiento</div>
+      <h2 class="slide-title">La Ruta de los <span>4 Sprints</span> (Septiembre a Diciembre)</h2>
+      <div class="slide-content">
+        <div class="timeline">
+          <div class="timeline-step">
+            <div class="timeline-node">1</div>
+            <div class="timeline-date">SEPTIEMBRE</div>
+            <div class="timeline-title">Structural</div>
+            <div class="timeline-desc">
+              Diseño básico de la estación, cálculo de gravedad rotatoria y selección de geometría (toroide vs cilindro).
+            </div>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-node">2</div>
+            <div class="timeline-date">OCTUBRE</div>
+            <div class="timeline-title">Operations</div>
+            <div class="timeline-desc">
+              Balance de energía (solar/nuclear) y ciclo de soporte vital. ¿De dónde sale el oxígeno y el agua?
+            </div>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-node">3</div>
+            <div class="timeline-date">OCT-NOV</div>
+            <div class="timeline-title">Human Factors</div>
+            <div class="timeline-desc">
+              Comunidad para 80-100 personas, m² por habitante, zonas verdes, psicología y plan de evacuación.
+            </div>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-node">4</div>
+            <div class="timeline-date">NOVIEMBRE</div>
+            <div class="timeline-title">Automation & Cost</div>
+            <div class="timeline-desc">
+              Flota de robots de mantenimiento exterior, cronograma Gantt y presupuesto del asentamiento.
+            </div>
+          </div>
+          <div class="timeline-step" style="border-color: var(--accent-amber);">
+            <div class="timeline-node" style="background:var(--accent-amber);">5</div>
+            <div class="timeline-date" style="color:#fff;">DICIEMBRE</div>
+            <div class="timeline-title" style="color:var(--accent-amber);">Simulación</div>
+            <div class="timeline-desc">
+              Mezcla de los 4 colegios en empresas conjuntas. Defensa oral ante jurado real.
+            </div>
+          </div>
+        </div>
+        <div class="card" style="background: rgba(15, 23, 42, 0.6); padding: 14px 20px;">
+          <strong style="color: #fff;">¿Cómo funciona cada Sprint?</strong>
+          <span style="color: var(--text-muted); font-size: 0.9rem; margin-left: 8px;">
+            Cada 2-3 semanas tendréis una píldora formativa con conceptos clave, una sesión de trabajo en equipo y una entrega directa a través de nuestra plataforma web.
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: LA GRAN SIMULACIÓN DE DICIEMBRE -->
+    <div class="slide" id="slide-6">
+      <div class="slide-tag">05 • El Clímax del Trimestre</div>
+      <h2 class="slide-title">La Gran <span>Simulación Intercolegial</span> (Diciembre)</h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-icon">🤝</div>
+            <div class="card-title">Mezcla Real de Colegios</div>
+            <p class="card-text">
+              En las finales internacionales nunca compites solo con tus compañeros de clase: formas una empresa con estudiantes de otros países y culturas.
+            </p>
+            <p class="card-text" style="margin-top: 8px;">
+              En diciembre viviremos exactamente eso: <strong>los 120 alumnos de los 4 colegios se mezclarán</strong> en 4 grandes compañías aeroespaciales de 30 personas.
+            </p>
+            <div class="highlight-pill">Networking • Liderazgo • Trabajo en Equipo</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">⏱️</div>
+            <div class="card-title">La Agenda de la Simulación</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem; color: var(--text-muted);">
+              <div><strong style="color:#38bdf8;">08:30</strong> • Apertura y bienvenida: asignación de empresas y elección de Presidencia.</div>
+              <div><strong style="color:#38bdf8;">09:30 - 13:00</strong> • Trabajo intenso por departamentos resolviendo el RFP conjunto.</div>
+              <div><strong style="color:#38bdf8;">13:00 - 14:00</strong> • Pausa de comida y estrategia interdepartamental.</div>
+              <div><strong style="color:#f59e0b;">17:30</strong> • <strong>DEADLINE FINAL:</strong> Bloqueo de entregas en la plataforma.</div>
+              <div><strong style="color:#10b981;">18:00</strong> • <strong>Defensa ante el Jurado:</strong> 15 min de exposición + 10 min de preguntas.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: HERRAMIENTAS Y ENTREGAS -->
+    <div class="slide" id="slide-7">
+      <div class="slide-tag">06 • Herramientas y Formatos</div>
+      <h2 class="slide-title">¿Qué <span>Herramientas</span> usaremos en los Sprints?</h2>
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-icon">🎨</div>
+            <div class="card-title">Diseño 3D y Renders</div>
+            <p class="card-text">
+              <strong>TinkerCAD:</strong> Para bocetos y modelado 3D ágil en el navegador.<br>
+              <strong>Blender:</strong> Para renders realistas con iluminación, texturas y gravedad rotatoria.
+            </p>
+            <div class="highlight-pill">Subida de .png / Links TinkerCAD</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Cálculo y Datos</div>
+            <p class="card-text">
+              <strong>Excel / Google Sheets:</strong> Tablas de balance de energía, consumo de oxígeno/agua y presupuesto.<br>
+              <strong>Calculadoras Web:</strong> Calculadora integrada de gravedad y Coriolis.
+            </p>
+            <div class="highlight-pill">Subida de .xlsx / Enlaces</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">📽️</div>
+            <div class="card-title">Documento y Diapositivas</div>
+            <p class="card-text">
+              <strong>PowerPoint / Google Slides:</strong> Formato visual con diagramas, planos acotados y justificación de decisiones.<br>
+              <strong>PDF Técnico:</strong> Entregas oficiales del RFP.
+            </p>
+            <div class="highlight-pill">Subida de .pptx / .pdf</div>
+          </div>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 12px 18px; display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 1.4rem;">💡</span>
+          <span style="font-size: 0.9rem; color: #a7f3d0;">
+            <strong>No necesitáis ser expertos de antemano:</strong> En cada sprint tendréis plantillas listas para usar y ejemplos premiados de años anteriores para guiaros paso a paso.
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: LA PLATAFORMA WEB -->
+    <div class="slide" id="slide-8">
+      <div class="slide-tag">07 • Vuestro Centro de Control</div>
+      <h2 class="slide-title">La Plataforma Web: <span>SPSDC Mission Control</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-icon">🖥️</div>
+            <div class="card-title">Todo en un Solo Lugar</div>
+            <p class="card-text">
+              Hemos creado una aplicación web propia para esta alianza de los 4 colegios:
+            </p>
+            <ul style="color: var(--text-muted); font-size: 0.9rem; margin-left: 20px; line-height: 1.7;">
+              <li><strong>Sin contraseñas olvidadas:</strong> Entras seleccionando tu colegio y equipo.</li>
+              <li><strong>Buzón de entrega universal:</strong> Arrastras tus archivos o pegas enlaces directos de TinkerCAD/Slides.</li>
+              <li><strong>Sincronización directa con Google Drive:</strong> Tus trabajos llegan organizados a la nube del profesorado.</li>
+              <li><strong>Calculadoras espaciales integradas:</strong> Comprueba la física de tu hábitat con un solo clic.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-icon">⚖️</div>
+            <div class="card-title">Evaluación por el Jurado</div>
+            <p class="card-text">
+              Un panel formado por profesores de los 4 colegios evaluará vuestras entregas usando la rúbrica oficial de la competición:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">
+                <span>Rigor Técnico y Fórmulas</span>
+                <strong style="color:var(--accent-cyan);">25%</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">
+                <span>Viabilidad y Respuesta al RFP</span>
+                <strong style="color:var(--accent-cyan);">25%</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">
+                <span>Innovación y Soluciones Creativas</span>
+                <strong style="color:var(--accent-cyan);">25%</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                <span>Calidad Gráfica y Presentación</span>
+                <strong style="color:var(--accent-cyan);">25%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: QUÉ TE LLEVAS -->
+    <div class="slide" id="slide-9">
+      <div class="slide-tag">08 • Habilidades para el Futuro</div>
+      <h2 class="slide-title">¿Qué te llevas de la <span>Operación Órbita</span>?</h2>
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-icon">🧠</div>
+            <div class="card-title">Mentalidad de Ingeniero</div>
+            <p class="card-text">
+              Aprenderás a resolver problemas complejos donde no hay una sola respuesta correcta, tomando decisiones de diseño con rigor y justificación.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🎯</div>
+            <div class="card-title">Trabajo Bajo Presión</div>
+            <p class="card-text">
+              Gestionar plazos ajustados, negociar con otros departamentos de la empresa y coordinar a decenas de personas hacia un objetivo común.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🎤</div>
+            <div class="card-title">Defensa y Oratoria</div>
+            <p class="card-text">
+              Presentar y convencer a un jurado técnico en inglés o español, respondiendo a preguntas sorpresa con seguridad y datos contrastados.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(168, 85, 247, 0.2)); border-color: rgba(56, 189, 248, 0.4); text-align: center; padding: 18px;">
+          <h3 style="font-family: var(--font-display); color: #fff; font-size: 1.15rem; margin-bottom: 4px;">
+            🌟 Reconocimiento y Currículum Internacional
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Esta experiencia es de las más valoradas por universidades de ingeniería de todo el mundo y la puerta directa a competir en Europa y visitar instalaciones de la NASA.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: CIERRE Y LLAMADA A LA ACCIÓN -->
+    <div class="slide" id="slide-10">
+      <div class="hero-center">
+        <div class="badge-orbita" style="font-size: 0.9rem; padding: 6px 14px;">FASE DE LANZAMIENTO</div>
+        <h2 class="hero-title" style="font-size: 3rem;">¡COMIENZA LA <span style="color:var(--accent-cyan);">MISIÓN</span>!</h2>
+        <p class="hero-subtitle">
+          Hoy se abren las inscripciones y la formación de los equipos en clase.<br>
+          En los próximos días arrancará el <strong>Sprint 1: Structural Engineering</strong>.
+        </p>
+        <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-panel); padding: 20px 36px; border-radius: 12px; margin-top: 10px;">
+          <div style="font-family: var(--font-display); color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 6px;">
+            PRÓXIMO PASO:
+          </div>
+          <div style="color: #fff; font-size: 1rem;">
+            1. Elige con qué departamento te sientes más identificado.<br>
+            2. Conforma tu equipo de trabajo en el aula.<br>
+            3. Prepárate para el briefing del Sprint 1 en la plataforma.
+          </div>
+        </div>
+        <div style="color: var(--accent-amber); font-family: var(--font-display); font-size: 0.95rem; margin-top: 10px;">
+          🚀 ¡BIENVENIDOS A LA SPSDC 2026!
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Controls -->
+  <footer>
+    <div class="nav-hints">
+      <span>Navegar: <span class="key-badge">←</span> <span class="key-badge">→</span> o <span class="key-badge">Espacio</span></span>
+      <span>Pantalla completa: <span class="key-badge">F</span></span>
+      <span>Imprimir / PDF: <span class="key-badge">Ctrl + P</span></span>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" onclick="prevSlide()">← Anterior</button>
+      <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 10;
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      document.querySelectorAll('.slide').forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (i + 1 === currentSlide) {
+          slide.classList.add('active');
+        }
+      });
+
+      const formattedNum = currentSlide < 10 ? '0' + currentSlide : currentSlide;
+      document.getElementById('slideIndicator').textContent = `SLIDE ${formattedNum} / ${totalSlides}`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          alert(`Error al activar pantalla completa: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'Home') {
+        showSlide(1);
+      } else if (e.key === 'End') {
+        showSlide(totalSlides);
+      }
+    });
+  </script>
+</body>
+</html>
