@@ -261,10 +261,10 @@
               <div class="form-group">
                 <label class="form-label" for="subSchool">Colegio de Origen</label>
                 <select id="subSchool" class="form-control" required>
-                  <option value="col1">Colegio 01 (Sede Local)</option>
-                  <option value="col2">Colegio 02 (Alianza Norte)</option>
-                  <option value="col3">Colegio 03 (Alianza Centro)</option>
-                  <option value="col4">Colegio 04 (Alianza Sur)</option>
+                  <option value="col1">ANDEL</option>
+                  <option value="col2">FUENLLANA</option>
+                  <option value="col3">J.H. NEWMAN</option>
+                  <option value="col4">EL PRADO</option>
                 </select>
               </div>
 
@@ -638,10 +638,10 @@
             <div style="font-family:var(--font-hud); font-size:0.85rem; color:var(--text-secondary);">FILTRAR ENTREGAS:</div>
             <select id="juryFilterSchool" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
               <option value="all">Todos los Colegios</option>
-              <option value="col1">Colegio 01</option>
-              <option value="col2">Colegio 02</option>
-              <option value="col3">Colegio 03</option>
-              <option value="col4">Colegio 04</option>
+              <option value="col1">ANDEL</option>
+              <option value="col2">FUENLLANA</option>
+              <option value="col3">J.H. NEWMAN</option>
+              <option value="col4">EL PRADO</option>
             </select>
             <select id="juryFilterSprint" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
               <option value="all">Todos los Sprints</option>
@@ -682,6 +682,62 @@
 
         <!-- SUBTAB 2: CENSO E INSCRIPCIÓN DE ALUMNOS (CLAVES OFICIALES) -->
         <div id="subtabJuryStudents" style="display:none;">
+
+          <!-- PANEL DE GESTIÓN Y EDICIÓN DE NOMBRES DE COLEGIOS -->
+          <div class="hud-panel" style="margin-bottom: 24px; border-left: 4px solid var(--amber-alert); background: linear-gradient(135deg, rgba(245,158,11,0.06) 0%, rgba(15,23,42,0.85) 100%);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <div>
+                <h3 style="font-size:1.1rem; color:var(--amber-alert); margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+                  🏫 Colegios Participantes Oficiales
+                </h3>
+                <div style="font-size:0.85rem; color:var(--text-secondary);" id="schoolsListSummary">
+                  ANDEL • FUENLLANA • J.H. NEWMAN • EL PRADO
+                </div>
+              </div>
+              <button type="button" class="btn-hud btn-hud-secondary" onclick="toggleSchoolEditor()">
+                ✏️ Modificar / Personalizar Nombres de Colegios
+              </button>
+            </div>
+
+            <!-- Formulario desplegable para editar nombres de colegios -->
+            <div id="schoolEditorContainer" style="display:none; margin-top:18px; padding-top:16px; border-top:1px dashed var(--border-subtle);">
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">
+                Puedes cambiar los nombres de los 4 colegios participantes en cualquier momento. Los cambios se actualizarán al instante en el buzón de entrega, censo de alumnos, filtros y clasificaciones.
+              </p>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label class="form-label" for="editSchoolName1">Colegio 1</label>
+                  <input type="text" id="editSchoolName1" class="form-control" value="ANDEL">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="editSchoolName2">Colegio 2</label>
+                  <input type="text" id="editSchoolName2" class="form-control" value="FUENLLANA">
+                </div>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label class="form-label" for="editSchoolName3">Colegio 3</label>
+                  <input type="text" id="editSchoolName3" class="form-control" value="J.H. NEWMAN">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="editSchoolName4">Colegio 4</label>
+                  <input type="text" id="editSchoolName4" class="form-control" value="EL PRADO">
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">
+                <button type="button" class="btn-hud btn-hud-primary" onclick="saveEditedSchoolNames()">
+                  💾 Guardar Nuevos Nombres
+                </button>
+                <button type="button" class="btn-hud btn-hud-secondary" onclick="resetToDefaultSchools()">
+                  🔄 Restaurar Originales
+                </button>
+                <button type="button" class="btn-hud btn-hud-secondary" onclick="toggleSchoolEditor()">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="hud-panel" style="margin-bottom:24px;">
             <div class="section-tag">REGISTRO DE INGENIEROS PARTICIPANTES</div>
             <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff; margin-bottom:6px;">
@@ -705,12 +761,17 @@
 
               <div class="form-row-2">
                 <div class="form-group">
-                  <label class="form-label" for="regStudentSchool">Colegio de Origen *</label>
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label class="form-label" for="regStudentSchool">Colegio de Origen *</label>
+                    <button type="button" style="background:none; border:none; color:var(--cyan-core); font-size:0.75rem; cursor:pointer; text-decoration:underline;" onclick="toggleSchoolEditor(true)">
+                      ✏️ Editar nombres
+                    </button>
+                  </div>
                   <select id="regStudentSchool" class="form-control" required>
-                    <option value="col1">Colegio 01 (Sede Local)</option>
-                    <option value="col2">Colegio 02 (Alianza Norte)</option>
-                    <option value="col3">Colegio 03 (Alianza Centro)</option>
-                    <option value="col4">Colegio 04 (Alianza Sur)</option>
+                    <option value="col1">ANDEL</option>
+                    <option value="col2">FUENLLANA</option>
+                    <option value="col3">J.H. NEWMAN</option>
+                    <option value="col4">EL PRADO</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -726,7 +787,7 @@
               <div class="form-row-2" style="align-items:flex-end;">
                 <div class="form-group" style="margin-bottom:0;">
                   <label class="form-label" for="regStudentCustomKey">Clave Personalizada (Opcional)</label>
-                  <input type="text" id="regStudentCustomKey" class="form-control" placeholder="Dejar vacío para autogenerar (ej: ALU-COL1-007)">
+                  <input type="text" id="regStudentCustomKey" class="form-control" placeholder="Dejar vacío para autogenerar (ej: ALU-ANDEL-01)">
                 </div>
                 <button type="submit" class="btn-hud btn-hud-primary" style="height:48px; justify-content:center;">
                   ➕ Inscribir y Generar Clave
@@ -740,8 +801,8 @@
                 📋 Inscripción Rápida por Lotes (Pegar listado de alumnos)
               </button>
               <div id="batchImportContainer" style="display:none; margin-top:14px;">
-                <label class="form-label" for="batchStudentsInput">Pega una lista (Formato: Nombre y Apellidos, Colegio (1-4), Curso):</label>
-                <textarea id="batchStudentsInput" class="form-control" rows="4" placeholder="Lucía Gómez, 1, 4º ESO&#10;David Romero, 1, 1º Bachillerato&#10;Elena Santos, 2, 4º ESO&#10;Mateo Navas, 3, 2º Bachillerato"></textarea>
+                <label class="form-label" for="batchStudentsInput">Pega una lista (Formato: Nombre y Apellidos, Colegio [ANDEL / FUENLLANA / NEWMAN / EL PRADO o 1-4], Curso):</label>
+                <textarea id="batchStudentsInput" class="form-control" rows="4" placeholder="Lucía Gómez, ANDEL, 4º ESO&#10;David Romero, ANDEL, 1º Bachillerato&#10;Elena Santos, FUENLLANA, 4º ESO&#10;Mateo Navas, J.H. NEWMAN, 2º Bachillerato&#10;Sofía Morales, EL PRADO, 1º Bachillerato"></textarea>
                 <button type="button" class="btn-hud btn-hud-amber" style="margin-top:10px;" onclick="handleBatchImportStudents()">
                   🚀 Procesar e Inscribir Lote
                 </button>
@@ -755,10 +816,10 @@
               <div style="font-family:var(--font-hud); font-size:0.85rem; color:var(--text-secondary);">FILTRAR CENSO:</div>
               <select id="filterStudentSchool" class="form-control" style="width:auto;" onchange="renderRegisteredStudentsTable()">
                 <option value="all">Todos los Colegios</option>
-                <option value="col1">Colegio 01</option>
-                <option value="col2">Colegio 02</option>
-                <option value="col3">Colegio 03</option>
-                <option value="col4">Colegio 04</option>
+                <option value="col1">ANDEL</option>
+                <option value="col2">FUENLLANA</option>
+                <option value="col3">J.H. NEWMAN</option>
+                <option value="col4">EL PRADO</option>
               </select>
               <select id="filterStudentGrade" class="form-control" style="width:auto;" onchange="renderRegisteredStudentsTable()">
                 <option value="all">Todos los Cursos</option>
