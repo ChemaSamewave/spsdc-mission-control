@@ -451,15 +451,19 @@ async function submitWork() {
 
     // Feedback al usuario
     if (savedOnDisk) {
-      alert(`✅ ¡ENTREGA GUARDADA EN TU GOOGLE DRIVE!\n\n` +
-            `📁 Carpeta creada:\n${serverSavedPath}\n\n` +
-            `📄 Archivos guardados: ${filesData.length}\n` +
-            `📋 Ficha técnica guardada: _INFO_ENTREGA.txt\n\n` +
-            `Tu Google Drive de escritorio ya la está sincronizando con la nube.`);
+      alert(`✅ ¡ENTREGA ENVIADA CON ÉXITO!\n\n` +
+            `ID de Entrega: ${subId}\n` +
+            `Equipo: ${teamName}\n` +
+            `Colegio: ${uploadPayload.school}\n` +
+            `Sprint: ${uploadPayload.sprint}\n` +
+            `Archivos recibidos: ${filesData.length}\n\n` +
+            `El panel del jurado ya tiene registrada vuestra propuesta.`);
     } else {
-      alert(`⚠️ ENTREGA REGISTRADA EN LA PLATAFORMA WEB\n\n` +
-            `Para que los archivos se vuelquen automáticamente en tu disco duro (H:\\Mi unidad\\SPSIN COLEGIOS):\n` +
-            `Asegúrate de tener abierta la plataforma ejecutando el archivo INICIAR_MISSION_CONTROL.bat (o en http://localhost:8080).`);
+      alert(`✅ ¡ENTREGA REGISTRADA CON ÉXITO!\n\n` +
+            `ID de Entrega: ${subId}\n` +
+            `Equipo: ${teamName}\n` +
+            `Archivos procesados: ${filesData.length}\n\n` +
+            `Vuestro trabajo ha sido enviado al jurado.`);
     }
 
     renderJurySubmissions();
