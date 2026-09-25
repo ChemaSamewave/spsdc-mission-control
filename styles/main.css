@@ -503,7 +503,7 @@ body {
 /* SPRINTS VIEW */
 .sprints-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
 }
 
@@ -985,19 +985,226 @@ body {
 }
 
 @media (max-width: 768px) {
+  /* BARRA SUPERIOR */
+  .top-status-bar {
+    padding: 6px 12px;
+    font-size: 0.72rem;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+  .top-status-bar .clock-group {
+    display: flex;
+    gap: 8px;
+    font-size: 0.7rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* CABECERA Y MARCA */
   .mission-header {
     flex-direction: column;
-    gap: 16px;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 12px;
   }
-  .mission-nav {
-    overflow-x: auto;
+  .brand-wrapper {
+    gap: 10px;
     width: 100%;
   }
-  .stats-strip, .form-row-2 {
+  .logo-badge {
+    font-size: 0.95rem;
+    padding: 6px 10px;
+    letter-spacing: 1px;
+  }
+  .brand-text h1 {
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+  }
+  .brand-text p {
+    font-size: 0.74rem;
+    line-height: 1.3;
+  }
+
+  /* NAVEGADOR PRINCIPAL EN MÓVIL (SWIPE HORIZONTAL SUAVE) */
+  .mission-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    gap: 6px;
+    padding: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .mission-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-tab {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    padding: 9px 12px;
+    gap: 6px;
+    border-radius: 6px;
+  }
+
+  /* CONTENEDOR Y PANELES */
+  .app-container {
+    padding: 14px 10px 40px;
+  }
+  .hud-panel {
+    padding: 16px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+  .section-header {
+    margin-bottom: 18px;
+  }
+  .section-title {
+    font-size: 1.4rem;
+  }
+  .section-subtitle {
+    font-size: 0.85rem;
+  }
+
+  /* HERO Y CUENTA ATRÁS */
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .hero-main {
+    padding: 20px 14px;
+  }
+  .hero-main h2 {
+    font-size: 1.3rem;
+  }
+  .hero-main p {
+    font-size: 0.88rem;
+    margin-bottom: 16px;
+  }
+  .hero-cta-row {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  .hero-cta-row .btn-hud {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 14px;
+  }
+
+  /* ESTADÍSTICAS Y CONTADORES */
+  .stats-strip {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .stat-card {
+    padding: 12px;
+  }
+  .stat-value {
+    font-size: 1.3rem;
+  }
+  .cd-timer-digits, .cd-segment-num {
+    font-size: 1.7rem;
+  }
+
+  /* SELECTOR DE MODALIDAD Y FORMULARIOS */
+  .modality-selector-group {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+  .btn-modality {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+  .form-row-2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+  .form-control {
+    font-size: 16px !important; /* Evita auto-zoom de Safari iOS */
+    padding: 12px 14px;
+  }
+  .btn-hud {
+    min-height: 44px; /* Tamaño táctil accesible */
+  }
+
+  /* BUZÓN DE ENTREGA Y ACCESO */
+  #studentGatePanel {
+    margin: 20px auto !important;
+    padding: 26px 16px !important;
+    width: 100%;
+  }
+  #studentActiveBanner {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+  }
+  #studentActiveBanner button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* SUBPESTAÑAS DEL JURADO */
+  .subnav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px;
+    padding-bottom: 8px;
+  }
+  .subnav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .subnav-tab {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+  }
+
+  /* TABLAS EN MÓVIL (DESPLAZAMIENTO HORIZONTAL ASISTIDO) */
+  .submissions-table {
+    min-width: 600px;
+  }
+  .submissions-table th, .submissions-table td {
+    padding: 10px 8px;
+    font-size: 0.82rem;
+  }
+
+  /* MODAL DE EVALUACIÓN */
+  .modal-content {
+    width: 95%;
+    padding: 20px 14px;
+    max-height: 92vh;
+  }
+
+  /* SIMULACIÓN Y CALCULADORAS */
+  .stage-timer-giant {
+    font-size: 3rem;
+    letter-spacing: 2px;
+  }
+  .calc-grid, .companies-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-status-bar .clock-group {
+    display: none; /* En pantallas muy pequeñas se oculta para no recargar */
+  }
+  .brand-text h1 {
+    font-size: 1.05rem;
+  }
+  .stats-strip {
     grid-template-columns: 1fr;
   }
   .stage-timer-giant {
-    font-size: 3.5rem;
+    font-size: 2.3rem;
   }
 }
 
