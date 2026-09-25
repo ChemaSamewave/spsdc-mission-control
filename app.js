@@ -339,7 +339,7 @@ async function submitWork() {
   const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '⏳ Guardando entrega en Google Drive...';
+    submitBtn.innerHTML = '⏳ Procesando y enviando entrega...';
   }
 
   try {
@@ -608,7 +608,7 @@ function openEvaluationModal(subId) {
     <strong>Sprint:</strong> ${sub.sprintName} | <strong>Departamento:</strong> ${sub.deptName}<br>
     <strong>Integrantes:</strong> ${sub.authors || 'No especificados'}<br>
     <strong>Notas del equipo:</strong> "${sub.notes || 'Sin notas'}"<br>
-    <strong>Carpeta Drive:</strong> <span style="font-family:monospace; color:var(--cyan-core);">${sub.targetDriveFolder}</span>
+    <strong>Registro de Misión:</strong> <span style="font-family:monospace; color:var(--cyan-core);">${sub.targetDriveFolder}</span>
   `;
 
   // Asignar valores si ya fue evaluada
