@@ -552,7 +552,7 @@ function unlockJury() {
     renderJurySubmissions();
     renderLeaderboard();
   } else {
-    alert('PIN incorrecto. El PIN por defecto de los profesores es: 2026');
+    alert('PIN incorrecto. Acceso restringido exclusivamente a profesores y miembros del jurado.');
   }
 }
 
