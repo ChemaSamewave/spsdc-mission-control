@@ -197,6 +197,30 @@
       <div class="form-grid">
         <div class="hud-panel">
           <form id="submissionForm">
+            <!-- SELECTOR DE MODALIDAD: INDIVIDUAL O EN EQUIPO -->
+            <div class="form-group" style="margin-bottom: 22px;">
+              <label class="form-label" style="color:var(--cyan-core); font-weight:700; font-size:0.85rem;">
+                MODALIDAD DE LA ENTREGA *
+              </label>
+              <div class="modality-selector-group">
+                <button type="button" class="btn-modality active" id="btnModalityGroup" onclick="setSubmissionModality('group')">
+                  <span class="modality-icon">👥</span>
+                  <div class="modality-text">
+                    <strong>Entrega en Equipo / Grupo</strong>
+                    <small>Trabajo colaborativo (2 a 5 alumnos)</small>
+                  </div>
+                </button>
+                <button type="button" class="btn-modality" id="btnModalityIndividual" onclick="setSubmissionModality('individual')">
+                  <span class="modality-icon">👤</span>
+                  <div class="modality-text">
+                    <strong>Entrega Individual</strong>
+                    <small>Trabajo de un único estudiante</small>
+                  </div>
+                </button>
+              </div>
+              <input type="hidden" id="subModality" value="group">
+            </div>
+
             <div class="form-row-2">
               <div class="form-group">
                 <label class="form-label" for="subSchool">Colegio de Origen</label>
@@ -232,15 +256,18 @@
                 </select>
               </div>
 
-              <div class="form-group">
-                <label class="form-label" for="subTeamName">Nombre del Equipo / Identificador</label>
-                <input type="text" id="subTeamName" class="form-control" placeholder="Ej: Equipo Aurora - Grupo A" required>
+              <div class="form-group" id="fieldTeamOrTitle">
+                <label class="form-label" for="subTeamName" id="labelTeamName">Nombre del Equipo / Grupo *</label>
+                <input type="text" id="subTeamName" class="form-control" placeholder="Ej: Equipo Aurora - Escuadrón Apolo" required>
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="subAuthors">Nombres de los Integrantes</label>
-              <input type="text" id="subAuthors" class="form-control" placeholder="Ej: Lucía Gómez, David Romero, Carlos Vega...">
+            <div class="form-group" id="fieldAuthorsOrGrade">
+              <label class="form-label" for="subAuthors" id="labelAuthors">Nombres y Apellidos de los Integrantes *</label>
+              <input type="text" id="subAuthors" class="form-control" placeholder="Ej: Lucía Gómez (Líder), David Romero, Carlos Vega..." required>
+              <small id="authorsHint" style="display:block; margin-top:5px; font-size:0.8rem; color:var(--text-muted);">
+                Indica todos los miembros del equipo que firman el trabajo.
+              </small>
             </div>
 
             <!-- Drag and drop zone -->
@@ -572,6 +599,11 @@
             <option value="4">Sprint 4</option>
             <option value="5">Sprint 5</option>
           </select>
+          <select id="juryFilterModality" class="form-control" style="width:auto;" onchange="renderJurySubmissions()">
+            <option value="all">Todas las Modalidades</option>
+            <option value="group">Solo Equipos 👥</option>
+            <option value="individual">Solo Individuales 👤</option>
+          </select>
         </div>
 
         <!-- Tabla de entregas -->
@@ -580,9 +612,10 @@
             <thead>
               <tr>
                 <th>ID / Fecha</th>
-                <th>Equipo / Colegio</th>
-                <th>Sprint</th>
-                <th>Departamento</th>
+                <th>Modalidad</th>
+                <th>Equipo / Alumno</th>
+                <th>Colegio</th>
+                <th>Sprint / Dept</th>
                 <th>Archivos / Enlaces</th>
                 <th>Estado / Nota</th>
                 <th>Acción</th>

@@ -206,6 +206,11 @@ function renderSprints() {
       </div>
       <h3 class="sprint-title">${sprint.title}</h3>
       <div class="sprint-dept">${sprint.dept}</div>
+      <div style="display:flex; align-items:center; gap:8px; margin: 6px 0 10px 0;">
+        ${sprint.id === 5 
+          ? `<span class="badge-modality-group">🤝 Grandes Compañías (30 alumnos)</span>`
+          : `<span class="badge-modality-group">👥 En Equipo</span> <span class="badge-modality-indiv">👤 Individual</span>`}
+      </div>
       <p class="sprint-desc">${sprint.summary}</p>
       
       <div class="sprint-requirements">
@@ -226,10 +231,59 @@ function renderSprints() {
   `).join('');
 }
 
+// Selector de Modalidad de Entrega (Individual vs Grupo)
+function setSubmissionModality(modality) {
+  const btnGroup = document.getElementById('btnModalityGroup');
+  const btnIndiv = document.getElementById('btnModalityIndividual');
+  const hiddenInput = document.getElementById('subModality');
+  const labelTeam = document.getElementById('labelTeamName');
+  const inputTeam = document.getElementById('subTeamName');
+  const labelAuthors = document.getElementById('labelAuthors');
+  const inputAuthors = document.getElementById('subAuthors');
+  const authorsHint = document.getElementById('authorsHint');
+
+  if (modality === 'individual') {
+    if (btnGroup) btnGroup.classList.remove('active');
+    if (btnIndiv) btnIndiv.classList.add('active');
+    if (hiddenInput) hiddenInput.value = 'individual';
+
+    if (labelTeam) labelTeam.textContent = 'Nombre y Apellidos del Alumno *';
+    if (inputTeam) inputTeam.placeholder = 'Ej: Lucía Gómez Fernández';
+    if (labelAuthors) labelAuthors.textContent = 'Curso y Grupo Académico *';
+    if (inputAuthors) inputAuthors.placeholder = 'Ej: 4º ESO B (o 1º Bachillerato A)';
+    if (authorsHint) authorsHint.textContent = 'Especifica tu curso escolar para registrar tu entrega individual en el expediente.';
+  } else {
+    if (btnGroup) btnGroup.classList.add('active');
+    if (btnIndiv) btnIndiv.classList.remove('active');
+    if (hiddenInput) hiddenInput.value = 'group';
+
+    if (labelTeam) labelTeam.textContent = 'Nombre del Equipo / Grupo *';
+    if (inputTeam) inputTeam.placeholder = 'Ej: Equipo Aurora - Escuadrón Apolo';
+    if (labelAuthors) labelAuthors.textContent = 'Nombres y Apellidos de los Integrantes *';
+    if (inputAuthors) inputAuthors.placeholder = 'Ej: Lucía Gómez (Líder), David Romero, Carlos Vega...';
+    if (authorsHint) authorsHint.textContent = 'Indica todos los miembros del equipo que firman el trabajo.';
+  }
+}
+
+function handleSprintSelectionChange() {
+  const sprintId = document.getElementById('subSprint') ? document.getElementById('subSprint').value : '1';
+  if (sprintId === '5') {
+    setSubmissionModality('group');
+    const labelTeam = document.getElementById('labelTeamName');
+    if (labelTeam) labelTeam.textContent = 'Compañía Aeroespacial (Condor / Sapien / Boscom / Pontifex) *';
+  } else {
+    const curMod = document.getElementById('subModality') ? document.getElementById('subModality').value : 'group';
+    setSubmissionModality(curMod);
+  }
+}
+
 function prepareSubmissionFor(sprintId) {
   navigateTo('submissions');
   const select = document.getElementById('subSprint');
-  if (select) select.value = sprintId;
+  if (select) {
+    select.value = sprintId;
+    handleSprintSelectionChange();
+  }
 }
 
 // Lógica del Buzón de Entrega (Upload Bay)
@@ -319,16 +373,19 @@ function readFileAsBase64(file) {
 }
 
 async function submitWork() {
+  const modality = document.getElementById('subModality') ? document.getElementById('subModality').value : 'group';
   const school = document.getElementById('subSchool').value;
   const sprintId = document.getElementById('subSprint').value;
   const dept = document.getElementById('subDept').value;
-  const teamName = document.getElementById('subTeamName').value.trim();
-  const authors = document.getElementById('subAuthors').value.trim();
+  const teamOrStudentName = document.getElementById('subTeamName').value.trim();
+  const authorsOrGrade = document.getElementById('subAuthors').value.trim();
   const externalLink = document.getElementById('subExternalLink').value.trim();
   const notes = document.getElementById('subNotes').value.trim();
 
-  if (!teamName) {
-    alert('Por favor, indica el nombre de tu equipo.');
+  if (!teamOrStudentName) {
+    alert(modality === 'individual' 
+      ? 'Por favor, introduce tu Nombre y Apellidos.' 
+      : 'Por favor, indica el nombre de tu equipo.');
     return;
   }
 
@@ -337,6 +394,8 @@ async function submitWork() {
   const deptObj = AppState.departments.find(d => d.id === dept);
 
   const subId = 'SUB-' + Date.now().toString().slice(-6);
+  const displayTeamName = modality === 'individual' ? `[INDIVIDUAL] ${teamOrStudentName}` : teamOrStudentName;
+  const displayAuthors = modality === 'individual' ? `${teamOrStudentName} (${authorsOrGrade || 'Alumno individual'})` : authorsOrGrade;
 
   // Botón en estado de carga
   const submitBtn = document.querySelector('#submissionForm button[type="submit"]');
@@ -362,11 +421,12 @@ async function submitWork() {
     // 2. Enviar al endpoint de guardado local en Google Drive
     const uploadPayload = {
       id: subId,
+      modality: modality,
       school: schoolObj ? schoolObj.name : school,
       sprint: sprintObj ? sprintObj.code : `Sprint_${sprintId}`,
       dept: deptObj ? deptObj.name : dept,
-      teamName: teamName,
-      authors: authors,
+      teamName: displayTeamName,
+      authors: displayAuthors,
       notes: notes,
       externalLink: externalLink,
       files: filesData
@@ -426,14 +486,15 @@ async function submitWork() {
     const newSubmission = {
       id: subId,
       timestamp: new Date().toLocaleString('es-ES'),
+      modality: modality,
       schoolId: school,
       schoolName: schoolObj ? schoolObj.name : school,
       sprintId: Number(sprintId),
       sprintName: sprintObj ? sprintObj.title : `Sprint ${sprintId}`,
       deptId: dept,
       deptName: deptObj ? deptObj.name : dept,
-      teamName: teamName,
-      authors: authors,
+      teamName: displayTeamName,
+      authors: displayAuthors,
       externalLink: externalLink,
       notes: notes,
       fileNames: uploadedFilesCache.map(f => f.name),
@@ -450,14 +511,17 @@ async function submitWork() {
 
     // Reset del formulario
     document.getElementById('submissionForm').reset();
+    setSubmissionModality('group');
     uploadedFilesCache = [];
     document.getElementById('selectedFilesList').innerHTML = '';
 
     // Feedback al usuario
+    const modalityLabel = modality === 'individual' ? '👤 Individual' : '👥 En Equipo';
     if (savedOnDisk) {
       alert(`✅ ¡ENTREGA ENVIADA CON ÉXITO!\n\n` +
             `ID de Entrega: ${subId}\n` +
-            `Equipo: ${teamName}\n` +
+            `Modalidad: ${modalityLabel}\n` +
+            `${modality === 'individual' ? 'Estudiante' : 'Equipo'}: ${teamOrStudentName}\n` +
             `Colegio: ${uploadPayload.school}\n` +
             `Sprint: ${uploadPayload.sprint}\n` +
             `Archivos recibidos: ${filesData.length}\n\n` +
@@ -465,7 +529,8 @@ async function submitWork() {
     } else {
       alert(`✅ ¡ENTREGA REGISTRADA CON ÉXITO!\n\n` +
             `ID de Entrega: ${subId}\n` +
-            `Equipo: ${teamName}\n` +
+            `Modalidad: ${modalityLabel}\n` +
+            `${modality === 'individual' ? 'Estudiante' : 'Equipo'}: ${teamOrStudentName}\n` +
             `Archivos procesados: ${filesData.length}\n\n` +
             `Vuestro trabajo ha sido enviado al jurado.`);
     }
@@ -498,12 +563,13 @@ function loadSubmissions() {
     }
   }
 
-  // Si no hay ninguna, creamos un par de ejemplo para visualización del jurado
+  // Si no hay ninguna, creamos un set de ejemplo que incluye equipo e individual
   if (AppState.submissions.length === 0) {
     AppState.submissions = [
       {
         id: 'SUB-104921',
         timestamp: '23/09/2026, 18:30:15',
+        modality: 'group',
         schoolId: 'col1',
         schoolName: 'Colegio 01 (Sede Local)',
         sprintId: 1,
@@ -524,6 +590,7 @@ function loadSubmissions() {
       {
         id: 'SUB-104922',
         timestamp: '23/09/2026, 19:15:40',
+        modality: 'group',
         schoolId: 'col2',
         schoolName: 'Colegio 02 (Alianza Norte)',
         sprintId: 1,
@@ -536,6 +603,27 @@ function loadSubmissions() {
         notes: 'Propuesta de cilindros concéntricos contrarrotatorios para compensar momento angular.',
         fileNames: ['Pioneer_Propuesta_Estructural.pdf'],
         targetDriveFolder: 'H:\\Mi unidad\\SPSIN COLEGIOS\\Colegio 02\\SPRINT-01',
+        status: 'Pendiente',
+        score: null,
+        rubric: null,
+        feedback: ''
+      },
+      {
+        id: 'SUB-104923',
+        timestamp: '24/09/2026, 11:20:05',
+        modality: 'individual',
+        schoolId: 'col3',
+        schoolName: 'Colegio 03 (Alianza Centro)',
+        sprintId: 1,
+        sprintName: 'Structural Engineering: El Esqueleto',
+        deptId: 'structural',
+        deptName: 'Structural Engineering',
+        teamName: '[INDIVIDUAL] Mateo Navas',
+        authors: 'Mateo Navas (4º ESO B)',
+        externalLink: '',
+        notes: 'Estudio individual comparativo de aleaciones Al-Li vs blindaje de polietileno frente a radiación cósmica (GCR).',
+        fileNames: ['Estudio_Materiales_MateoNavas.pdf'],
+        targetDriveFolder: 'H:\\Mi unidad\\SPSIN COLEGIOS\\Colegio 03\\SPRINT-01',
         status: 'Pendiente',
         score: null,
         rubric: null,
@@ -567,22 +655,29 @@ function renderJurySubmissions() {
 
   const schoolFilter = document.getElementById('juryFilterSchool') ? document.getElementById('juryFilterSchool').value : 'all';
   const sprintFilter = document.getElementById('juryFilterSprint') ? document.getElementById('juryFilterSprint').value : 'all';
+  const modalityFilter = document.getElementById('juryFilterModality') ? document.getElementById('juryFilterModality').value : 'all';
 
   let list = AppState.submissions;
   if (schoolFilter !== 'all') list = list.filter(s => s.schoolId === schoolFilter);
   if (sprintFilter !== 'all') list = list.filter(s => s.sprintId === Number(sprintFilter));
+  if (modalityFilter !== 'all') list = list.filter(s => (s.modality || 'group') === modalityFilter);
 
   if (list.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:30px;">No hay entregas registradas con estos filtros.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:30px;">No hay entregas registradas con estos filtros.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = list.map(sub => `
     <tr>
       <td><strong>${sub.id}</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">${sub.timestamp}</span></td>
-      <td><strong>${sub.teamName}</strong><br><span style="font-size:0.8rem; color:var(--text-secondary);">${sub.schoolName}</span></td>
-      <td><span class="pill-badge">${sub.sprintName.split(':')[0]}</span></td>
-      <td>${sub.deptName.split(' ')[0]}</td>
+      <td>
+        <span class="${sub.modality === 'individual' ? 'badge-modality-indiv' : 'badge-modality-group'}">
+          ${sub.modality === 'individual' ? '👤 INDIVIDUAL' : '👥 EQUIPO'}
+        </span>
+      </td>
+      <td><strong>${sub.teamName}</strong><br><span style="font-size:0.78rem; color:var(--text-muted);">${sub.authors || ''}</span></td>
+      <td><span style="font-size:0.85rem; color:var(--text-secondary);">${sub.schoolName}</span></td>
+      <td><span class="pill-badge">${sub.sprintName.split(':')[0]}</span><br><span style="font-size:0.75rem; color:var(--text-secondary);">${sub.deptName ? sub.deptName.split(' ')[0] : ''}</span></td>
       <td>
         ${sub.fileNames.map(f => `<div style="font-size:0.8rem; color:var(--cyan-core);">📎 ${f}</div>`).join('')}
         ${sub.externalLink ? `<a href="${sub.externalLink}" target="_blank" style="font-size:0.8rem; color:var(--amber-alert); text-decoration:underline;">🔗 Enlace 3D/Slides</a>` : ''}
@@ -608,11 +703,15 @@ function openEvaluationModal(subId) {
   if (!sub) return;
 
   activeEvaluatingSubId = subId;
-  document.getElementById('modalSubTitle').textContent = `Evaluando: ${sub.teamName} (${sub.schoolName})`;
+  const modalityBadge = sub.modality === 'individual'
+    ? `<span class="badge-modality-indiv" style="margin-bottom:8px;">👤 Modalidad: Entrega Individual</span>`
+    : `<span class="badge-modality-group" style="margin-bottom:8px;">👥 Modalidad: Entrega en Equipo</span>`;
+
+  document.getElementById('modalSubTitle').innerHTML = `${modalityBadge}<br>Evaluando: ${sub.teamName} (${sub.schoolName})`;
   document.getElementById('modalSubDetails').innerHTML = `
     <strong>Sprint:</strong> ${sub.sprintName} | <strong>Departamento:</strong> ${sub.deptName}<br>
-    <strong>Integrantes:</strong> ${sub.authors || 'No especificados'}<br>
-    <strong>Notas del equipo:</strong> "${sub.notes || 'Sin notas'}"<br>
+    <strong>${sub.modality === 'individual' ? 'Estudiante y Curso' : 'Integrantes del Equipo'}:</strong> ${sub.authors || 'No especificados'}<br>
+    <strong>Notas / Resumen:</strong> "${sub.notes || 'Sin notas'}"<br>
     <strong>Registro de Misión:</strong> <span style="font-family:monospace; color:var(--cyan-core);">${sub.targetDriveFolder}</span>
   `;
 
