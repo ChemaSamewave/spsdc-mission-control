@@ -331,17 +331,17 @@ function renderSprints() {
         <div class="sprint-dept" style="color:var(--text-muted); font-size:0.82rem;">${sprint.dept}</div>
 
         <div class="sprint-unlock-box">
-          <div style="font-size:0.82rem; color:var(--amber-alert); margin-bottom:8px; font-weight:600; display:flex; align-items:center; gap:6px;">
-            <span>🔒 Clave de Desbloqueo de Google Classroom:</span>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <input type="text" id="sprintKeyInput_${sprint.id}" class="form-control" placeholder="Introduce la clave de Classroom" style="text-transform:uppercase; font-family:var(--font-hud); font-size:0.85rem; letter-spacing:1px;" onkeyup="if(event.key==='Enter') unlockSprint(${sprint.id})">
-            <button class="btn-hud btn-hud-primary" style="white-space:nowrap; padding:6px 14px; font-size:0.8rem;" onclick="unlockSprint(${sprint.id})">
+          <label for="sprintKeyInput_${sprint.id}" style="font-size:0.95rem; color:var(--amber-alert); margin-bottom:10px; font-weight:700; display:flex; align-items:center; gap:8px; letter-spacing:0.5px;">
+            <span>🔑 CLAVE DE ACCESO (GOOGLE CLASSROOM):</span>
+          </label>
+          <div style="display:flex; gap:12px; align-items:stretch; flex-wrap:wrap;">
+            <input type="text" id="sprintKeyInput_${sprint.id}" class="form-control sprint-unlock-input" placeholder="Escribe aquí la clave (ej: HERMES2026)" style="flex:1; min-width:260px;" onkeyup="if(event.key==='Enter') unlockSprint(${sprint.id})">
+            <button class="btn-hud btn-hud-primary" style="white-space:nowrap; min-height:52px; padding:0 24px; font-size:0.95rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="unlockSprint(${sprint.id})">
               🔓 Desplegar Sprint
             </button>
           </div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">
-            Tu profesor facilitará la clave oficial por Google Classroom al abrir este sprint.
+          <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:10px;">
+            ℹ️ Tu profesor facilitará la clave oficial en el tablón de Google Classroom en la fecha fijada.
           </div>
         </div>
       </div>
@@ -827,6 +827,112 @@ function showStudentLoggedInUI(student) {
   const curMod = document.getElementById('subModality') ? document.getElementById('subModality').value : 'group';
   setSubmissionModality(curMod);
   renderSprints();
+  renderStudentSubmissionsHistory();
+}
+
+// OBTENER Y RENDERIZAR ENTREGAS ANTERIORES DEL ALUMNO ACTIVO
+function getSubmissionsForActiveStudent() {
+  if (!AppState.activeStudent) return [];
+  const s = AppState.activeStudent;
+  return AppState.submissions.filter(sub => {
+    // Coincidencia por clave de alumno
+    if (sub.studentKey && sub.studentKey.toUpperCase() === s.key.toUpperCase()) return true;
+    // Coincidencia por nombre en autores o equipo
+    if (sub.authors && sub.authors.toLowerCase().includes(s.name.toLowerCase())) return true;
+    if (sub.teamName && sub.teamName.toLowerCase().includes(s.name.toLowerCase())) return true;
+    return false;
+  });
+}
+
+function renderStudentSubmissionsHistory() {
+  const container = document.getElementById('studentSubmissionsHistory');
+  if (!container) return;
+
+  const mySubs = getSubmissionsForActiveStudent();
+
+  if (mySubs.length === 0) {
+    container.innerHTML = `
+      <div style="background: rgba(15, 23, 42, 0.5); border: 1px dashed var(--border-subtle); border-radius: 8px; padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+        📭 Aún no constan entregas registradas para tu clave oficial en este dispositivo.<br>
+        <span style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 6px; display: inline-block;">
+          Cuando realices tu primer envío a través del formulario superior, quedará archivado automáticamente aquí junto con la calificación y comentarios del jurado.
+        </span>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      ${mySubs.map(sub => {
+        const isEvaluated = sub.status === 'Evaluada';
+        return `
+          <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid ${isEvaluated ? 'rgba(16,185,129,0.5)' : 'var(--border-subtle)'}; border-left: 4px solid ${isEvaluated ? 'var(--emerald-success)' : 'var(--cyan-core)'}; border-radius: 8px; padding: 18px 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span class="pill-badge" style="font-size: 0.75rem;">${sub.id}</span>
+                  <span class="${sub.modality === 'individual' ? 'badge-modality-indiv' : 'badge-modality-group'}">
+                    ${sub.modality === 'individual' ? '👤 Individual' : '👥 En Equipo'}
+                  </span>
+                  ${sub.deliverableCode ? `
+                    <span class="${sub.modality === 'individual' ? 'deliverable-tag-ind' : 'deliverable-tag-grp'}" style="font-size: 0.72rem; padding: 2px 6px;">
+                      ${sub.deliverableCode}
+                    </span>
+                  ` : ''}
+                </div>
+                <h4 style="color: #fff; margin: 8px 0 2px 0; font-size: 1.05rem;">
+                  ${sub.deliverableName || sub.sprintName}
+                </h4>
+                <div style="font-size: 0.8rem; color: var(--cyan-core);">
+                  ${sub.sprintName} • ${sub.deptName || ''}
+                </div>
+              </div>
+
+              <!-- Estado y Calificación -->
+              <div style="text-align: right;">
+                <span class="sprint-badge ${isEvaluated ? 'badge-active' : 'badge-upcoming'}" style="font-size: 0.8rem;">
+                  ${isEvaluated ? `✅ EVALUADA (${sub.score}/100)` : '⏳ PENDIENTE DE CORRECCIÓN'}
+                </span>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                  📅 ${sub.timestamp}
+                </div>
+              </div>
+            </div>
+
+            <!-- Detalles del envío -->
+            <div style="margin-top: 12px; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5; background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 6px;">
+              <div><strong>Firmantes:</strong> ${sub.authors || sub.teamName}</div>
+              ${sub.fileNames && sub.fileNames.length > 0 ? `
+                <div style="margin-top: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <strong>Archivos enviados:</strong>
+                  ${sub.fileNames.map(f => `<span style="color: var(--cyan-core); font-size: 0.8rem;">📎 ${f}</span>`).join(' • ')}
+                </div>
+              ` : ''}
+              ${sub.externalLink ? `
+                <div style="margin-top: 6px;">
+                  <strong>Enlace aportado:</strong> <a href="${sub.externalLink}" target="_blank" style="color: var(--amber-alert); text-decoration: underline;">🔗 Abrir enlace del proyecto</a>
+                </div>
+              ` : ''}
+              ${sub.notes ? `
+                <div style="margin-top: 6px; font-style: italic; color: var(--text-muted);">
+                  "${sub.notes}"
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Feedback del Jurado si está evaluada -->
+            ${isEvaluated && sub.feedback ? `
+              <div style="margin-top: 12px; background: rgba(16,185,129,0.08); border-left: 3px solid var(--emerald-success); padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 0.85rem;">
+                <strong style="color: var(--emerald-success); font-family: var(--font-hud);">💬 FEEDBACK DEL JURADO:</strong>
+                <p style="margin: 4px 0 0 0; color: #fff; line-height: 1.4;">${sub.feedback}</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
 }
 
 function showStudentLoggedOutUI() {
@@ -1134,7 +1240,10 @@ async function submitWork() {
     }
 
     renderJurySubmissions();
-    navigateTo('dashboard');
+    renderStudentSubmissionsHistory();
+    // Scroll suave hacia el expediente para que vea su entrega registrada
+    const historyEl = document.getElementById('studentSubmissionsHistory');
+    if (historyEl) historyEl.scrollIntoView({ behavior: 'smooth' });
   } catch (err) {
     console.error('Error al enviar entrega:', err);
     alert('Hubo un problema al procesar la entrega: ' + err.message);
@@ -1149,6 +1258,57 @@ async function submitWork() {
 // Persistencia de entregas
 function saveSubmissions() {
   localStorage.setItem('spsdc_submissions', JSON.stringify(AppState.submissions));
+  syncSubmissionsToServer();
+}
+
+async function syncSubmissionsToServer() {
+  try {
+    const endpoint = (window.location.origin.includes('localhost') || window.location.protocol === 'file:')
+      ? (window.location.origin.includes('localhost') ? '/api/submissions/sync' : 'http://localhost:8080/api/submissions/sync')
+      : null;
+    if (!endpoint) return;
+
+    await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(AppState.submissions)
+    });
+  } catch(e) {
+    // Modo offline / GitHub Pages
+  }
+}
+
+async function fetchSubmissionsFromServer() {
+  try {
+    const endpoint = (window.location.origin.includes('localhost') || window.location.protocol === 'file:')
+      ? (window.location.origin.includes('localhost') ? '/api/submissions' : 'http://localhost:8080/api/submissions')
+      : null;
+    if (!endpoint) return;
+
+    const res = await fetch(endpoint);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const map = new Map();
+        AppState.submissions.forEach(s => map.set(s.id, s));
+        data.forEach(s => {
+          map.set(s.id, Object.assign({}, map.get(s.id) || {}, s));
+        });
+        AppState.submissions = Array.from(map.values());
+        localStorage.setItem('spsdc_submissions', JSON.stringify(AppState.submissions));
+
+        if (AppState.activeStudent) {
+          renderStudentSubmissionsHistory();
+        }
+        if (AppState.juryAuthenticated) {
+          renderJurySubmissions();
+          renderLeaderboard();
+        }
+      }
+    }
+  } catch (e) {
+    // Offline / GitHub Pages
+  }
 }
 
 function loadSubmissions() {
@@ -1236,6 +1396,9 @@ function loadSubmissions() {
       if (sch) sub.schoolName = sch.name;
     });
   }
+
+  // Sincronizar automáticamente en segundo plano con el servidor central/Google Drive
+  fetchSubmissionsFromServer();
 }
 
 // PANEL DE JURADO (EVALUACIÓN & CENSO)

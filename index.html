@@ -421,6 +421,29 @@
           </div>
         </div>
       </div>
+
+      <!-- EXPEDIENTE DE ENTREGAS REALIZADAS POR EL ALUMNO -->
+      <div class="hud-panel" style="margin-top: 32px; border-left: 4px solid var(--cyan-core);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div>
+            <span class="section-tag">EXPEDIENTE DEL INGENIERO</span>
+            <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff; margin-top:4px;">
+              📦 Mis Entregas de Misión Realizadas
+            </h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin:4px 0 0 0;">
+              Historial de todos tus envíos registrados, archivos entregados, estado de corrección y feedback del jurado.
+            </p>
+          </div>
+          <button type="button" class="btn-hud btn-hud-secondary" style="padding:6px 14px; font-size:0.8rem;" onclick="renderStudentSubmissionsHistory()">
+            🔄 Actualizar Expediente
+          </button>
+        </div>
+
+        <div id="studentSubmissionsHistory">
+          <!-- Renderizado dinámico desde app.js -->
+        </div>
+      </div>
+
       </div><!-- /#submissionMainContent -->
     </section>
 
