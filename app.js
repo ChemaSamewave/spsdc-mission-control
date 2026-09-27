@@ -439,11 +439,15 @@ function openRfpModal(sprintId) {
   }
 
   modal.style.display = 'flex';
+  modal.classList.add('active');
 }
 
 function closeRfpModal() {
   const modal = document.getElementById('rfpModal');
-  if (modal) modal.style.display = 'none';
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
 }
 
 function downloadRfpMarkdown() {
