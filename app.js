@@ -11,6 +11,15 @@ const DEFAULT_SCHOOLS = [
   { id: 'col4', name: 'EL PRADO', shortCode: 'PRADO' }
 ];
 
+// Claves de Google Classroom para desbloqueo paulatino de cada Sprint
+const DEFAULT_SPRINT_KEYS = {
+  1: 'HERMES2026',
+  2: 'ORGANOS2026',
+  3: 'HUMAN2026',
+  4: 'ROBOTS2026',
+  5: 'COLONY2026'
+};
+
 // Estado global de la aplicación
 const AppState = {
   activeView: 'dashboard',
@@ -18,6 +27,7 @@ const AppState = {
   targetDrivePath: 'H:\\Mi unidad\\SPSIN COLEGIOS',
   cloudWebhookUrl: 'https://script.google.com/macros/s/AKfycbzozxziqZdtsx5QE_UPYEW3s_3Cc7ncfKdbaI_Ula1TF_UOUo17l5gl3cvaQd7BbOt6/exec',
   schools: JSON.parse(JSON.stringify(DEFAULT_SCHOOLS)),
+  sprintKeys: Object.assign({}, DEFAULT_SPRINT_KEYS),
   departments: [
     { id: 'structural', name: 'Structural Engineering (El Esqueleto)' },
     { id: 'operations', name: 'Operations & Infrastructure (Los Órganos)' },
@@ -152,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSchoolsConfig();
   populateSchoolDropdowns();
   loadRegisteredStudents();
+  loadSprintKeys();
   loadStudentSession();
   loadSubmissions();
   renderSprints();
@@ -226,23 +237,128 @@ function navigateTo(viewId) {
     initSimulationModule();
   }
 
+  if (viewId === 'sprints' || viewId === 'submissions') {
+    if (AppState.activeStudent) {
+      showStudentLoggedInUI(AppState.activeStudent);
+    } else {
+      showStudentLoggedOutUI();
+    }
+  }
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Renderizado dinámico de Sprints
+// GESTIÓN DE CLAVES Y DESBLOQUEO DE SPRINTS (GOOGLE CLASSROOM)
+function loadSprintKeys() {
+  const saved = localStorage.getItem('spsdc_sprint_keys');
+  if (saved) {
+    try {
+      AppState.sprintKeys = Object.assign({}, DEFAULT_SPRINT_KEYS, JSON.parse(saved));
+    } catch(e) {
+      AppState.sprintKeys = Object.assign({}, DEFAULT_SPRINT_KEYS);
+    }
+  } else {
+    AppState.sprintKeys = Object.assign({}, DEFAULT_SPRINT_KEYS);
+  }
+}
+
+function saveSprintKeys() {
+  localStorage.setItem('spsdc_sprint_keys', JSON.stringify(AppState.sprintKeys));
+}
+
+function getUnlockedSprints() {
+  try {
+    const raw = sessionStorage.getItem('spsdc_unlocked_sprints');
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) {
+    return [];
+  }
+}
+
+function unlockSprint(sprintId) {
+  const inputEl = document.getElementById(`sprintKeyInput_${sprintId}`);
+  const keyEntered = inputEl ? inputEl.value.trim().toUpperCase() : '';
+  const expectedKey = (AppState.sprintKeys[sprintId] || DEFAULT_SPRINT_KEYS[sprintId] || '').toUpperCase();
+
+  if (!keyEntered) {
+    alert('Por favor, introduce la clave facilitada por tu profesor en Google Classroom.');
+    return;
+  }
+
+  if (keyEntered !== expectedKey) {
+    alert(`❌ Clave incorrecta para el Sprint ${sprintId}.\n\nPor favor, comprueba el anuncio oficial de tu profesor en Google Classroom.`);
+    return;
+  }
+
+  const unlocked = getUnlockedSprints();
+  if (!unlocked.includes(sprintId)) {
+    unlocked.push(sprintId);
+    sessionStorage.setItem('spsdc_unlocked_sprints', JSON.stringify(unlocked));
+  }
+
+  renderSprints();
+  alert(`🔓 ¡Sprint ${sprintId} Desbloqueado y Desplegado!\n\nYa puedes revisar las especificaciones técnicas del pliego oficial (RFP), requisitos y buzón de entregas.`);
+}
+
+function lockSprint(sprintId) {
+  let unlocked = getUnlockedSprints();
+  unlocked = unlocked.filter(id => id !== sprintId);
+  sessionStorage.setItem('spsdc_unlocked_sprints', JSON.stringify(unlocked));
+  renderSprints();
+}
+
+// Renderizado dinámico de Sprints (Comprimidos por defecto · Desbloqueo por Clave de Classroom)
 function renderSprints() {
   const grid = document.getElementById('sprintsGrid');
   if (!grid) return;
 
+  const unlockedSprints = getUnlockedSprints();
+
   grid.innerHTML = AppState.sprints.map(sprint => {
+    const isUnlocked = unlockedSprints.includes(sprint.id);
     const isMercury = sprint.id === 1;
+
+    // ESTADO 1: SPRINT COMPRIMIDO (BLOQUEADO HASTA CLAVE DE CLASSROOM)
+    if (!isUnlocked) {
+      return `
+      <div class="sprint-card sprint-card-collapsed" id="sprintCard_${sprint.id}">
+        <div class="sprint-header">
+          <span class="sprint-code">${sprint.code} • ${sprint.month}</span>
+          <span class="sprint-badge badge-locked">🔒 SPRINT COMPRIMIDO</span>
+        </div>
+        
+        <h3 class="sprint-title" style="margin: 6px 0 2px 0;">${sprint.title}</h3>
+        <div class="sprint-dept" style="color:var(--text-muted); font-size:0.82rem;">${sprint.dept}</div>
+
+        <div class="sprint-unlock-box">
+          <div style="font-size:0.82rem; color:var(--amber-alert); margin-bottom:8px; font-weight:600; display:flex; align-items:center; gap:6px;">
+            <span>🔒 Clave de Desbloqueo de Google Classroom:</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="sprintKeyInput_${sprint.id}" class="form-control" placeholder="Introduce la clave de Classroom" style="text-transform:uppercase; font-family:var(--font-hud); font-size:0.85rem; letter-spacing:1px;" onkeyup="if(event.key==='Enter') unlockSprint(${sprint.id})">
+            <button class="btn-hud btn-hud-primary" style="white-space:nowrap; padding:6px 14px; font-size:0.8rem;" onclick="unlockSprint(${sprint.id})">
+              🔓 Desplegar Sprint
+            </button>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">
+            Tu profesor facilitará la clave oficial por Google Classroom al abrir este sprint.
+          </div>
+        </div>
+      </div>
+      `;
+    }
+
+    // ESTADO 2: SPRINT DESPLEGADO / DESBLOQUEADO
     return `
-    <div class="sprint-card" style="${isMercury ? 'border-color: rgba(6,182,212,0.5); box-shadow: 0 0 25px rgba(6,182,212,0.15);' : ''}">
+    <div class="sprint-card" id="sprintCard_${sprint.id}" style="${isMercury ? 'border-color: rgba(6,182,212,0.5); box-shadow: 0 0 25px rgba(6,182,212,0.15);' : ''}">
       <div class="sprint-header">
         <span class="sprint-code">${sprint.code} • ${sprint.month}</span>
-        <span class="sprint-badge ${sprint.status === 'active' ? 'badge-active' : 'badge-upcoming'}">
-          ${sprint.status === 'active' ? '⚡ ACTIVO' : 'PRÓXIMO'}
-        </span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="sprint-badge badge-active">🔓 DESPLEGADO</span>
+          <button class="btn-hud btn-hud-secondary" style="padding:2px 8px; font-size:0.7rem;" onclick="lockSprint(${sprint.id})" title="Volver a comprimir">
+            🔒 Comprimir
+          </button>
+        </div>
       </div>
 
       ${sprint.planet ? `<div class="rfp-badge-planet">${sprint.planet}</div>` : ''}
@@ -266,7 +382,7 @@ function renderSprints() {
           <!-- Entregas Individuales -->
           <div style="margin-bottom:10px;">
             <div style="font-size:0.75rem; color:var(--cyan-core); font-weight:700; margin-bottom:4px;">
-              👤 ENTREGAS INDIVIDUALES (Física & Materiales):
+              👤 ENTREGAS INDIVIDUALES (Física, Materiales & Vídeo en Inglés):
             </div>
             ${(sprint.deliverables.individual || []).map(ind => `
               <div style="margin-bottom:6px; background:rgba(6,182,212,0.04); border-left:3px solid var(--cyan-core); padding:6px 8px; border-radius:0 4px 4px 0;">
@@ -605,9 +721,12 @@ function updateDeliverableOptions() {
   }
 }
 
-// CONTROL DE ACCESO POR CLAVE DE ALUMNO (BUZÓN DE ENTREGA)
+// CONTROL DE ACCESO POR CLAVE DE ALUMNO (BUZÓN DE ENTREGA Y SPRINTS)
 function loadStudentSession() {
-  const saved = localStorage.getItem('spsdc_student_session');
+  // Limpiar cualquier residuo permanente en localStorage para que no quede abierta la sesión
+  localStorage.removeItem('spsdc_student_session');
+
+  const saved = sessionStorage.getItem('spsdc_student_session');
   if (saved) {
     try {
       const student = JSON.parse(saved);
@@ -618,15 +737,22 @@ function loadStudentSession() {
         return;
       }
     } catch (e) {
-      localStorage.removeItem('spsdc_student_session');
+      sessionStorage.removeItem('spsdc_student_session');
     }
   }
   showStudentLoggedOutUI();
 }
 
+function loginStudentFromSprints() {
+  const inputEl = document.getElementById('sprintsStudentKeyInput');
+  const key = inputEl ? inputEl.value : '';
+  loginStudentWithKey(key);
+}
+
 function loginStudentWithKey(keyParam) {
   const inputEl = document.getElementById('studentKeyInput');
-  const rawKey = keyParam || (inputEl ? inputEl.value : '');
+  const sprintsInputEl = document.getElementById('sprintsStudentKeyInput');
+  const rawKey = keyParam || (inputEl && inputEl.value ? inputEl.value : (sprintsInputEl ? sprintsInputEl.value : ''));
   const cleanKey = (rawKey || '').trim().toUpperCase();
 
   if (!cleanKey) {
@@ -636,7 +762,7 @@ function loginStudentWithKey(keyParam) {
 
   let student = AppState.registeredStudents.find(s => s.key.toUpperCase() === cleanKey);
   
-  // Soporte de alias retrocompatible (ej: si introducen ALU-COL1-01 busca el alumno de col1 correspondiente)
+  // Soporte de alias retrocompatible
   if (!student) {
     if (cleanKey.includes('COL1-01') || cleanKey.includes('ANDEL-01')) student = AppState.registeredStudents.find(s => s.schoolId === 'col1');
     else if (cleanKey.includes('COL2-01') || cleanKey.includes('FUEN-01')) student = AppState.registeredStudents.find(s => s.schoolId === 'col2');
@@ -650,7 +776,8 @@ function loginStudentWithKey(keyParam) {
   }
 
   AppState.activeStudent = student;
-  localStorage.setItem('spsdc_student_session', JSON.stringify(student));
+  // Guardar exclusivamente en sessionStorage (se destruye al cerrar la pestaña o el navegador)
+  sessionStorage.setItem('spsdc_student_session', JSON.stringify(student));
   showStudentLoggedInUI(student);
 
   alert(`🚀 ¡Identificación exitosa!\n\nBienvenido/a, ${student.name}.\nColegio: ${student.schoolName}\nCurso: ${student.grade}\n\nTus datos individuales ya están preconfigurados.`);
@@ -658,11 +785,16 @@ function loginStudentWithKey(keyParam) {
 
 function logoutStudent() {
   AppState.activeStudent = null;
+  sessionStorage.removeItem('spsdc_student_session');
+  sessionStorage.removeItem('spsdc_unlocked_sprints');
   localStorage.removeItem('spsdc_student_session');
   showStudentLoggedOutUI();
+  renderSprints();
+  alert('🔒 Sesión cerrada correctamente.\nTodos tus accesos y datos locales han sido desvinculados.');
 }
 
 function showStudentLoggedInUI(student) {
+  // Buzón de entrega
   const gate = document.getElementById('studentGatePanel');
   const mainContent = document.getElementById('submissionMainContent');
   const nameEl = document.getElementById('bannerStudentName');
@@ -680,11 +812,25 @@ function showStudentLoggedInUI(student) {
     schoolSelect.disabled = true;
   }
 
+  // Vista de Sprints
+  const sprintsGate = document.getElementById('sprintsGatePanel');
+  const sprintsMain = document.getElementById('sprintsMainContent');
+  const bannerSprintsName = document.getElementById('bannerSprintsStudentName');
+  const bannerSprintsInfo = document.getElementById('bannerSprintsStudentInfo');
+
+  if (sprintsGate) sprintsGate.style.display = 'none';
+  if (sprintsMain) sprintsMain.style.display = 'block';
+
+  if (bannerSprintsName) bannerSprintsName.textContent = student.name;
+  if (bannerSprintsInfo) bannerSprintsInfo.textContent = `${student.schoolName} • ${student.grade} • Clave Oficial: ${student.key}`;
+
   const curMod = document.getElementById('subModality') ? document.getElementById('subModality').value : 'group';
   setSubmissionModality(curMod);
+  renderSprints();
 }
 
 function showStudentLoggedOutUI() {
+  // Buzón de entrega
   const gate = document.getElementById('studentGatePanel');
   const mainContent = document.getElementById('submissionMainContent');
   const schoolSelect = document.getElementById('subSchool');
@@ -694,6 +840,15 @@ function showStudentLoggedOutUI() {
   if (mainContent) mainContent.style.display = 'none';
   if (schoolSelect) schoolSelect.disabled = false;
   if (inputKey) inputKey.value = '';
+
+  // Vista de Sprints
+  const sprintsGate = document.getElementById('sprintsGatePanel');
+  const sprintsMain = document.getElementById('sprintsMainContent');
+  const sprintsKeyInput = document.getElementById('sprintsStudentKeyInput');
+
+  if (sprintsGate) sprintsGate.style.display = 'block';
+  if (sprintsMain) sprintsMain.style.display = 'none';
+  if (sprintsKeyInput) sprintsKeyInput.value = '';
 }
 
 function handleSprintSelectionChange() {
@@ -1101,16 +1256,22 @@ function unlockJury() {
 
 // Navegación interna entre pestañas del panel de Jurado
 function switchJurySubTab(tabName) {
-  const tabs = ['eval', 'students', 'leaderboard'];
+  const tabs = [
+    { id: 'eval', btn: 'tabBtnEval', container: 'subtabJuryEval' },
+    { id: 'students', btn: 'tabBtnStudents', container: 'subtabJuryStudents' },
+    { id: 'leaderboard', btn: 'tabBtnLeaderboard', container: 'subtabJuryLeaderboard' },
+    { id: 'sprintkeys', btn: 'tabBtnSprintKeys', container: 'subtabJurySprintKeys' }
+  ];
+
   tabs.forEach(t => {
-    const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
-    const container = document.getElementById(`subtabJury${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    const btn = document.getElementById(t.btn);
+    const container = document.getElementById(t.container);
     if (btn) {
-      if (t === tabName) btn.classList.add('active');
+      if (t.id === tabName) btn.classList.add('active');
       else btn.classList.remove('active');
     }
     if (container) {
-      container.style.display = (t === tabName) ? 'block' : 'none';
+      container.style.display = (t.id === tabName) ? 'block' : 'none';
     }
   });
 
@@ -1120,7 +1281,70 @@ function switchJurySubTab(tabName) {
     renderJurySubmissions();
   } else if (tabName === 'leaderboard') {
     renderLeaderboard();
+  } else if (tabName === 'sprintkeys') {
+    renderJurySprintKeys();
   }
+}
+
+// Renderizado de Claves de Google Classroom para los Profesores
+function renderJurySprintKeys() {
+  const container = document.getElementById('sprintKeysListContainer');
+  if (!container) return;
+
+  container.innerHTML = AppState.sprints.map(sprint => {
+    const currentKey = AppState.sprintKeys[sprint.id] || DEFAULT_SPRINT_KEYS[sprint.id] || `SPRINT-${sprint.id}`;
+    return `
+      <div style="background:rgba(15,23,42,0.8); border:1px solid var(--border-subtle); border-radius:8px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+        <div style="max-width:400px;">
+          <span class="pill-badge" style="margin-bottom:6px;">${sprint.code} • ${sprint.month}</span>
+          <div style="font-weight:700; color:#fff; font-size:1.05rem;">${sprint.title}</div>
+          <div style="font-size:0.8rem; color:var(--cyan-core); margin-top:2px;">${sprint.dept}</div>
+        </div>
+
+        <div style="display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap;">
+          <div>
+            <label style="display:block; font-size:0.75rem; color:var(--amber-alert); font-weight:700; margin-bottom:4px; letter-spacing:0.5px;">
+              CLAVE CLASSROOM (PARA LOS ALUMNOS):
+            </label>
+            <input type="text" id="adminSprintKey_${sprint.id}" class="form-control" value="${currentKey}" style="width:180px; font-family:var(--font-hud); letter-spacing:2px; text-transform:uppercase; text-align:center; font-weight:700; font-size:0.95rem;">
+          </div>
+          <button class="btn-hud btn-hud-primary" style="padding:10px 14px; font-size:0.82rem;" onclick="copySprintKey(${sprint.id})">
+            📋 Copiar para Classroom
+          </button>
+          <button class="btn-hud btn-hud-secondary" style="padding:10px 14px; font-size:0.82rem;" onclick="saveSingleSprintKey(${sprint.id})">
+            💾 Guardar Clave
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function copySprintKey(sprintId) {
+  const input = document.getElementById(`adminSprintKey_${sprintId}`);
+  const key = input ? input.value.trim().toUpperCase() : (AppState.sprintKeys[sprintId] || '');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(key).then(() => {
+      alert(`📋 ¡Clave copiada con éxito!\n\nClave del Sprint ${sprintId}: "${key}"\n\nYa puedes pegarla en el tablón de Google Classroom para tus alumnos.`);
+    }).catch(() => {
+      alert(`Clave del Sprint ${sprintId}: ${key}`);
+    });
+  } else {
+    alert(`Clave del Sprint ${sprintId}: ${key}`);
+  }
+}
+
+function saveSingleSprintKey(sprintId) {
+  const input = document.getElementById(`adminSprintKey_${sprintId}`);
+  const key = input ? input.value.trim().toUpperCase() : '';
+  if (!key) {
+    alert('La clave no puede estar vacía.');
+    return;
+  }
+  AppState.sprintKeys[sprintId] = key;
+  saveSprintKeys();
+  renderSprints();
+  alert(`💾 Clave del Sprint ${sprintId} actualizada a "${key}".`);
 }
 
 // GESTIÓN Y CONFIGURACIÓN DINÁMICA DE COLEGIOS

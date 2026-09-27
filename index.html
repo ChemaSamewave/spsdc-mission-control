@@ -171,16 +171,53 @@
 
     <!-- VISTA 2: SPRINTS Y BRIEFINGS TÉCNICOS -->
     <section id="sprints" class="view-section">
-      <div class="section-header">
-        <div class="section-tag">HOJA DE RUTA ACADÉMICA</div>
-        <h2 class="section-title">Calendario de Sprints (Septiembre a Diciembre)</h2>
-        <p class="section-subtitle">
-          Cada sprint entrena a los alumnos en un departamento clave de la competición, garantizando una preparación completa para la simulación final.
+      <!-- PASARELA DE ACCESO POR CLAVE DE ALUMNO (GATE SPRINTS) -->
+      <div id="sprintsGatePanel" class="hud-panel jury-gate">
+        <div style="font-size:3rem; margin-bottom:12px;">🔑</div>
+        <h3 style="font-family:var(--font-hud); font-size:1.4rem; color:#fff; margin-bottom:8px;">
+          Acceso al Área de Sprints y Pliegos Técnicos
+        </h3>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px; max-width:500px; margin-left:auto; margin-right:auto;">
+          Para consultar los briefings de misión, pliegos oficiales (RFP) y requisitos de cada sprint, introduce tu clave personal de alumno participante.
         </p>
+        <div class="form-group" style="max-width:320px; margin:0 auto 16px auto;">
+          <input type="text" id="sprintsStudentKeyInput" class="form-control" style="text-align:center; font-family:var(--font-hud); font-size:1.15rem; letter-spacing:2px; text-transform:uppercase;" placeholder="Introduce tu clave personal" autocomplete="off" onkeyup="if(event.key==='Enter') loginStudentFromSprints()">
+        </div>
+        <button class="btn-hud btn-hud-primary" style="width:100%; max-width:320px; margin:0 auto; justify-content:center;" onclick="loginStudentFromSprints()">
+          🚀 Validar Clave y Ver Sprints
+        </button>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:16px;">
+          ¿No tienes clave? Pídesela al profesor coordinador de tu colegio.
+        </div>
       </div>
 
-      <div class="sprints-grid" id="sprintsGrid">
-        <!-- Renderizado dinámico desde app.js -->
+      <!-- CONTENIDO DE SPRINTS (VISIBLE TRAS IDENTIFICACIÓN) -->
+      <div id="sprintsMainContent" style="display:none;">
+        <div id="sprintsActiveBanner" class="hud-panel" style="margin-bottom:20px; background:rgba(6,182,212,0.08); border-color:var(--cyan-core); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="font-size:2rem;">👨‍🚀</div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--cyan-core); font-weight:700; letter-spacing:1px;">INGENIERO PARTICIPANTE ACTIVO</div>
+              <div style="font-size:1.15rem; color:#fff; font-weight:700;" id="bannerSprintsStudentName">Cargando...</div>
+              <div style="font-size:0.82rem; color:var(--text-secondary);" id="bannerSprintsStudentInfo">...</div>
+            </div>
+          </div>
+          <button type="button" class="btn-hud btn-hud-secondary" style="padding:6px 14px; font-size:0.75rem;" onclick="logoutStudent()">
+            🔒 Cerrar Sesión / Salir
+          </button>
+        </div>
+
+        <div class="section-header">
+          <div class="section-tag">HOJA DE RUTA ACADÉMICA</div>
+          <h2 class="section-title">Calendario de Sprints (Septiembre a Diciembre)</h2>
+          <p class="section-subtitle">
+            Los sprints se encuentran comprimidos para avanzar al ritmo del curso. Introduce la clave proporcionada por tu profesor en Google Classroom para desplegar el sprint activo y acceder al pliego técnico (RFP).
+          </p>
+        </div>
+
+        <div class="sprints-grid" id="sprintsGrid">
+          <!-- Renderizado dinámico desde app.js -->
+        </div>
       </div>
     </section>
 
@@ -646,6 +683,9 @@
           <button class="subnav-tab" id="tabBtnLeaderboard" onclick="switchJurySubTab('leaderboard')">
             🏆 Ranking por Colegios
           </button>
+          <button class="subnav-tab" id="tabBtnSprintKeys" onclick="switchJurySubTab('sprintkeys')">
+            🔑 Claves Classroom (Sprints)
+          </button>
         </div>
 
         <!-- SUBTAB 1: EVALUACIÓN DE ENTREGAS -->
@@ -891,6 +931,27 @@
                 <!-- Renderizado dinámico -->
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- SUBTAB 4: CLAVES DE DESBLOQUEO DE SPRINTS PARA CLASSROOM -->
+        <div id="subtabJurySprintKeys" style="display:none;">
+          <div class="hud-panel" style="border-left: 4px solid var(--amber-alert);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+              <div>
+                <span class="section-tag">CONTROL DE ACCESO TEMPORAL</span>
+                <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:#fff; margin-top:4px;">
+                  🔑 Claves de Desbloqueo de Sprints para Google Classroom
+                </h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin:6px 0 0 0;">
+                  Para evitar que los alumnos adelanten trabajo, cada sprint aparece comprimido en la plataforma. Copia la clave del sprint que toque y compártela con tus alumnos a través de Google Classroom cuando comience el periodo lectivo correspondiente.
+                </p>
+              </div>
+            </div>
+
+            <div id="sprintKeysListContainer" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+              <!-- Renderizado dinámico desde app.js -->
+            </div>
           </div>
         </div>
       </div>

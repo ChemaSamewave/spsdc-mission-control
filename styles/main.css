@@ -1368,3 +1368,41 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* SPRINTS COMPRIMIDOS / BLOQUEADOS POR CLAVE */
+.sprint-card-collapsed {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px dashed rgba(148, 163, 184, 0.35);
+  padding: 20px 24px;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.sprint-card-collapsed:hover {
+  border-color: var(--amber-alert);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.12);
+  transform: translateY(-2px);
+}
+
+.badge-locked {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  font-family: var(--font-hud);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.sprint-unlock-box {
+  background: rgba(12, 17, 29, 0.85);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius-hud);
+  padding: 14px 18px;
+  margin-top: 10px;
+  transition: all 0.25s ease;
+}
+
+.sprint-unlock-box:focus-within {
+  border-color: var(--amber-alert);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+}
+
