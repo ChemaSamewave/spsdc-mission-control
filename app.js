@@ -335,7 +335,7 @@ function renderSprints() {
             <span>🔑 CLAVE DE ACCESO (GOOGLE CLASSROOM):</span>
           </label>
           <div style="display:flex; gap:12px; align-items:stretch; flex-wrap:wrap;">
-            <input type="text" id="sprintKeyInput_${sprint.id}" class="form-control sprint-unlock-input" placeholder="Escribe aquí la clave (ej: HERMES2026)" style="flex:1; min-width:260px;" onkeyup="if(event.key==='Enter') unlockSprint(${sprint.id})">
+            <input type="text" id="sprintKeyInput_${sprint.id}" class="form-control sprint-unlock-input" placeholder="Escribe aquí la clave" style="flex:1; min-width:260px;" onkeyup="if(event.key==='Enter') unlockSprint(${sprint.id})">
             <button class="btn-hud btn-hud-primary" style="white-space:nowrap; min-height:52px; padding:0 24px; font-size:0.95rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:8px;" onclick="unlockSprint(${sprint.id})">
               🔓 Desplegar Sprint
             </button>
