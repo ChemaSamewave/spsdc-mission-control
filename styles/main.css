@@ -1277,3 +1277,94 @@ body {
   align-items: center;
   gap: 6px;
 }
+
+/* RFP Y ENTREGABLES ESPECÍFICOS DE SPRINT */
+.rfp-badge-planet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  font-family: var(--font-hud);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.deliverables-container {
+  background: rgba(12, 17, 29, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 14px;
+  margin: 12px 0;
+}
+
+.deliverable-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.6);
+  margin-bottom: 8px;
+  border-left: 3px solid var(--border-subtle);
+}
+
+.deliverable-item:last-child {
+  margin-bottom: 0;
+}
+
+.deliverable-item.indiv {
+  border-left-color: #c084fc;
+}
+
+.deliverable-item.group {
+  border-left-color: var(--cyan-core);
+}
+
+.deliverable-tag-ind {
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 4px;
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.deliverable-tag-grp {
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--cyan-core);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 4px;
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.rfp-clause {
+  background: rgba(15, 23, 42, 0.8);
+  border-left: 3px solid var(--cyan-core);
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.88rem;
+}
+
+.rfp-clause-code {
+  font-family: var(--font-hud);
+  color: var(--cyan-core);
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.rfp-shall {
+  color: #f87171;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+

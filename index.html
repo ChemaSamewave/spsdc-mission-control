@@ -25,7 +25,7 @@
   <div class="top-status-bar">
     <div class="status-indicator">
       <div class="pulse-dot"></div>
-      <span>MISIÓN: <strong>OPERACIÓN ÓRBITA 2026</strong> • SISTEMA OPERATIVO ACTIVO</span>
+      <span>MISIÓN: <strong>PROYECTO MERCURIO 2026 (HERMES-1)</strong> • SISTEMA OPERATIVO ACTIVO</span>
     </div>
     <div class="clock-group">
       <div class="clock-item">UTC: <span id="utcClock">00:00:00</span></div>
@@ -37,10 +37,10 @@
   <!-- 2. CABECERA PRINCIPAL Y MENÚ DE NAVEGACIÓN -->
   <header class="mission-header">
     <div class="brand-wrapper">
-      <div class="logo-badge">🛰️ SPSDC</div>
+      <div class="logo-badge">🪐 SPSDC</div>
       <div class="brand-text">
         <h1>MISSION <span>CONTROL</span></h1>
-        <p>Centro de Entrenamiento y Gestión Intercolegial • 4 Colegios</p>
+        <p>Centro de Entrenamiento Intercolegial • Desafío Planeta Mercurio 2026</p>
       </div>
     </div>
 
@@ -64,12 +64,12 @@
         <div class="hero-main">
           <div>
             <div class="hero-badge-row">
-              <span class="pill-badge">FASE CLASIFICATORIA LOCAL</span>
+              <span class="pill-badge">DESTINO: PLANETA MERCURIO</span>
               <span class="pill-badge amber">120 ALUMNOS • 4 COLEGIOS</span>
             </div>
-            <h2>OPERACIÓN ÓRBITA:<br>Rumbo a la <span>SPSDC 2026</span></h2>
+            <h2>MISIÓN MERCURIO 2026:<br>Asentamiento <span>HERMES-1</span></h2>
             <p>
-              Plataforma de alta fidelidad para el entrenamiento de los 4 colegios aliados. A través de 4 sprints técnicos y una gran simulación intercolegial en diciembre, los estudiantes diseñarán asentamientos y vehículos espaciales con estándares de ingeniería de la NASA y la ESA.
+              Entrenamiento intercolegial para la Spanish Space Design Competition (SPSDC). Los alumnos de <strong>ANDEL, FUENLLANA, J.H. NEWMAN y EL PRADO</strong> diseñarán la primera estación y base permanente en las condiciones extremas de Mercurio: radiación de 9.1 kW/m², gradientes térmicos de -180 °C a +430 °C, blindaje pasivo y gravedad artificial rotatoria.
             </p>
           </div>
           <div class="hero-cta-row">
@@ -270,14 +270,27 @@
 
               <div class="form-group">
                 <label class="form-label" for="subSprint">Sprint a Entregar</label>
-                <select id="subSprint" class="form-control" required>
-                  <option value="1">Sprint 1: Structural Engineering (El Esqueleto)</option>
-                  <option value="2">Sprint 2: Operations & Infrastructure (Los Órganos)</option>
-                  <option value="3">Sprint 3: Human Factors & Safety (La Vida)</option>
-                  <option value="4">Sprint 4: Automation, Robotics & Business</option>
-                  <option value="5">Sprint 5: Gran Simulación de Diciembre</option>
+                <select id="subSprint" class="form-control" required onchange="handleSprintSelectionChange()">
+                  <option value="1">Sprint 1: Structural Engineering (El Esqueleto · Mercurio)</option>
+                  <option value="2">Sprint 2: Operations & Infrastructure (Los Órganos · Mercurio)</option>
+                  <option value="3">Sprint 3: Human Factors & Safety (La Vida · Mercurio)</option>
+                  <option value="4">Sprint 4: Automation, Robotics & Mining (El Negocio)</option>
+                  <option value="5">Sprint 5: Gran Simulación Final (4 Compañías)</option>
                 </select>
               </div>
+            </div>
+
+            <!-- SELECTOR ESPECÍFICO DEL ENTREGABLE RFP -->
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label class="form-label" for="subDeliverableType" style="color:var(--amber-alert); font-weight:700;">
+                Entregable Específico del RFP *
+              </label>
+              <select id="subDeliverableType" class="form-control" required>
+                <!-- Se actualiza dinámicamente -->
+              </select>
+              <small id="deliverableHint" style="display:block; margin-top:5px; font-size:0.8rem; color:var(--text-muted);">
+                Selecciona si entregas la parte individual (Física o Materiales) o la propuesta grupal del colegio.
+              </small>
             </div>
 
             <div class="form-row-2">
@@ -948,6 +961,37 @@
       <div style="display:flex; justify-content:flex-end; gap:12px;">
         <button class="btn-hud btn-hud-secondary" onclick="closeEvaluationModal()">Cancelar</button>
         <button class="btn-hud btn-hud-primary" onclick="saveEvaluation()">💾 Guardar Evaluación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE VISUALIZACIÓN RFP (ESPECIFICACIONES DE LICITACIÓN) -->
+  <div id="rfpModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 860px; max-height: 88vh; padding: 28px 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; border-bottom:1px solid var(--border-subtle); padding-bottom:12px;">
+        <div>
+          <span class="section-tag">DOCUMENTO OFICIAL DE LICITACIÓN</span>
+          <h3 style="font-family:var(--font-hud); font-size:1.3rem; color:var(--cyan-core); margin-top:4px;" id="rfpModalTitle">
+            REQUEST FOR PROPOSAL (RFP) · SPRINT 01
+          </h3>
+          <span style="font-size:0.8rem; color:var(--amber-alert);" id="rfpModalSubtitle">
+            Contract FS-M01 · Foundation Society · Destino: Planeta Mercurio
+          </span>
+        </div>
+        <button class="btn-hud btn-hud-secondary" style="padding:4px 10px; font-size:1rem;" onclick="closeRfpModal()">✕</button>
+      </div>
+
+      <div id="rfpModalBody" style="font-size:0.9rem; line-height:1.6; color:var(--text-primary); max-height:calc(88vh - 160px); overflow-y:auto; padding-right:10px;">
+        <!-- Inyectado dinámicamente desde app.js -->
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid var(--border-subtle);">
+        <button class="btn-hud btn-hud-secondary" onclick="downloadRfpMarkdown()">
+          📥 Descargar Documento RFP (.md)
+        </button>
+        <button class="btn-hud btn-hud-primary" onclick="closeRfpModal(); prepareSubmissionFor(1);">
+          📤 Ir al Buzón de Entrega de este Sprint
+        </button>
       </div>
     </div>
   </div>

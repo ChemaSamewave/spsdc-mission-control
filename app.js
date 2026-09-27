@@ -29,19 +29,42 @@ const AppState = {
     {
       id: 1,
       code: 'SPRINT-01',
-      month: 'SEPTIEMBRE',
-      title: 'Structural Engineering: El Esqueleto',
-      dept: 'Estructura & Materiales',
+      month: 'SEPTIEMBRE / OCTUBRE',
+      planet: '🪐 DESTINO: PLANETA MERCURIO (HERMES-1)',
+      title: 'Structural Engineering: El Esqueleto (Estación en Mercurio)',
+      dept: 'Estructura & Materiales · Contrato FS-M01',
       status: 'active',
-      deadline: '2025-10-05',
-      summary: 'Diseño geométrico de la estación espacial, cálculo de gravedad artificial por rotación, dimensionamiento del casco y blindaje pasivo.',
+      deadline: '2026-10-15',
+      summary: 'Diseño estructural de la primera estación orbital y asentamiento en el planeta Mercurio. Retos: radiación solar masiva (9.1 kW/m²), gradientes térmicos (-180°C a +430°C), gravedad artificial rotatoria (0.9-1.0 G) y escudo solar pasivo (Sunshield).',
+      deliverables: {
+        individual: [
+          {
+            code: 'IND-1A',
+            title: 'Memoria de Cálculo: Gravedad Artificial y Efecto Coriolis en Mercurio',
+            desc: 'Cálculo de radio (r) y velocidad angular (ω) para 0.9-1.0 G, verificación de límite de cinetosis (< 3 rpm) y gradiente cabeza-pies (< 12%).'
+          },
+          {
+            code: 'IND-1B',
+            title: 'Ficha Técnica: Casco Multicapa y Blindaje Térmico/Radiológico frente al Sol',
+            desc: 'Selección de aleaciones del casco (Al-Li, Titanio), escudo térmico reflectante (+430°C), escudo Whipple y blindaje de protones solares.'
+          }
+        ],
+        group: [
+          {
+            code: 'GRP-1',
+            title: 'Propuesta Estructural Completa por Colegio (ANDEL, FUENLLANA, NEWMAN, EL PRADO)',
+            desc: 'Trabajo conjunto de los alumnos de cada colegio (2-5 alumnos): planos o modelo 3D (TinkerCAD/Blender), escudo solar parasol, distribución de cubiertas y memoria técnica unificada (3-6 págs).'
+          }
+        ]
+      },
       reqs: [
-        'Selección de geometría justificada (Toroide, Cilindro, Esfera o Mancuerna).',
-        'Cálculo de gravedad artificial centrípeta (a = ω²·r) demostrando ~1.0 G.',
-        'Velocidad de rotación inferior a 4 rpm para evitar cinetosis (mareo Coriolis).',
-        'Espesor de casco y materiales (Al-Li, Titanio, Polietileno / Regolito).'
+        'Geometría macroestructural justificada (Toroide, Mancuerna, Cilindros) y dimensiones.',
+        'Escudo solar parasol (Sunshield pasivo) frente a la radiación directa de Mercurio (9.1 kW/m²).',
+        'Cálculo riguroso de gravedad centrípeta (a = ω²·r) entre 0.85 G y 1.0 G con rotación < 3 rpm.',
+        'Despiece del casco multicapa contra gradientes de -180°C a +430°C y tormentas solares.',
+        'Entrega individual obligatoria (IND-1A o IND-1B) y Entrega grupal unificada del colegio (GRP-1).'
       ],
-      sampleDoc: 'Propuesta CONDOR COMPANY 2025 (pág 4-12)'
+      sampleDoc: 'RFP Oficial M01 · Structural Design (Secciones S1, S2, S4)'
     },
     {
       id: 2,
@@ -127,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadStudentSession();
   loadSubmissions();
   renderSprints();
+  updateDeliverableOptions();
   setupEventListeners();
   initCalculators();
   initSimulationModule();
@@ -205,39 +229,230 @@ function renderSprints() {
   const grid = document.getElementById('sprintsGrid');
   if (!grid) return;
 
-  grid.innerHTML = AppState.sprints.map(sprint => `
-    <div class="sprint-card">
+  grid.innerHTML = AppState.sprints.map(sprint => {
+    const isMercury = sprint.id === 1;
+    return `
+    <div class="sprint-card" style="${isMercury ? 'border-color: rgba(6,182,212,0.5); box-shadow: 0 0 25px rgba(6,182,212,0.15);' : ''}">
       <div class="sprint-header">
         <span class="sprint-code">${sprint.code} • ${sprint.month}</span>
         <span class="sprint-badge ${sprint.status === 'active' ? 'badge-active' : 'badge-upcoming'}">
           ${sprint.status === 'active' ? '⚡ ACTIVO' : 'PRÓXIMO'}
         </span>
       </div>
+
+      ${sprint.planet ? `<div class="rfp-badge-planet">${sprint.planet}</div>` : ''}
+
       <h3 class="sprint-title">${sprint.title}</h3>
       <div class="sprint-dept">${sprint.dept}</div>
-      <div style="display:flex; align-items:center; gap:8px; margin: 6px 0 10px 0;">
-        ${sprint.id === 5 
-          ? `<span class="badge-modality-group">🤝 Grandes Compañías (30 alumnos)</span>`
-          : `<span class="badge-modality-group">👥 En Equipo</span> <span class="badge-modality-indiv">👤 Individual</span>`}
+      
+      <div style="display:flex; align-items:center; gap:8px; margin: 6px 0 10px 0; flex-wrap:wrap;">
+        <span class="badge-modality-group">👥 En Equipo (Mismo Colegio)</span> 
+        <span class="badge-modality-indiv">👤 Individual</span>
       </div>
+
       <p class="sprint-desc">${sprint.summary}</p>
       
-      <div class="sprint-requirements">
-        <strong>📋 REQUISITOS DEL ENTREGABLE:</strong>
-        <ul>
-          ${sprint.reqs.map(r => `<li>${r}</li>`).join('')}
-        </ul>
+      ${sprint.deliverables ? `
+        <div class="sprint-deliverables-container">
+          <strong style="color:var(--text-primary); font-size:0.82rem; display:block; margin-bottom:8px; font-family:var(--font-hud);">
+            📦 ENTREGABLES FORMALES REQUERIDOS:
+          </strong>
+
+          <!-- Entregas Individuales -->
+          <div style="margin-bottom:10px;">
+            <div style="font-size:0.75rem; color:var(--cyan-core); font-weight:700; margin-bottom:4px;">
+              👤 ENTREGAS INDIVIDUALES (Física & Materiales):
+            </div>
+            ${(sprint.deliverables.individual || []).map(ind => `
+              <div style="margin-bottom:6px; background:rgba(6,182,212,0.04); border-left:3px solid var(--cyan-core); padding:6px 8px; border-radius:0 4px 4px 0;">
+                <span class="deliverable-tag-ind">${ind.code}</span>
+                <span style="font-size:0.8rem; font-weight:600; color:var(--text-primary);">${ind.title}</span>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${ind.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Entrega Grupal por Colegio -->
+          <div>
+            <div style="font-size:0.75rem; color:var(--emerald-success); font-weight:700; margin-bottom:4px;">
+              👥 ENTREGA GRUPAL POR COLEGIO (2-5 alumnos):
+            </div>
+            ${(sprint.deliverables.group || []).map(grp => `
+              <div style="background:rgba(16,185,129,0.05); border-left:3px solid var(--emerald-success); padding:6px 8px; border-radius:0 4px 4px 0;">
+                <span class="deliverable-tag-grp">${grp.code}</span>
+                <span style="font-size:0.8rem; font-weight:600; color:var(--text-primary);">${grp.title}</span>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">${grp.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : `
+        <div class="sprint-requirements">
+          <strong>📋 REQUISITOS DEL ENTREGABLE:</strong>
+          <ul>
+            ${sprint.reqs ? sprint.reqs.map(r => `<li>${r}</li>`).join('') : ''}
+          </ul>
+        </div>
+      `}
+
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-top:auto; margin-bottom:12px;">
+        <strong>Doc. contractual de referencia:</strong> ${sprint.sampleDoc || 'Contract FS-M01'}
       </div>
 
-      <div style="font-size:0.8rem; color:var(--text-muted); margin-top:auto;">
-        <strong>Doc. de referencia:</strong> ${sprint.sampleDoc}
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:auto;">
+        ${isMercury ? `
+          <button class="btn-hud btn-hud-primary" style="width:100%; justify-content:center;" onclick="openRfpModal(${sprint.id})">
+            📜 Ver RFP Oficial (Mercurio FS-M01)
+          </button>
+        ` : ''}
+        <button class="btn-hud btn-hud-secondary" style="width:100%; justify-content:center;" onclick="prepareSubmissionFor(${sprint.id})">
+          📤 Entregar Trabajo de este Sprint
+        </button>
       </div>
-
-      <button class="btn-hud btn-hud-secondary" onclick="prepareSubmissionFor(${sprint.id})">
-        📤 Entregar Trabajo de este Sprint
-      </button>
     </div>
-  `).join('');
+    `;
+  }).join('');
+}
+
+// Modal de visualización del RFP Oficial
+function openRfpModal(sprintId) {
+  const modal = document.getElementById('rfpModal');
+  const body = document.getElementById('rfpModalBody');
+  const title = document.getElementById('rfpModalTitle');
+  const subtitle = document.getElementById('rfpModalSubtitle');
+  if (!modal || !body) return;
+
+  if (sprintId === 1) {
+    if (title) title.textContent = 'REQUEST FOR PROPOSAL (RFP) · SPRINT 01';
+    if (subtitle) subtitle.innerHTML = 'CONTRACT FS-M01 · FOUNDATION SOCIETY · 🪐 DESTINO: PLANETA MERCURIO (HERMES-1)';
+
+    body.innerHTML = `
+      <div style="background:rgba(245,158,11,0.08); border-left:4px solid var(--amber-alert); padding:14px 18px; border-radius:4px; margin-bottom:20px;">
+        <strong style="color:var(--amber-alert); font-family:var(--font-hud);">⚡ CONDICIONES EXTREMAS DE MISIÓN EN MERCURIO:</strong>
+        <p style="margin:6px 0 0 0; font-size:0.86rem; color:var(--text-secondary); line-height:1.5;">
+          • Radiación solar directa: <strong>9.1 kW/m²</strong> (6.6 veces la terrestre) a 0.38 UA.<br>
+          • Amplitud térmica en el casco: <strong>-180 °C</strong> (lado oscuro) hasta <strong>+430 °C</strong> (cara al Sol).<br>
+          • Gravedad artificial requerida: <strong>0.9 - 1.0 G</strong> rotatoria en hábitat permanente (radio recomendado: 100-250 m).<br>
+          • Límite médico de cinetosis vestibular (Coriolis): <strong>ω &lt; 3.0 rpm</strong> y gradiente cabeza-pies <strong>&le; 12%</strong>.
+        </p>
+      </div>
+
+      <h4 style="font-family:var(--font-hud); color:var(--cyan-core); margin:18px 0 8px 0; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+        1. REQUISITOS TÉCNICOS CONTRACTUALES (FOUNDATION SOCIETY FS-M01)
+      </h4>
+      <div class="rfp-clause">
+        <span class="rfp-shall">MANDATORIO S1.1</span> La propuesta <strong>SHALL</strong> definir la geometría de la estación orbital (Toroide de Stanford, Cilindro rotatorio o Mancuerna contrarrotatoria) indicando radio y dimensiones exteriores.
+      </div>
+      <div class="rfp-clause">
+        <span class="rfp-shall">MANDATORIO S1.2</span> La propuesta <strong>SHALL</strong> incorporar un <strong>Escudo Solar Primario (Sunshield pasivo)</strong> que bloquee el flujo térmico de 9.1 kW/m² y proyecte un cono de sombra protector sobre los módulos habitados.
+      </div>
+      <div class="rfp-clause">
+        <span class="rfp-shall">MANDATORIO S1.3</span> La propuesta <strong>SHALL</strong> detallar la composición multicapa del casco (aleación Al-Li / Titanio, cerámicas de circonio de alta reflectividad, escudo Whipple antimeteoroides y blindaje de protones solares).
+      </div>
+      <div class="rfp-clause">
+        <span class="rfp-shall">MANDATORIO S2.1</span> La propuesta <strong>SHALL</strong> separar claramente los volúmenes con gravedad artificial (alojamiento, centro médico, laboratorios) del muelle de atraque de naves espaciales, que debe situarse en el <strong>eje de rotación (cero-G)</strong>.
+      </div>
+      <div class="rfp-clause">
+        <span class="rfp-shall">MANDATORIO S4.1</span> La aceleración centrípeta en la cubierta principal <strong>SHALL</strong> estar comprendida entre <strong>0.85 G y 1.00 G</strong> (aplicando a = ω² · r).
+      </div>
+      <div class="rfp-clause">
+        <span class="rfp-shall">MANDATORIO S4.2</span> La velocidad de rotación <strong>SHALL</strong> ser inferior a <strong>3.0 rpm</strong> para evitar el efecto Coriolis y la cinetosis vestibular.
+      </div>
+      <div class="rfp-clause">
+        <span class="rfp-shall">MANDATORIO S4.3</span> El gradiente de gravedad cabeza-pies para una persona de 1.80 m <strong>SHALL</strong> ser inferior al <strong>12%</strong>.
+      </div>
+
+      <h4 style="font-family:var(--font-hud); color:var(--cyan-core); margin:24px 0 10px 0; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+        2. ESTRUCTURA DE ENTREGABLES OBLIGATORIOS (BUZÓN DE MISIÓN)
+      </h4>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-bottom:20px;">
+        <div style="background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.3); border-radius:8px; padding:14px;">
+          <span class="deliverable-tag-ind">👤 ENTREGA INDIVIDUAL IND-1A</span>
+          <h5 style="color:var(--cyan-core); margin:8px 0 4px 0; font-size:0.95rem;">Memoria de Cálculo de Gravedad Artificial</h5>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0; line-height:1.4;">
+            Desarrollo matemático del radio y rpm requeridos para alcanzar 1 G. Cálculo del gradiente cabeza-pies para una persona de 1.80 m y justificación de tolerancia médica (&lt; 3 rpm).<br>
+            <strong>Formato:</strong> PDF, Word o Excel con fórmulas y conclusiones.
+          </p>
+        </div>
+
+        <div style="background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.3); border-radius:8px; padding:14px;">
+          <span class="deliverable-tag-ind">👤 ENTREGA INDIVIDUAL IND-1B</span>
+          <h5 style="color:var(--cyan-core); margin:8px 0 4px 0; font-size:0.95rem;">Ficha Técnica del Casco Multicapa</h5>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0; line-height:1.4;">
+            Especificación de materiales (Al-Li, Titanio, cerámicas), capas reflectantes para +430 °C, escudo Whipple antimeteoroides y blindaje contra tormentas solares.<br>
+            <strong>Formato:</strong> PDF o infografía técnica explicativa.
+          </p>
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.4); border-radius:8px; padding:16px; margin-bottom:20px;">
+        <span class="deliverable-tag-grp">👥 ENTREGA GRUPAL GRP-1 (EXCLUSIVA POR COLEGIO)</span>
+        <h5 style="color:var(--emerald-success); margin:8px 0 6px 0; font-size:1rem;">Propuesta Estructural Completa de la Estación en Mercurio</h5>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin:0 0 10px 0; line-height:1.5;">
+          Trabajo en equipo entre alumnos del <strong>MISMO colegio</strong> (ANDEL, FUENLLANA, J.H. NEWMAN o EL PRADO) de 2 a 5 participantes:<br>
+          1. <strong>Nombre de la estación y concepto general:</strong> Justificación de la arquitectura elegida.<br>
+          2. <strong>Planos o Modelo 3D:</strong> Maqueta virtual (TinkerCAD / Blender / SketchUp) o plano acotado mostrando la geometría y el parasol solar.<br>
+          3. <strong>Distribución de cubiertas:</strong> Módulos con gravedad artificial vs atraque de naves en microgravedad (eje rotacional).<br>
+          4. <strong>Memoria técnica unificada (3 a 6 págs o presentación de 5-10 diapositivas):</strong> Integrando los cálculos individuales de los miembros del equipo.
+        </p>
+        <span style="font-size:0.8rem; color:var(--text-muted);">
+          📍 <em>Nota importante:</em> En esta fase los equipos colaboran internamente entre compañeros del mismo colegio para competir o aportar a la gran simulación de Diciembre.
+        </span>
+      </div>
+
+      <h4 style="font-family:var(--font-hud); color:var(--cyan-core); margin:20px 0 8px 0; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
+        3. RÚBRICA OFICIAL DEL JURADO (100 PUNTOS)
+      </h4>
+      <table style="width:100%; border-collapse:collapse; font-size:0.82rem; margin-top:8px;">
+        <thead>
+          <tr style="background:rgba(255,255,255,0.05); text-align:left;">
+            <th style="padding:8px; border:1px solid var(--border-subtle);">Criterio</th>
+            <th style="padding:8px; border:1px solid var(--border-subtle); width:70px;">Peso</th>
+            <th style="padding:8px; border:1px solid var(--border-subtle);">Descripción del Estándar Aeroespacial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:8px; border:1px solid var(--border-subtle); color:var(--cyan-core); font-weight:600;">Rigor Técnico y Físico</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle); text-align:center; font-weight:700;">25 pts</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle);">Cálculos exactos de gravedad rotatoria, gradiente cabeza-pies &lt; 12% y respeto estricto del límite de mareo vestibular (&lt; 3 rpm).</td>
+          </tr>
+          <tr>
+            <td style="padding:8px; border:1px solid var(--border-subtle); color:var(--cyan-core); font-weight:600;">Viabilidad Térmica en Mercurio</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle); text-align:center; font-weight:700;">25 pts</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle);">Eficacia del parasol pasivo contra 9.1 kW/m², materiales resistentes al rango -180 °C a +430 °C y blindaje contra viento solar.</td>
+          </tr>
+          <tr>
+            <td style="padding:8px; border:1px solid var(--border-subtle); color:var(--cyan-core); font-weight:600;">Diseño 3D y Planos de la Estación</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle); text-align:center; font-weight:700;">25 pts</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle);">Claridad de planos, modelos 3D (TinkerCAD/renders) y distribución coherente de áreas residenciales vs atraques cero-G.</td>
+          </tr>
+          <tr>
+            <td style="padding:8px; border:1px solid var(--border-subtle); color:var(--cyan-core); font-weight:600;">Coordinación y Calidad del Informe</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle); text-align:center; font-weight:700;">25 pts</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle);">Síntesis ejecutiva, claridad formal, integración de las aportaciones individuales en el informe grupal del colegio.</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+  }
+
+  modal.style.display = 'flex';
+}
+
+function closeRfpModal() {
+  const modal = document.getElementById('rfpModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function downloadRfpMarkdown() {
+  const a = document.createElement('a');
+  a.href = 'RFP_SPRINT_01_MERCURIO.md';
+  a.download = 'RFP_SPRINT_01_MERCURIO.md';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 // Selector de Modalidad de Entrega (Individual vs Grupo)
@@ -322,6 +537,53 @@ function setSubmissionModality(modality) {
         if (authorsHint) authorsHint.textContent = 'Indica todos los miembros del equipo que firman el trabajo.';
       }
     }
+  }
+
+  // Actualizar el selector dinámico del entregable (IND-1A, IND-1B, GRP-1)
+  updateDeliverableOptions();
+}
+
+// Actualización dinámica del selector de entregables del Sprint y Modalidad
+function updateDeliverableOptions() {
+  const select = document.getElementById('subDeliverableType');
+  const sprintId = document.getElementById('subSprint') ? document.getElementById('subSprint').value : '1';
+  const modality = document.getElementById('subModality') ? document.getElementById('subModality').value : 'group';
+  const hintEl = document.getElementById('deliverableHint');
+
+  if (!select) return;
+
+  const sprint = AppState.sprints.find(s => s.id === Number(sprintId));
+  select.innerHTML = '';
+
+  if (sprint && sprint.deliverables) {
+    if (modality === 'individual') {
+      (sprint.deliverables.individual || []).forEach(del => {
+        const opt = document.createElement('option');
+        opt.value = del.code;
+        opt.textContent = `${del.code}: ${del.title}`;
+        select.appendChild(opt);
+      });
+      if (hintEl) {
+        hintEl.innerHTML = `👤 <strong>Entrega Individual:</strong> Cada estudiante realiza al menos una entrega individual (cálculos físicos IND-1A o ficha de blindaje IND-1B).`;
+      }
+    } else {
+      (sprint.deliverables.group || []).forEach(del => {
+        const opt = document.createElement('option');
+        opt.value = del.code;
+        opt.textContent = `${del.code}: ${del.title}`;
+        select.appendChild(opt);
+      });
+      if (hintEl) {
+        hintEl.innerHTML = `👥 <strong>Entrega Grupal por Colegio:</strong> Equipo formado exclusivamente por alumnos del mismo colegio (ANDEL, FUENLLANA, J.H. NEWMAN o EL PRADO).`;
+      }
+    }
+  } else {
+    const opt = document.createElement('option');
+    opt.value = modality === 'individual' ? `IND-${sprintId}` : `GRP-${sprintId}`;
+    opt.textContent = modality === 'individual' 
+      ? `IND-${sprintId}: Entrega Individual Técnica del Sprint` 
+      : `GRP-${sprintId}: Propuesta de Equipo del Colegio`;
+    select.appendChild(opt);
   }
 }
 
@@ -548,6 +810,10 @@ async function submitWork() {
   const displayTeamName = modality === 'individual' ? `[INDIVIDUAL] ${teamOrStudentName}` : teamOrStudentName;
   const displayAuthors = modality === 'individual' ? `${teamOrStudentName} (${authorsOrGrade || 'Alumno individual'})` : authorsOrGrade;
 
+  const deliverableSelect = document.getElementById('subDeliverableType');
+  const deliverableCode = deliverableSelect ? deliverableSelect.value : (modality === 'individual' ? 'IND-1A' : 'GRP-1');
+  const deliverableName = deliverableSelect && deliverableSelect.selectedOptions[0] ? deliverableSelect.selectedOptions[0].textContent : deliverableCode;
+
   // Botón en estado de carga
   const submitBtn = document.querySelector('#submissionForm button[type="submit"]');
   const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
@@ -573,6 +839,8 @@ async function submitWork() {
     const uploadPayload = {
       id: subId,
       modality: modality,
+      deliverableCode: deliverableCode,
+      deliverableName: deliverableName,
       studentKey: AppState.activeStudent ? AppState.activeStudent.key : null,
       school: schoolObj ? schoolObj.name : school,
       sprint: sprintObj ? sprintObj.code : `Sprint_${sprintId}`,
@@ -639,6 +907,8 @@ async function submitWork() {
       id: subId,
       timestamp: new Date().toLocaleString('es-ES'),
       modality: modality,
+      deliverableCode: deliverableCode,
+      deliverableName: deliverableName,
       studentKey: AppState.activeStudent ? AppState.activeStudent.key : null,
       schoolId: school,
       schoolName: schoolObj ? schoolObj.name : school,
@@ -674,6 +944,7 @@ async function submitWork() {
       alert(`✅ ¡ENTREGA ENVIADA CON ÉXITO!\n\n` +
             `ID de Entrega: ${subId}\n` +
             `Modalidad: ${modalityLabel}\n` +
+            `Entregable: ${deliverableName}\n` +
             `${modality === 'individual' ? 'Estudiante' : 'Equipo'}: ${teamOrStudentName}\n` +
             `Colegio: ${uploadPayload.school}\n` +
             `Sprint: ${uploadPayload.sprint}\n` +
@@ -683,6 +954,7 @@ async function submitWork() {
       alert(`✅ ¡ENTREGA REGISTRADA CON ÉXITO!\n\n` +
             `ID de Entrega: ${subId}\n` +
             `Modalidad: ${modalityLabel}\n` +
+            `Entregable: ${deliverableName}\n` +
             `${modality === 'individual' ? 'Estudiante' : 'Equipo'}: ${teamOrStudentName}\n` +
             `Archivos procesados: ${filesData.length}\n\n` +
             `Vuestro trabajo ha sido enviado al jurado.`);
@@ -1284,6 +1556,13 @@ function renderJurySubmissions() {
         <span class="${sub.modality === 'individual' ? 'badge-modality-indiv' : 'badge-modality-group'}">
           ${sub.modality === 'individual' ? '👤 INDIVIDUAL' : '👥 EQUIPO'}
         </span>
+        ${sub.deliverableCode ? `
+          <div style="margin-top:5px;">
+            <span class="${sub.modality === 'individual' ? 'deliverable-tag-ind' : 'deliverable-tag-grp'}" style="font-size:0.7rem; padding:2px 6px;">
+              ${sub.deliverableCode}
+            </span>
+          </div>
+        ` : ''}
       </td>
       <td><strong>${sub.teamName}</strong><br><span style="font-size:0.78rem; color:var(--text-muted);">${sub.authors || ''}</span></td>
       <td><span style="font-size:0.85rem; color:var(--text-secondary);">${sub.schoolName}</span></td>
@@ -1317,10 +1596,15 @@ function openEvaluationModal(subId) {
     ? `<span class="badge-modality-indiv" style="margin-bottom:8px;">👤 Modalidad: Entrega Individual</span>`
     : `<span class="badge-modality-group" style="margin-bottom:8px;">👥 Modalidad: Entrega en Equipo</span>`;
 
-  document.getElementById('modalSubTitle').innerHTML = `${modalityBadge}<br>Evaluando: ${sub.teamName} (${sub.schoolName})`;
+  const deliverableBadge = sub.deliverableCode 
+    ? `<span class="${sub.modality === 'individual' ? 'deliverable-tag-ind' : 'deliverable-tag-grp'}" style="margin-left:8px; font-size:0.75rem;">${sub.deliverableCode}: ${sub.deliverableName || ''}</span>`
+    : '';
+
+  document.getElementById('modalSubTitle').innerHTML = `${modalityBadge} ${deliverableBadge}<br>Evaluando: ${sub.teamName} (${sub.schoolName})`;
   document.getElementById('modalSubDetails').innerHTML = `
     <strong>Sprint:</strong> ${sub.sprintName} | <strong>Departamento:</strong> ${sub.deptName}<br>
     <strong>${sub.modality === 'individual' ? 'Estudiante y Curso' : 'Integrantes del Equipo'}:</strong> ${sub.authors || 'No especificados'}<br>
+    <strong>Entregable Específico:</strong> <span style="color:var(--amber-alert); font-weight:600;">${sub.deliverableName || sub.deliverableCode || 'Propuesta de Sprint'}</span><br>
     <strong>Notas / Resumen:</strong> "${sub.notes || 'Sin notas'}"<br>
     <strong>Registro de Misión:</strong> <span style="font-family:monospace; color:var(--cyan-core);">${sub.targetDriveFolder}</span>
   `;
