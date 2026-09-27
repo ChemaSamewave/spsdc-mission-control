@@ -53,6 +53,11 @@ Para cumplir con las normas del concurso, cada participante y equipo debe regist
   * *Ficha Técnica del Casco Protector Multicapa frente a Mercurio*.
   * Esquema y justificación de capas: aleación estructural, escudo térmico reflectante de alta emisividad contra 430 °C, escudo Whipple antimeteoritos y blindaje de polietileno/agua/regolito frente a llamaradas de protones solares.
   * Formato: Fichero PDF o infografía técnica explicativa.
+* **ENTREGA IND-1C (Oral Communication & Technical Pitch in English):**
+  * *Vídeo Individual de Defensa Técnica en Inglés (1 a 2 minutos)*.
+  * **Encuadre Obligatorio:** **Cuerpo completo (Full-body framing)**, de pie, proyectando presencia escénica formal y comunicación no verbal profesional (simulando una exposición ante el Consejo de la *Foundation Society*).
+  * **Objetivo:** Sintetizar en inglés fluido la aportación individual del alumno (cálculos físicos o diseño del casco), destacando los puntos críticos de seguridad y viabilidad en el entorno de Mercurio.
+  * **Formato:** Archivo de vídeo (.mp4, .mov, .webm) o enlace directo compartido (Loom, YouTube, Google Drive, OneDrive).
 
 #### 👥 B. Entrega Grupal (Equipos de Alumnos del MISMO Colegio):
 * **ENTREGA GRP-1 (Propuesta Estructural Completa de la Estación en Mercurio):**
@@ -71,4 +76,4 @@ Las propuestas serán calificadas por el Comité Técnico del Jurado en base a 4
 1. **Rigor Técnico y Físico (25%):** Exactitud de las fórmulas de gravedad centrípeta ($a = \omega^2 \cdot r$), cálculo del gradiente cabeza-pies y respeto estricto al límite de Coriolis ($< 3\text{ rpm}$).
 2. **Viabilidad Térmica y Radiológica en Mercurio (25%):** Eficacia del escudo solar (parasol), selección justificada de aleaciones y multicapa para soportar el gradiente $-180^\circ\text{C} / +430^\circ\text{C}$ y la radiación solar masiva (9.1 kW/m²).
 3. **Innovación y Diseño 3D / Planos (25%):** Claridad de los planos, renders, modelos en TinkerCAD o infografías estructurales que permitan visualizar la estación.
-4. **Coordinación de Equipo y Presentación Ejecutiva (25%):** Calidad del informe grupal, síntesis ejecutiva, integración fluida de los trabajos individuales y cumplimiento estricto del formato contractual del RFP.
+4. **Coordinación de Equipo, Defensa Oral en Inglés y Calidad Ejecutiva (25%):** Calidad del informe grupal, síntesis ejecutiva, cumplimiento estricto del formato contractual del RFP y solidez del Pitch Individual en Inglés IND-1C (postura de cuerpo completo, claridad expositiva, vocabulario técnico aeroespacial en inglés y capacidad de convicción ante el panel de la *Foundation Society*).

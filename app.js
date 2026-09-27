@@ -47,6 +47,11 @@ const AppState = {
             code: 'IND-1B',
             title: 'Ficha Técnica: Casco Multicapa y Blindaje Térmico/Radiológico frente al Sol',
             desc: 'Selección de aleaciones del casco (Al-Li, Titanio), escudo térmico reflectante (+430°C), escudo Whipple y blindaje de protones solares.'
+          },
+          {
+            code: 'IND-1C',
+            title: 'Oral Defense & Technical Pitch in English (1-2 min Video)',
+            desc: 'Grabación individual en vídeo de 1-2 minutos de pie y a CUERPO COMPLETO, exponiendo en inglés la solución técnica propuesta (física o casco) con presencia escénica formal ante la Foundation Society. Subir archivo MP4 o enlace (Loom/Drive/YouTube).'
           }
         ],
         group: [
@@ -384,6 +389,15 @@ function openRfpModal(sprintId) {
             <strong>Formato:</strong> PDF o infografía técnica explicativa.
           </p>
         </div>
+
+        <div style="background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.3); border-radius:8px; padding:14px;">
+          <span class="deliverable-tag-ind">👤 ENTREGA INDIVIDUAL IND-1C</span>
+          <h5 style="color:var(--cyan-core); margin:8px 0 4px 0; font-size:0.95rem;">Oral Pitch in English (1-2 min Vídeo)</h5>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0; line-height:1.4;">
+            Defensa individual grabada en vídeo de 1 a 2 minutos exponiendo en inglés la solución técnica propuesta (física o casco) con <strong>encuadre de CUERPO COMPLETO (de pie)</strong> y presencia formal ante la Foundation Society.<br>
+            <strong>Formato:</strong> Archivo MP4/MOV o enlace a Loom, Drive o YouTube.
+          </p>
+        </div>
       </div>
 
       <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.4); border-radius:8px; padding:16px; margin-bottom:20px;">
@@ -429,9 +443,9 @@ function openRfpModal(sprintId) {
             <td style="padding:8px; border:1px solid var(--border-subtle);">Claridad de planos, modelos 3D (TinkerCAD/renders) y distribución coherente de áreas residenciales vs atraques cero-G.</td>
           </tr>
           <tr>
-            <td style="padding:8px; border:1px solid var(--border-subtle); color:var(--cyan-core); font-weight:600;">Coordinación y Calidad del Informe</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle); color:var(--cyan-core); font-weight:600;">Defensa Oral en Inglés y Calidad Ejecutiva</td>
             <td style="padding:8px; border:1px solid var(--border-subtle); text-align:center; font-weight:700;">25 pts</td>
-            <td style="padding:8px; border:1px solid var(--border-subtle);">Síntesis ejecutiva, claridad formal, integración de las aportaciones individuales en el informe grupal del colegio.</td>
+            <td style="padding:8px; border:1px solid var(--border-subtle);">Síntesis ejecutiva, claridad formal, defensa oral individual en inglés IND-1C (vídeo 1-2 min de pie a cuerpo completo) y cohesión de equipo.</td>
           </tr>
         </tbody>
       </table>
@@ -568,7 +582,7 @@ function updateDeliverableOptions() {
         select.appendChild(opt);
       });
       if (hintEl) {
-        hintEl.innerHTML = `👤 <strong>Entrega Individual:</strong> Cada estudiante realiza al menos una entrega individual (cálculos físicos IND-1A o ficha de blindaje IND-1B).`;
+        hintEl.innerHTML = `👤 <strong>Entrega Individual:</strong> Elige entre memoria de gravedad (IND-1A), ficha de blindaje (IND-1B) o el <strong>vídeo en inglés a cuerpo completo (IND-1C)</strong>.`;
       }
     } else {
       (sprint.deliverables.group || []).forEach(del => {

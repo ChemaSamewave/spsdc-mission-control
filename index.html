@@ -321,23 +321,26 @@
 
             <!-- Drag and drop zone -->
             <div class="form-group">
-              <label class="form-label">Archivos del Proyecto (PDF, PPTX, XLSX, Renders .PNG/.JPG, 3D .STL)</label>
+              <label class="form-label">Archivos del Proyecto (PDF, PPTX, XLSX, Vídeo .MP4/.MOV, Renders .PNG/.JPG, 3D .STL)</label>
               <div class="drop-zone" id="dropZone">
                 <div class="drop-zone-icon">📁</div>
                 <div style="font-family:var(--font-hud); font-size:0.95rem; color:#fff; margin-bottom:4px;">
                   Arrastra y suelta aquí tus archivos o haz clic para examinar
                 </div>
                 <div style="font-size:0.8rem; color:var(--text-muted);">
-                  Formatos aceptados: PowerPoint (.pptx), PDF (.pdf), Excel (.xlsx), Renders Blender (.png, .jpg), Modelos 3D (.stl, .obj)
+                  Formatos: PDF (.pdf), Diapositivas (.pptx), Vídeo (.mp4, .mov, .webm), Excel (.xlsx), Renders (.png, .jpg), 3D (.stl, .obj)
                 </div>
-                <input type="file" id="fileUploadInput" multiple style="display:none;" accept=".pdf,.pptx,.ppt,.xlsx,.xls,.png,.jpg,.jpeg,.stl,.obj,.zip">
+                <input type="file" id="fileUploadInput" multiple style="display:none;" accept=".pdf,.pptx,.ppt,.xlsx,.xls,.png,.jpg,.jpeg,.stl,.obj,.zip,.mp4,.mov,.webm">
               </div>
               <div id="selectedFilesList"></div>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="subExternalLink">Enlace 3D TinkerCAD o Presentación Google Slides (Opcional)</label>
-              <input type="url" id="subExternalLink" class="form-control" placeholder="https://www.tinkercad.com/things/... o https://docs.google.com/presentation/...">
+              <label class="form-label" for="subExternalLink">Enlace a Vídeo en Inglés (YouTube / Loom / Drive), Maqueta 3D o Presentación</label>
+              <input type="url" id="subExternalLink" class="form-control" placeholder="https://www.loom.com/share/... o https://youtube.com/... o https://drive.google.com/...">
+              <small style="display:block; margin-top:4px; font-size:0.78rem; color:var(--cyan-core);">
+                💡 Recomendado para el vídeo IND-1C: Si tu vídeo de cuerpo entero supera los 15-20 MB, puedes subirlo a Loom, Drive o YouTube y pegar aquí el enlace.
+              </small>
             </div>
 
             <div class="form-group">
@@ -361,8 +364,9 @@
               Asegúrate de revisar estos puntos antes de pulsar el botón de envío:
             </p>
             <div style="font-size:0.84rem; color:var(--text-secondary); display:flex; flex-direction:column; gap:8px; margin-top:10px;">
-              <div>• <strong>Formatos aceptados:</strong> Presentaciones en PowerPoint (.pptx) o PDF, hojas de cálculo (.xlsx), renders (.png/.jpg) y 3D (.stl).</div>
-              <div>• <strong>Enlaces interactivos:</strong> Si usáis TinkerCAD o Google Slides, comprobad que el enlace tenga permiso de lectura público.</div>
+              <div>• <strong>Vídeo en Inglés (IND-1C):</strong> 1-2 min, <em>cuerpo completo (de pie)</em>, buena iluminación y dicción clara.</div>
+              <div>• <strong>Formatos aceptados:</strong> Presentaciones en PowerPoint (.pptx) o PDF, hojas de cálculo (.xlsx), vídeos (.mp4/.mov), renders y 3D (.stl).</div>
+              <div>• <strong>Enlaces interactivos:</strong> Si usáis Loom, TinkerCAD o Google Slides, comprobad que el enlace tenga permiso de lectura público.</div>
               <div>• <strong>Resumen técnico:</strong> Justificad brevemente en las notas las fórmulas y decisiones de diseño tomadas.</div>
             </div>
           </div>
