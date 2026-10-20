@@ -2119,8 +2119,9 @@ function renderLeaderboard() {
 }
 
 // CALCULADORAS AEROESPACIALES
+// CALCULADORAS AEROESPACIALES
 function initCalculators() {
-  // Calculadora de Gravedad Artificial
+  // 1. Calculadora de Gravedad Artificial
   const radiusInput = document.getElementById('calcRadius');
   const rpmInput = document.getElementById('calcRpm');
 
@@ -2135,28 +2136,79 @@ function initCalculators() {
     const gValue = accel / 9.80665; // g's
     // v = ω * r
     const vTangential = omega * r; // m/s
+    const vKmh = vTangential * 3.6;
     // Gradiente cabeza-pies para astronauta de 1.80 m (cláusula S4.3): 1.80 / r
     const gradient = (1.80 / r) * 100;
 
+    // Actualización de textos de control
     document.getElementById('valRadiusDisplay').textContent = `${r} m`;
     document.getElementById('valRpmDisplay').textContent = `${rpm.toFixed(1)} rpm`;
-    document.getElementById('resGravity').textContent = `${accel.toFixed(2)} m/s² (${gValue.toFixed(2)} G)`;
+
+    // Badges dinámicos de viabilidad en los controles deslizantes
+    const radBadge = document.getElementById('valRadiusBadge');
+    if (radBadge) {
+      if (gradient > 12.0) {
+        radBadge.className = 'calc-badge calc-badge-red';
+        radBadge.textContent = '🔴 Inviable (Grad. > 12%)';
+      } else if (r < 85) {
+        radBadge.className = 'calc-badge calc-badge-amber';
+        radBadge.textContent = '⚠️ Requiere > 3 rpm';
+      } else {
+        radBadge.className = 'calc-badge calc-badge-green';
+        radBadge.textContent = '🟢 Viable (≥ 85 m)';
+      }
+    }
+
+    const rpmBadge = document.getElementById('valRpmBadge');
+    if (rpmBadge) {
+      if (rpm >= 3.0) {
+        rpmBadge.className = 'calc-badge calc-badge-red';
+        rpmBadge.textContent = '🔴 Inviable (≥ 3.0 rpm)';
+      } else if (rpm > 2.0) {
+        rpmBadge.className = 'calc-badge calc-badge-amber';
+        rpmBadge.textContent = '🟡 Aclimatación (2-3 rpm)';
+      } else {
+        rpmBadge.className = 'calc-badge calc-badge-green';
+        rpmBadge.textContent = '🟢 Óptimo (≤ 2.0 rpm)';
+      }
+    }
+
+    // Resultados
+    const resGravEl = document.getElementById('resGravity');
+    const resGravSub = document.getElementById('resGravitySub');
+    if (resGravEl) {
+      resGravEl.textContent = `${accel.toFixed(2)} m/s² (${gValue.toFixed(2)} G)`;
+      if (accel >= 8.34 && accel <= 9.81) {
+        resGravEl.style.color = 'var(--cyan-core)';
+        if (resGravSub) resGravSub.innerHTML = '🟢 Conforme RFP (8.34 a 9.81 m/s²)';
+      } else {
+        resGravEl.style.color = 'var(--rose-danger)';
+        if (resGravSub) {
+          resGravSub.innerHTML = accel < 8.34 
+            ? '🔴 Inviable (&lt; 8.34 m/s² / 0.85 G)' 
+            : '🔴 Inviable (&gt; 9.81 m/s² / 1.00 G)';
+        }
+      }
+    }
+
     document.getElementById('resVelocity').textContent = `${vTangential.toFixed(1)} m/s`;
     const resVelKmh = document.getElementById('resVelocityKmh');
     if (resVelKmh) resVelKmh.textContent = `${vKmh.toFixed(0)} km/h`;
+
     const resGrad = document.getElementById('resGradient');
+    const resGradSub = document.getElementById('resGradientSub');
     if (resGrad) {
       resGrad.textContent = `${gradient.toFixed(2)} %`;
       resGrad.style.color = gradient <= 12.0 ? 'var(--emerald-safe)' : 'var(--rose-danger)';
+      if (resGradSub) {
+        resGradSub.innerHTML = gradient <= 12.0 ? '🟢 Límite RFP: &le; 12%' : '🔴 Inviable: &gt; 12%';
+      }
     }
 
     // Evaluación estricta de Viabilidad Técnica según el Pliego Oficial (RFP)
-    // 1. Aceleración centrípeta en SI: 8.34 a 9.81 m/s² (0.85 a 1.00 G)
     const accelPass = accel >= 8.34 && accel <= 9.81;
-    // 2. Velocidad de giro: estrictamente < 3.0 rpm (recomendado <= 2.0 rpm)
     const rpmPass = rpm < 3.0;
     const rpmOptimal = rpm <= 2.0;
-    // 3. Gradiente cabeza-pies: <= 12%
     const gradPass = gradient <= 12.0;
 
     const coriolisBox = document.getElementById('coriolisAlert');
@@ -2164,20 +2216,20 @@ function initCalculators() {
       if (accelPass && rpmPass && gradPass) {
         if (rpmOptimal) {
           coriolisBox.className = 'coriolis-indicator coriolis-green';
-          coriolisBox.innerHTML = `🟢 <strong>PROPUESTA 100% VIABLE (APROBADA POR LA FOUNDATION SOCIETY):</strong><br>
-          <span style="font-size:0.82rem; font-weight:normal; line-height:1.4; display:block; margin-top:4px;">
+          coriolisBox.innerHTML = `<div>🟢 <strong>PROPUESTA 100% VIABLE (APROBADA POR LA FOUNDATION SOCIETY):</strong></div>
+          <div style="font-size:0.83rem; font-weight:normal; line-height:1.45; margin-top:2px;">
             ✓ Gravedad en el Sistema Internacional: <strong>${accel.toFixed(2)} m/s²</strong> (cumple rango 8.34 - 9.81 m/s²).<br>
             ✓ Giro óptimo: <strong>${rpm.toFixed(1)} rpm</strong> (&le; 2.0 rpm; sin mareo de Coriolis ni cinetosis).<br>
             ✓ Gradiente cabeza-pies: <strong>${gradient.toFixed(2)}%</strong> (&le; 12%; diferencia de peso imperceptible).
-          </span>`;
+          </div>`;
         } else {
           coriolisBox.className = 'coriolis-indicator coriolis-amber';
-          coriolisBox.innerHTML = `🟡 <strong>PROPUESTA VIABLE CON ACLIMATACIÓN (APROBADA):</strong><br>
-          <span style="font-size:0.82rem; font-weight:normal; line-height:1.4; display:block; margin-top:4px;">
+          coriolisBox.innerHTML = `<div>🟡 <strong>PROPUESTA VIABLE CON ACLIMATACIÓN (APROBADA CON OBSERVACIONES):</strong></div>
+          <div style="font-size:0.83rem; font-weight:normal; line-height:1.45; margin-top:2px;">
             ✓ Gravedad: <strong>${accel.toFixed(2)} m/s²</strong> (Correcta).<br>
             ⚠️ Giro de <strong>${rpm.toFixed(1)} rpm</strong> (cerca del límite máximo de 3.0 rpm). Los astronautas requerirán periodo de aclimatación de 24h para evitar ligeros mareos al girar la cabeza.<br>
             ✓ Gradiente cabeza-pies: <strong>${gradient.toFixed(2)}%</strong> (&le; 12%).
-          </span>`;
+          </div>`;
         }
       } else {
         coriolisBox.className = 'coriolis-indicator coriolis-red';
@@ -2190,18 +2242,18 @@ function initCalculators() {
           }
         }
         if (!rpmPass) {
-          fallos.push(`❌ <strong>Giro excesivo (${rpm.toFixed(1)} rpm &ge; 3.0 rpm):</strong> Incumple S4.2. Efecto Coriolis severo; provocará cinetosis vestibular constante, náuseas y pérdida de orientación.`);
+          fallos.push(`❌ <strong>Giro excesivo (${rpm.toFixed(1)} rpm &ge; 3.0 rpm):</strong> Incumple S4.2. Efecto Coriolis severo; provocará cinetosis vestibular constante, náuseas y vómitos.`);
         }
         if (!gradPass) {
           fallos.push(`❌ <strong>Gradiente cabeza-pies inaceptable (${gradient.toFixed(2)}% &gt; 12%):</strong> Incumple S4.3. El radio de ${r} m es demasiado pequeño; la sangre descenderá violentamente a los pies provocando síncopes.`);
         }
 
-        coriolisBox.innerHTML = `🔴 <strong>PROPUESTA NO VIABLE (RECHAZADA POR EL COMITÉ TÉCNICO):</strong><br>
-        <div style="font-size:0.82rem; font-weight:normal; line-height:1.4; margin-top:6px;">
+        coriolisBox.innerHTML = `<div>🔴 <strong>PROPUESTA NO VIABLE (RECHAZADA POR EL COMITÉ TÉCNICO):</strong></div>
+        <div style="font-size:0.82rem; font-weight:normal; line-height:1.4; margin-top:4px;">
           ${fallos.join('<br>')}
         </div>
-        <div style="font-size:0.8rem; color:#fecaca; margin-top:6px; font-weight:bold;">
-          💡 <em>Solución recomendada:</em> Aumenta el radio (r) a más de 100-250 m y ajusta las rpm para situar la aceleración entre 8.34 y 9.81 m/s².
+        <div style="font-size:0.8rem; color:#fecaca; margin-top:4px; font-weight:600;">
+          💡 <em>Solución recomendada:</em> Aumenta el radio (r) a &ge; 85 m (óptimo 200-300 m) y ajusta las rpm para situar la aceleración entre 8.34 y 9.81 m/s² con menos de 2.0-3.0 rpm.
         </div>`;
       }
     }
@@ -2220,7 +2272,7 @@ function initCalculators() {
     calculateGravity();
   }
 
-  // Calculadora ECLSS (Soporte Vital)
+  // 2. Calculadora ECLSS (Soporte Vital)
   const crewInput = document.getElementById('eclssCrew');
   const daysInput = document.getElementById('eclssDays');
   const recycleInput = document.getElementById('eclssRecycle');
@@ -2239,15 +2291,137 @@ function initCalculators() {
     const totalO2 = crew * days * o2PerDay;
     const rawWater = crew * days * (drinkWaterPerDay + hygieneWaterPerDay);
     const waterAfterRecycle = rawWater * (1 - recycleRate);
+    const savedWater = rawWater - waterAfterRecycle;
     const totalFood = crew * days * foodDryPerDay;
+    const totalPayloadKg = totalO2 + waterAfterRecycle + totalFood;
+    const totalPayloadTon = totalPayloadKg / 1000;
 
+    // Actualización de textos de control
     document.getElementById('eclssCrewDisplay').textContent = `${crew} astronautas`;
     document.getElementById('eclssDaysDisplay').textContent = `${days} días`;
     document.getElementById('eclssRecycleDisplay').textContent = `${(recycleRate * 100).toFixed(0)}%`;
 
-    document.getElementById('resO2').textContent = `${totalO2.toFixed(0)} kg O₂`;
-    document.getElementById('resWater').textContent = `${waterAfterRecycle.toFixed(0)} L (Ahorro de ${(rawWater - waterAfterRecycle).toFixed(0)} L)`;
-    document.getElementById('resFood').textContent = `${totalFood.toFixed(0)} kg raciones secas`;
+    // Badges dinámicos de viabilidad en los controles deslizantes
+    const crewBadge = document.getElementById('eclssCrewBadge');
+    if (crewBadge) {
+      if (crew < 20) {
+        crewBadge.className = 'calc-badge calc-badge-red';
+        crewBadge.textContent = '🔴 Inviable (< 20 pers.)';
+      } else if (crew > 300) {
+        crewBadge.className = 'calc-badge calc-badge-red';
+        crewBadge.textContent = '🔴 Inviable (> 300 pers.)';
+      } else if (crew >= 50 && crew <= 150) {
+        crewBadge.className = 'calc-badge calc-badge-green';
+        crewBadge.textContent = '🟢 Nominal (50 - 150)';
+      } else {
+        crewBadge.className = 'calc-badge calc-badge-amber';
+        crewBadge.textContent = `🟡 Margen Secundario (${crew})`;
+      }
+    }
+
+    const daysBadge = document.getElementById('eclssDaysBadge');
+    if (daysBadge) {
+      if (days < 30) {
+        daysBadge.className = 'calc-badge calc-badge-red';
+        daysBadge.textContent = '🔴 Inviable (< 30 días)';
+      } else if (days < 60) {
+        daysBadge.className = 'calc-badge calc-badge-amber';
+        daysBadge.textContent = '🟡 Mínimo Emergencia (30-59 d)';
+      } else if (days <= 180) {
+        daysBadge.className = 'calc-badge calc-badge-green';
+        daysBadge.textContent = '🟢 Margen Seguro (60-180 d)';
+      } else {
+        daysBadge.className = 'calc-badge calc-badge-amber';
+        daysBadge.textContent = '🟡 Carga Pesada (> 180 d)';
+      }
+    }
+
+    const recBadge = document.getElementById('eclssRecycleBadge');
+    if (recBadge) {
+      if (recycleRate < 0.90) {
+        recBadge.className = 'calc-badge calc-badge-red';
+        recBadge.textContent = '🔴 Inviable (< 90%)';
+      } else if (recycleRate < 0.95) {
+        recBadge.className = 'calc-badge calc-badge-amber';
+        recBadge.textContent = '🟡 No conforme RFP (90-94%)';
+      } else {
+        recBadge.className = 'calc-badge calc-badge-green';
+        recBadge.textContent = '🟢 Conforme RFP (≥ 95%)';
+      }
+    }
+
+    // Resultados
+    document.getElementById('resO2').textContent = `${totalO2.toLocaleString('es-ES', {maximumFractionDigits:0})} kg O₂`;
+    document.getElementById('resWater').textContent = `${waterAfterRecycle.toLocaleString('es-ES', {maximumFractionDigits:0})} L (Ahorro: ${savedWater.toLocaleString('es-ES', {maximumFractionDigits:0})} L)`;
+    document.getElementById('resFood').textContent = `${totalFood.toLocaleString('es-ES', {maximumFractionDigits:0})} kg raciones`;
+    
+    const resPayload = document.getElementById('resTotalPayload');
+    if (resPayload) {
+      resPayload.textContent = `${totalPayloadKg.toLocaleString('es-ES', {maximumFractionDigits:0})} kg (${totalPayloadTon.toFixed(2)} t)`;
+    }
+
+    // Evaluación de Viabilidad ECLSS
+    const crewPass = crew >= 20 && crew <= 300;
+    const daysPass = days >= 30;
+    const recyclePass = recycleRate >= 0.90;
+    const rfpRecyclePass = recycleRate >= 0.95;
+
+    const eclssAlertBox = document.getElementById('eclssViabilityAlert');
+    if (eclssAlertBox) {
+      if (crewPass && daysPass && recyclePass) {
+        if (rfpRecyclePass && crew >= 50 && crew <= 150 && days >= 60) {
+          eclssAlertBox.className = 'coriolis-indicator coriolis-green';
+          eclssAlertBox.innerHTML = `<div>🟢 <strong>SISTEMA ECLSS 100% VIABLE (APROBADO POR LA FOUNDATION SOCIETY):</strong></div>
+          <div style="font-size:0.83rem; font-weight:normal; line-height:1.45; margin-top:2px;">
+            ✓ Dotación de diseño: <strong>${crew} astronautas</strong> (óptimo dentro de los 50-150 del Sprint 1).<br>
+            ✓ Reserva logística: <strong>${days} días</strong> (suficiente para superar desfases en ventanas de transferencia Tierra-Mercurio).<br>
+            ✓ Tasa de reciclaje de agua: <strong>${(recycleRate * 100).toFixed(0)}%</strong> (&ge; 95% mandatorio RFP S4.5). Ahorra ${(savedWater / 1000).toFixed(1)} toneladas de agua de lanzamiento.<br>
+            ✓ Masa total consumibles de misión: <strong>${totalPayloadTon.toFixed(2)} toneladas</strong>.
+          </div>`;
+        } else {
+          eclssAlertBox.className = 'coriolis-indicator coriolis-amber';
+          let advertencias = [];
+          if (!rfpRecyclePass) {
+            advertencias.push(`⚠️ Reciclaje del ${(recycleRate * 100).toFixed(0)}%: Aunque técnicamente operativo, el pliego S4.5 exige ciclo cerrado &ge; 95%. Requiere justificar flete adicional.`);
+          }
+          if (days < 60) {
+            advertencias.push(`⚠️ Reserva de ${days} días: Cumple el mínimo estricto (30 d) pero deja poco margen ante retrasos en naves de aprovisionamiento a Mercurio.`);
+          }
+          if (crew < 50 || crew > 150) {
+            advertencias.push(`⚠️ Dotación de ${crew} personas: Fuera del rango de diseño estándar (50-150). Justificar asignación de turnos o volumen de hábitat.`);
+          }
+          eclssAlertBox.innerHTML = `<div>🟡 <strong>SISTEMA ECLSS VIABLE CON OBSERVACIONES TÉCNICAS:</strong></div>
+          <div style="font-size:0.83rem; font-weight:normal; line-height:1.45; margin-top:2px;">
+            ${advertencias.join('<br>')}<br>
+            Masa total de lanzamiento requerida: <strong>${totalPayloadTon.toFixed(2)} t</strong>.
+          </div>`;
+        }
+      } else {
+        eclssAlertBox.className = 'coriolis-indicator coriolis-red';
+        let fallos = [];
+        if (!crewPass) {
+          if (crew < 20) {
+            fallos.push(`❌ <strong>Dotación insuficiente (${crew} tripulantes &lt; 20):</strong> Personal insuficiente para operar 24/7 los sistemas vitales, soporte de reactores y contingencias.`);
+          } else {
+            fallos.push(`❌ <strong>Superpoblación de Fase 1 (${crew} tripulantes &gt; 300):</strong> Colapso del volumen presurizado y sobrecarga masiva de los filtros de CO₂ en la arquitectura del Sprint 1.`);
+          }
+        }
+        if (!daysPass) {
+          fallos.push(`❌ <strong>Reserva de supervivencia crítica (${days} días &lt; 30):</strong> Incumple la ventana de contingencia orbital. Cualquier retraso en cargueros provocará asfixia o inanición.`);
+        }
+        if (!recyclePass) {
+          fallos.push(`❌ <strong>Reciclaje inaceptable (${(recycleRate * 100).toFixed(0)}% &lt; 90%):</strong> Pérdida masiva de agua (${(waterAfterRecycle / 1000).toFixed(1)} t perdidas). Coste de flete a Mercurio astronómico e inviable.`);
+        }
+
+        eclssAlertBox.innerHTML = `<div>🔴 <strong>SISTEMA ECLSS NO VIABLE (RECHAZADO POR EL COMITÉ TÉCNICO):</strong></div>
+        <div style="font-size:0.82rem; font-weight:normal; line-height:1.4; margin-top:4px;">
+          ${fallos.join('<br>')}
+        </div>
+        <div style="font-size:0.8rem; color:#fecaca; margin-top:4px; font-weight:600;">
+          💡 <em>Solución recomendada:</em> Aumenta el reciclaje de agua a &ge; 95%, asegura al menos 30-60 días de reserva y mantén la tripulación entre 50 y 150 astronautas.
+        </div>`;
+      }
+    }
   }
 
   if (crewInput && daysInput && recycleInput) {

@@ -475,28 +475,42 @@
           </h3>
 
           <div class="form-group">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <label class="form-label" style="margin:0;">Radio del Hábitat (r):</label>
-              <strong style="color:var(--cyan-core);" id="valRadiusDisplay">250 m</strong>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span id="valRadiusBadge" class="calc-badge calc-badge-green">🟢 Viable</span>
+                <strong style="color:var(--cyan-core);" id="valRadiusDisplay">250 m</strong>
+              </div>
             </div>
-            <input type="range" id="calcRadius" class="rubric-slider" min="20" max="1000" step="5" value="250">
+            <input type="range" id="calcRadius" class="rubric-slider" min="10" max="1000" step="5" value="250">
+            <div class="slider-margin-guide">
+              <span class="margin-tag danger">🔴 Inviable: r &lt; 15 m (Grad. &gt; 12%) / &lt; 85 m (Fuerza &gt; 3 rpm)</span>
+              <span class="margin-tag success">🟢 Margen Viable: r &ge; 85 m (Óptimo: 200 - 500 m)</span>
+            </div>
           </div>
 
           <div class="form-group">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <label class="form-label" style="margin:0;">Velocidad de Giro (rpm):</label>
-              <strong style="color:var(--cyan-core);" id="valRpmDisplay">1.9 rpm</strong>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span id="valRpmBadge" class="calc-badge calc-badge-green">🟢 Óptimo (&le; 2.0 rpm)</span>
+                <strong style="color:var(--cyan-core);" id="valRpmDisplay">1.9 rpm</strong>
+              </div>
             </div>
             <input type="range" id="calcRpm" class="rubric-slider" min="0.5" max="8.0" step="0.1" value="1.9">
+            <div class="slider-margin-guide">
+              <span class="margin-tag success">🟢 Margen Viable: &le; 2.0 rpm (Óptimo) / 2.0-2.9 rpm (Aclimatación)</span>
+              <span class="margin-tag danger">🔴 Inviable: &ge; 3.0 rpm (Coriolis / Vómitos)</span>
+            </div>
           </div>
 
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-top:20px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-top:16px;">
             <div style="background:rgba(12,17,29,0.9); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
               <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Aceleración (SI: m/s²):</div>
               <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--cyan-core); font-weight:800; margin-top:4px;" id="resGravity">
                 9.81 m/s² (1.00 G)
               </div>
-              <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">RFP: 8.34 a 9.81 m/s²</div>
+              <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;" id="resGravitySub">RFP: 8.34 a 9.81 m/s²</div>
             </div>
             <div style="background:rgba(12,17,29,0.9); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
               <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Velocidad Tangencial:</div>
@@ -510,7 +524,7 @@
               <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--emerald-safe); font-weight:800; margin-top:4px;" id="resGradient">
                 0.72 %
               </div>
-              <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">Límite RFP: &le; 12%</div>
+              <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;" id="resGradientSub">Límite RFP: &le; 12%</div>
             </div>
           </div>
 
@@ -534,53 +548,87 @@
           </h3>
 
           <div class="form-group">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <label class="form-label" style="margin:0;">Población de la Estación:</label>
-              <strong style="color:var(--cyan-core);" id="eclssCrewDisplay">80 astronautas</strong>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span id="eclssCrewBadge" class="calc-badge calc-badge-green">🟢 Nominal (50 - 150)</span>
+                <strong style="color:var(--cyan-core);" id="eclssCrewDisplay">80 astronautas</strong>
+              </div>
             </div>
             <input type="range" id="eclssCrew" class="rubric-slider" min="10" max="500" step="5" value="80">
+            <div class="slider-margin-guide">
+              <span class="margin-tag danger">🔴 Inviable: &lt; 20 (Abandono técnico) / &gt; 300 (Sobrecarga)</span>
+              <span class="margin-tag success">🟢 Margen Nominal: 50 - 150 tripulantes</span>
+            </div>
           </div>
 
           <div class="form-group">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <label class="form-label" style="margin:0;">Días de Operación / Reserva:</label>
-              <strong style="color:var(--cyan-core);" id="eclssDaysDisplay">30 días</strong>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span id="eclssDaysBadge" class="calc-badge calc-badge-amber">🟡 Mínimo Emergencia</span>
+                <strong style="color:var(--cyan-core);" id="eclssDaysDisplay">30 días</strong>
+              </div>
             </div>
             <input type="range" id="eclssDays" class="rubric-slider" min="5" max="365" step="5" value="30">
+            <div class="slider-margin-guide">
+              <span class="margin-tag danger">🔴 Inviable: &lt; 30 días (Riesgo letal desabastecimiento)</span>
+              <span class="margin-tag success">🟢 Margen Seguro: &ge; 30 días (Óptimo: 60 - 180 d)</span>
+            </div>
           </div>
 
           <div class="form-group">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <label class="form-label" style="margin:0;">Tasa de Reciclaje de Agua:</label>
-              <strong style="color:var(--cyan-core);" id="eclssRecycleDisplay">95%</strong>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span id="eclssRecycleBadge" class="calc-badge calc-badge-green">🟢 Conforme RFP (&ge; 95%)</span>
+                <strong style="color:var(--cyan-core);" id="eclssRecycleDisplay">95%</strong>
+              </div>
             </div>
             <input type="range" id="eclssRecycle" class="rubric-slider" min="50" max="99" step="1" value="95">
+            <div class="slider-margin-guide">
+              <span class="margin-tag danger">🔴 Inviable: &lt; 90% (Flete prohibitivo de agua)</span>
+              <span class="margin-tag success">🟢 Margen Viable: &ge; 95% (Mandatorio S4.5)</span>
+            </div>
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:12px; margin-top:24px;">
-            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:20px;">
+            <div style="background:rgba(12,17,29,0.9); padding:12px 14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <strong style="color:#fff;">Oxígeno Neto Necesario:</strong>
                 <div style="font-size:0.8rem; color:var(--text-muted);">0.84 kg O₂ por persona / día</div>
               </div>
-              <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--cyan-core);" id="resO2">2,016 kg O₂</div>
+              <div style="font-family:var(--font-hud); font-size:1.25rem; color:var(--cyan-core);" id="resO2">2,016 kg O₂</div>
             </div>
 
-            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+            <div style="background:rgba(12,17,29,0.9); padding:12px 14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <strong style="color:#fff;">Agua Total con Reciclaje:</strong>
                 <div style="font-size:0.8rem; color:var(--text-muted);">Consumo bruto 27.5 L / pers / día</div>
               </div>
-              <div style="font-family:var(--font-hud); font-size:1.3rem; color:#34d399;" id="resWater">3,300 L</div>
+              <div style="font-family:var(--font-hud); font-size:1.25rem; color:#34d399;" id="resWater">3,300 L</div>
             </div>
 
-            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+            <div style="background:rgba(12,17,29,0.9); padding:12px 14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <strong style="color:#fff;">Alimentos Deshidratados:</strong>
                 <div style="font-size:0.8rem; color:var(--text-muted);">0.62 kg comida seca / pers / día</div>
               </div>
-              <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--amber-alert);" id="resFood">1,488 kg</div>
+              <div style="font-family:var(--font-hud); font-size:1.25rem; color:var(--amber-alert);" id="resFood">1,488 kg</div>
             </div>
+
+            <div style="background:rgba(12,17,29,0.9); padding:12px 14px; border-radius:8px; border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#fff;">Masa Total Consumibles de Lanzamiento:</strong>
+                <div style="font-size:0.8rem; color:var(--text-muted);">Suma O₂ + Agua neta + Alimentos secos</div>
+              </div>
+              <div style="font-family:var(--font-hud); font-size:1.25rem; color:var(--cyan-core); font-weight:800;" id="resTotalPayload">6,804 kg (6.8 t)</div>
+            </div>
+          </div>
+
+          <!-- Diagnóstico de Viabilidad Técnica ECLSS -->
+          <div id="eclssViabilityAlert" class="coriolis-indicator coriolis-green">
+            🟢 SISTEMA ECLSS 100% VIABLE (APROBADO POR LA FOUNDATION SOCIETY)
           </div>
         </div>
       </div>
