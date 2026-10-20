@@ -28,7 +28,7 @@
 
 ### 1.1. Parámetros Geométricos y Cinemáticos Elegidos:
 * **Radio exterior al nivel del suelo residencial ($r$):** `___________ metros`
-* **Gravedad artificial objetivo en los pies ($a_{pies}$):** `___________ m/s²` *(Equivalente a: `______ g`)*
+* **Aceleración centrípeta objetivo en los pies ($a_{pies}$ en Sistema Internacional):** `___________ m/s²` *(Obligatorio entre 8.34 y 9.81 m/s²; equivalente a: `______ g`)*
 * **Velocidad angular calculada ($\omega$):**
   $$\omega = \sqrt{\frac{a_{pies}}{r}} = \sqrt{\frac{\quad\quad\quad}{\quad\quad\quad}} = \mathbf{\quad\quad\quad}\text{ rad/s}$$
 * **Velocidad de rotación en revoluciones por minuto ($\text{rpm}$):**

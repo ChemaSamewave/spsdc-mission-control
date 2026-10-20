@@ -572,9 +572,9 @@
         <ul style="padding-left: 20px; font-size:0.92rem; color:var(--text-secondary);">
           <li><strong>S2.1:</strong> Separar cubiertas rotatorias con gravedad de zonas cero-G (muelles y hangares).</li>
           <li><strong>S2.2:</strong> Ubicar el puerto de acople de naves en el <strong>eje central de rotación</strong>.</li>
-          <li><strong>S4.1:</strong> Gravedad en suelo entre <strong>0.85 g y 1.00 g</strong> ($a = \omega^2 \cdot r$).</li>
+          <li><strong>S4.1:</strong> Aceleración centrípeta en el suelo en el Sistema Internacional: entre <strong>8.34 m/s² y 9.81 m/s²</strong> (<em>a = &omega;<sup>2</sup> &middot; r</em>, correspondiente a 0.85 G - 1.00 G).</li>
           <li><strong>S4.2:</strong> Velocidad de giro estrictamente <strong>menor a 3.0 rpm</strong> (evita el mareo de Coriolis).</li>
-          <li><strong>S4.3:</strong> Gradiente cabeza-pies de un astronauta de 1.80 m <strong>inferior al 12%</strong>.</li>
+          <li><strong>S4.3:</strong> Gradiente cabeza-pies de un astronauta de 1.80 m <strong>inferior al 12%</strong> (&Delta;a / a<sub>pies</sub> = 1.80 / r &le; 0.12).</li>
         </ul>
       </div>
     </div>
@@ -583,37 +583,41 @@
     <div class="calc-container">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
         <h3 style="font-family:var(--font-hud); color:#fff; font-size:1.15rem;">
-          🛠️ Comprobador Rápido de Gravedad Artificial y Coriolis
+          🛠️ Comprobador Rápido de Gravedad Artificial y Coriolis (Sistema Internacional)
         </h3>
         <span class="badge">HERRAMIENTA EN VIVO</span>
       </div>
       <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:18px;">
-        Introduce el radio exterior de tu estación y la gravedad que deseas alcanzar para verificar instantáneamente si tu diseño cumple las cláusulas <strong>S4.1, S4.2 y S4.3</strong>:
+        Introduce el radio exterior de tu estación y la aceleración en m/s² que deseas alcanzar para verificar instantáneamente si tu diseño cumple las cláusulas <strong>S4.1, S4.2 y S4.3</strong>:
       </p>
 
       <div class="calc-inputs">
         <div class="form-group">
-          <label for="inputRadius">Radio Exterior $r$ (metros):</label>
+          <label for="inputRadius">Radio Exterior <em>r</em> (metros):</label>
           <input type="number" id="inputRadius" value="250" min="10" max="2000" step="10" oninput="calculateGravity()">
         </div>
         <div class="form-group">
-          <label for="inputGravity">Gravedad Deseada en Pies ($g$):</label>
-          <input type="number" id="inputGravity" value="1.0" min="0.5" max="1.5" step="0.05" oninput="calculateGravity()">
+          <label for="inputGravity">Aceleración Deseada en Pies (m/s² en SI):</label>
+          <input type="number" id="inputGravity" value="9.81" min="5.0" max="15.0" step="0.1" oninput="calculateGravity()">
         </div>
       </div>
 
       <div class="calc-results">
         <div class="res-item">
+          <div class="res-val pass" id="resAccel">9.81 m/s²</div>
+          <div class="res-label">Aceleración SI (8.34 - 9.81 m/s²)</div>
+        </div>
+        <div class="res-item">
           <div class="res-val" id="resOmega">0.198 rad/s</div>
-          <div class="res-label">Velocidad Angular ($\omega$)</div>
+          <div class="res-label">Velocidad Angular (&omega;)</div>
         </div>
         <div class="res-item">
           <div class="res-val pass" id="resRpm">1.89 rpm</div>
-          <div class="res-label">Rotación (< 3.0 rpm)</div>
+          <div class="res-label">Rotación (&lt; 3.0 rpm)</div>
         </div>
         <div class="res-item">
           <div class="res-val pass" id="resGradient">0.72 %</div>
-          <div class="res-label">Gradiente Cabeza-Pies (< 12%)</div>
+          <div class="res-label">Gradiente Cabeza-Pies (&le; 12%)</div>
         </div>
         <div class="res-item">
           <div class="res-val pass" id="resStatus">¡APROBADO!</div>
@@ -633,7 +637,7 @@
       </div>
       <h3 style="color:#fff; font-size:1.1rem; margin-bottom:6px;">Memoria de Cálculo de Gravedad Artificial y Coriolis</h3>
       <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:10px;">
-        Demostración matemática del radio exterior $r$, velocidad angular $\omega$ y rpm de giro. Cálculo detallado del gradiente cabeza-pies para una persona de 1.80 m y justificación médica contra la cinetosis vestibular.
+        Demostración matemática del radio exterior <em>r</em> (m), velocidad angular &omega; (rad/s y rpm) y aceleración centrípeta resultante en m/s² (Sistema Internacional). Cálculo detallado del gradiente cabeza-pies para una persona de 1.80 m y justificación médica contra la cinetosis vestibular.
       </p>
       <div style="font-size:0.82rem; color:var(--cyan-core);">
         📄 Formato: Documento PDF, Word o Excel con fórmulas y desarrollo numérico.
@@ -711,7 +715,7 @@
         <tr>
           <td><strong>1. Rigor Técnico y Físico</strong></td>
           <td><span class="badge">25%</span></td>
-          <td>Exactitud en las fórmulas cinemáticas ($a = \omega^2 \cdot r$), cálculo del gradiente cabeza-pies y respeto estricto a las rpm (< 3.0 rpm).</td>
+          <td>Exactitud en las fórmulas cinemáticas (<em>a = &omega;<sup>2</sup> &middot; r</em> en m/s²), cálculo del gradiente cabeza-pies y respeto estricto a las rpm (&lt; 3.0 rpm).</td>
         </tr>
         <tr>
           <td><strong>2. Viabilidad Térmica & Casco</strong></td>
@@ -769,43 +773,41 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // Calculadora interactiva de Gravedad
+    // Calculadora interactiva de Gravedad (Sistema Internacional)
     function calculateGravity() {
       const radius = parseFloat(document.getElementById('inputRadius').value) || 250;
-      const targetG = parseFloat(document.getElementById('inputGravity').value) || 1.0;
+      const targetA = parseFloat(document.getElementById('inputGravity').value) || 9.81; // m/s² en el SI
 
-      const a_m_s2 = targetG * 9.81;
-      const omega = Math.sqrt(a_m_s2 / radius);
+      const omega = Math.sqrt(targetA / radius);
       const rpm = omega * (60 / (2 * Math.PI));
       const gradientPercent = (1.80 / radius) * 100;
+      const gEquivalent = targetA / 9.80665;
 
+      const accelEl = document.getElementById('resAccel');
       const omegaEl = document.getElementById('resOmega');
       const rpmEl = document.getElementById('resRpm');
       const gradEl = document.getElementById('resGradient');
       const statusEl = document.getElementById('resStatus');
 
+      accelEl.innerText = targetA.toFixed(2) + ' m/s² (' + gEquivalent.toFixed(2) + ' G)';
       omegaEl.innerText = omega.toFixed(3) + ' rad/s';
       rpmEl.innerText = rpm.toFixed(2) + ' rpm';
       gradEl.innerText = gradientPercent.toFixed(2) + ' %';
 
+      const accelPass = targetA >= 8.34 && targetA <= 9.81;
       const rpmPass = rpm < 3.0;
       const gradPass = gradientPercent <= 12.0;
 
-      if (rpmPass) {
-        rpmEl.className = 'res-val pass';
-      } else {
-        rpmEl.className = 'res-val fail';
-      }
+      accelEl.className = accelPass ? 'res-val pass' : 'res-val';
+      rpmEl.className = rpmPass ? 'res-val pass' : 'res-val fail';
+      gradEl.className = gradPass ? 'res-val pass' : 'res-val fail';
 
-      if (gradPass) {
-        gradEl.className = 'res-val pass';
-      } else {
-        gradEl.className = 'res-val fail';
-      }
-
-      if (rpmPass && gradPass) {
+      if (rpmPass && gradPass && accelPass) {
         statusEl.innerText = '¡APROBADO!';
         statusEl.className = 'res-val pass';
+      } else if (!accelPass && (rpmPass && gradPass)) {
+        statusEl.innerText = 'FUERA DE RANGO SI';
+        statusEl.className = 'res-val fail';
       } else {
         statusEl.innerText = 'RECHAZADO';
         statusEl.className = 'res-val fail';

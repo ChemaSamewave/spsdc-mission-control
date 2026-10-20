@@ -465,8 +465,8 @@ function openRfpModal(sprintId) {
         <p style="margin:6px 0 0 0; font-size:0.86rem; color:var(--text-secondary); line-height:1.5;">
           • Radiación solar directa: <strong>9.1 kW/m²</strong> (6.6 veces la terrestre) a 0.38 UA.<br>
           • Amplitud térmica en el casco: <strong>-180 °C</strong> (lado oscuro) hasta <strong>+430 °C</strong> (cara al Sol).<br>
-          • Gravedad artificial requerida: <strong>0.9 - 1.0 G</strong> rotatoria en hábitat permanente (radio recomendado: 100-250 m).<br>
-          • Límite médico de cinetosis vestibular (Coriolis): <strong>ω &lt; 3.0 rpm</strong> y gradiente cabeza-pies <strong>&le; 12%</strong>.
+          • Gravedad artificial en el Sistema Internacional: <strong>8.34 a 9.81 m/s²</strong> (equivalente a 0.85 - 1.00 G) rotatoria en hábitat permanente (radio recomendado: 100-250 m).<br>
+          • Límite médico de cinetosis vestibular (Coriolis): velocidad angular <strong>&omega; &lt; 3.0 rpm</strong> y gradiente cabeza-pies <strong>&le; 12%</strong> (&Delta;a / a<sub>pies</sub> &le; 0.12).
         </p>
       </div>
 
@@ -486,13 +486,13 @@ function openRfpModal(sprintId) {
         <span class="rfp-shall">MANDATORIO S2.1</span> La propuesta <strong>SHALL</strong> separar claramente los volúmenes con gravedad artificial (alojamiento, centro médico, laboratorios) del muelle de atraque de naves espaciales, que debe situarse en el <strong>eje de rotación (cero-G)</strong>.
       </div>
       <div class="rfp-clause">
-        <span class="rfp-shall">MANDATORIO S4.1</span> La aceleración centrípeta en la cubierta principal <strong>SHALL</strong> estar comprendida entre <strong>0.85 G y 1.00 G</strong> (aplicando a = ω² · r).
+        <span class="rfp-shall">MANDATORIO S4.1</span> La aceleración centrípeta en la cubierta principal <strong>SHALL</strong> estar comprendida entre <strong>8.34 m/s² y 9.81 m/s²</strong> en el Sistema Internacional (equivalente a 0.85 G - 1.00 G, calculada mediante <em>a = &omega;<sup>2</sup> &middot; r</em>).
       </div>
       <div class="rfp-clause">
         <span class="rfp-shall">MANDATORIO S4.2</span> La velocidad de rotación <strong>SHALL</strong> ser inferior a <strong>3.0 rpm</strong> para evitar el efecto Coriolis y la cinetosis vestibular.
       </div>
       <div class="rfp-clause">
-        <span class="rfp-shall">MANDATORIO S4.3</span> El gradiente de gravedad cabeza-pies para una persona de 1.80 m <strong>SHALL</strong> ser inferior al <strong>12%</strong>.
+        <span class="rfp-shall">MANDATORIO S4.3</span> El gradiente de gravedad cabeza-pies para una persona de 1.80 m <strong>SHALL</strong> ser inferior al <strong>12%</strong> (&Delta;a / a<sub>pies</sub> = 1.80 / r &le; 0.12).
       </div>
 
       <h4 style="font-family:var(--font-hud); color:var(--cyan-core); margin:24px 0 10px 0; border-bottom:1px solid var(--border-subtle); padding-bottom:6px;">
@@ -2139,7 +2139,7 @@ function initCalculators() {
 
     document.getElementById('valRadiusDisplay').textContent = `${r} m`;
     document.getElementById('valRpmDisplay').textContent = `${rpm.toFixed(1)} rpm`;
-    document.getElementById('resGravity').textContent = `${gValue.toFixed(2)} G (${accel.toFixed(1)} m/s²)`;
+    document.getElementById('resGravity').textContent = `${accel.toFixed(2)} m/s² (${gValue.toFixed(2)} G)`;
     document.getElementById('resVelocity').textContent = `${vTangential.toFixed(1)} m/s (${vKmh.toFixed(0)} km/h)`;
 
     // Indicador Coriolis

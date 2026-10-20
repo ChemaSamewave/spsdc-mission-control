@@ -35,7 +35,7 @@ Cada propuesta presentada por las compañías contratistas deberá satisfacer ob
 * **S2.2.** La propuesta **SHALL** ubicar el muelle de acoplamiento de naves en el eje de rotación central (cero-G) para permitir atraques y desacoples seguros sin fuerzas centrífugas desestabilizadoras.
 
 #### S4. Gravedad Artificial y Control de Efecto Coriolis
-* **S4.1.** La propuesta **SHALL** proporcionar una aceleración centrípeta en el suelo de la cubierta residencial principal comprendida entre **$0.85 \text{ g}$ y $1.00 \text{ g}$** ($a = \omega^2 \cdot r$, con $1\text{ g} \approx 9.81\text{ m/s}^2$).
+* **S4.1.** La propuesta **SHALL** proporcionar una aceleración centrípeta en el suelo de la cubierta residencial principal expresada obligatoriamente en el **Sistema Internacional entre $8.34\text{ m/s}^2$ y $9.81\text{ m/s}^2$** ($a = \omega^2 \cdot r$, equivalente a $0.85\text{ g} - 1.00\text{ g}$ con $1\text{ g} \approx 9.81\text{ m/s}^2$).
 * **S4.2.** Para evitar la cinetosis vestibular (mareo y desorientación por aceleración de Coriolis en el canal semicircular del oído interno cuando los tripulantes giran la cabeza), la velocidad de rotación **SHALL** ser estrictamente **inferior a 3.0 rpm** (recomendado: $\le 2.0\text{ rpm}$).
 * **S4.3.** El gradiente de gravedad entre la cabeza y los pies de un astronauta estándar (altura de 1.80 m) **SHALL** ser inferior al **12%** ($\Delta g / g_{pies} \le 0.12$).
 
