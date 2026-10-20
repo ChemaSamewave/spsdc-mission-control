@@ -194,16 +194,22 @@ function initClocks() {
 
 // Cuenta atrás para la Gran Simulación de Diciembre
 function initCountdown() {
-  const targetDate = new Date('2025-12-20T08:30:00');
+  const cdDays = document.getElementById('cdDays');
+  const cdHours = document.getElementById('cdHours');
+  const cdMinutes = document.getElementById('cdMinutes');
+  const cdSeconds = document.getElementById('cdSeconds');
+  if (!cdDays || !cdHours || !cdMinutes || !cdSeconds) return;
+
+  const targetDate = new Date('2026-12-19T08:30:00');
   function updateCountdown() {
     const now = new Date();
     const diff = targetDate - now;
 
     if (diff <= 0) {
-      document.getElementById('cdDays').textContent = '00';
-      document.getElementById('cdHours').textContent = '00';
-      document.getElementById('cdMinutes').textContent = '00';
-      document.getElementById('cdSeconds').textContent = '00';
+      cdDays.textContent = '00';
+      cdHours.textContent = '00';
+      cdMinutes.textContent = '00';
+      cdSeconds.textContent = '00';
       return;
     }
 
@@ -212,10 +218,10 @@ function initCountdown() {
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    document.getElementById('cdDays').textContent = String(days).padStart(2, '0');
-    document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
-    document.getElementById('cdMinutes').textContent = String(minutes).padStart(2, '0');
-    document.getElementById('cdSeconds').textContent = String(seconds).padStart(2, '0');
+    cdDays.textContent = String(days).padStart(2, '0');
+    cdHours.textContent = String(hours).padStart(2, '0');
+    cdMinutes.textContent = String(minutes).padStart(2, '0');
+    cdSeconds.textContent = String(seconds).padStart(2, '0');
   }
   updateCountdown();
   setInterval(updateCountdown, 1000);
