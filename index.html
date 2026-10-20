@@ -961,7 +961,32 @@
             </div>
           </div>
 
-          <!-- Filtros del Censo -->
+          <!-- PANEL DE SINCRONIZACIÓN ENTRE PROFESORES Y COPIAS DE SEGURIDAD -->
+          <div class="hud-panel" style="margin-bottom:20px; border-left: 4px solid var(--cyan-core); background: rgba(6,182,212,0.06);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+              <div>
+                <strong style="color:var(--cyan-core); font-size:0.95rem; display:flex; align-items:center; gap:6px;">
+                  🔄 SINCRONIZACIÓN ENTRE PROFESORES Y PERSISTENCIA
+                </strong>
+                <div style="font-size:0.83rem; color:var(--text-secondary); margin-top:3px;" id="censusStatusSummary">
+                  Censo Oficial: 12 alumnos de prueba • <span style="color:var(--emerald-safe); font-weight:700;">💾 Guardado en este navegador</span>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" class="btn-hud btn-hud-primary" style="font-size:0.8rem; padding:6px 12px;" onclick="copyCensusShareCode()">
+                  📋 Copiar Código para el otro Profesor
+                </button>
+                <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="pasteCensusShareCode()">
+                  📥 Pegar Código del otro Profesor
+                </button>
+                <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="downloadStudentsDataJson()">
+                  💾 Descargar 'students_data.json'
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filtros y Acciones del Censo -->
           <div class="hud-panel" style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
             <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
               <div style="font-family:var(--font-hud); font-size:0.85rem; color:var(--text-secondary);">FILTRAR CENSO:</div>
@@ -978,11 +1003,23 @@
                 <option value="1º Bachillerato">1º Bachillerato</option>
                 <option value="2º Bachillerato">2º Bachillerato</option>
               </select>
-              <input type="text" id="searchStudentQuery" class="form-control" style="width:190px;" placeholder="Buscar nombre o clave..." oninput="renderRegisteredStudentsTable()">
+              <input type="text" id="searchStudentQuery" class="form-control" style="width:180px;" placeholder="Buscar nombre o clave..." oninput="renderRegisteredStudentsTable()">
             </div>
-            <button class="btn-hud btn-hud-secondary" onclick="exportStudentsToCSV()">
-              📥 Exportar Claves a CSV
-            </button>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn-hud btn-hud-secondary" style="font-size:0.8rem;" onclick="exportStudentsToCSV()">
+                📥 CSV
+              </button>
+              <button class="btn-hud btn-hud-secondary" style="font-size:0.8rem;" onclick="exportStudentsToJSON()">
+                📥 Exportar JSON
+              </button>
+              <button class="btn-hud btn-hud-secondary" style="font-size:0.8rem;" onclick="triggerImportStudentsJSON()">
+                📤 Importar JSON
+              </button>
+              <input type="file" id="importStudentsFileInput" style="display:none;" accept=".json" onchange="handleImportStudentsFile(event)">
+              <button class="btn-hud btn-hud-secondary" style="font-size:0.8rem; color:#f87171; border-color:rgba(244,63,94,0.4);" onclick="clearAllTestStudents()">
+                🗑️ Borrar Alumnos de Prueba
+              </button>
+            </div>
           </div>
 
           <!-- Tabla del censo oficial -->
@@ -1155,7 +1192,66 @@
     </div>
   </div>
 
+  <!-- MODAL PARA EDITAR ALUMNO REGISTRADO -->
+  <div class="modal-overlay" id="editStudentModal">
+    <div class="modal-content" style="max-width: 520px; padding: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">
+        <div>
+          <span class="section-tag">EDICIÓN DE INGENIERO PARTICIPANTE</span>
+          <h3 style="font-family:var(--font-hud); font-size:1.25rem; color:#fff; margin-top:4px;">
+            ✏️ Editar Perfil de Alumno
+          </h3>
+        </div>
+        <button onclick="closeEditStudentModal()" class="btn-hud btn-hud-secondary" style="padding:4px 10px;">✕</button>
+      </div>
+
+      <input type="hidden" id="editStudentOriginalKey">
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label" for="editStudentFirstName">Nombre *</label>
+          <input type="text" id="editStudentFirstName" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="editStudentLastName">Apellidos *</label>
+          <input type="text" id="editStudentLastName" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label" for="editStudentSchool">Colegio</label>
+          <select id="editStudentSchool" class="form-control">
+            <option value="col1">ANDEL</option>
+            <option value="col2">FUENLLANA</option>
+            <option value="col3">J.H. NEWMAN</option>
+            <option value="col4">EL PRADO</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="editStudentGrade">Curso</label>
+          <select id="editStudentGrade" class="form-control">
+            <option value="4º ESO">4º ESO</option>
+            <option value="1º Bachillerato">1º Bachillerato</option>
+            <option value="2º Bachillerato">2º Bachillerato</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="editStudentKey">Clave / Contraseña de Acceso *</label>
+        <input type="text" id="editStudentKey" class="form-control" style="font-family:var(--font-hud); letter-spacing:1px; text-transform:uppercase;" required>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Esta es la clave única con la que el alumno iniciará sesión en el Buzón y los Sprints.</div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn-hud btn-hud-secondary" onclick="closeEditStudentModal()">Cancelar</button>
+        <button type="button" class="btn-hud btn-hud-primary" onclick="saveEditedStudent()">💾 Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Script principal -->
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

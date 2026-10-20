@@ -1669,17 +1669,17 @@ function resetToDefaultSchools() {
 
 // GESTIÓN DEL CENSO DE ALUMNOS INSCRITOS
 function loadRegisteredStudents() {
+  const isInitialized = localStorage.getItem('spsdc_students_initialized');
   const saved = localStorage.getItem('spsdc_registered_students');
-  if (saved) {
+
+  if (saved !== null) {
     try {
       AppState.registeredStudents = JSON.parse(saved);
     } catch (e) {
       AppState.registeredStudents = [];
     }
-  }
-
-  // Si no hay alumnos, crear plantilla inicial representativa de los 4 colegios y cursos
-  if (AppState.registeredStudents.length === 0) {
+  } else if (!isInitialized) {
+    // Solo en la primera apertura si no hay ningún censo guardado previamente
     AppState.registeredStudents = [
       { key: 'ALU-ANDEL-01', firstName: 'Lucía', lastName: 'Gómez Fernández', name: 'Lucía Gómez Fernández', schoolId: 'col1', schoolName: 'ANDEL', grade: '4º ESO', createdAt: '23/09/2026' },
       { key: 'ALU-ANDEL-02', firstName: 'Marcos', lastName: 'Pérez Salazar', name: 'Marcos Pérez Salazar', schoolId: 'col1', schoolName: 'ANDEL', grade: '1º Bachillerato', createdAt: '23/09/2026' },
@@ -1694,18 +1694,56 @@ function loadRegisteredStudents() {
       { key: 'ALU-PRADO-02', firstName: 'Adrián', lastName: 'Lozano Blanco', name: 'Adrián Lozano Blanco', schoolId: 'col4', schoolName: 'EL PRADO', grade: '1º Bachillerato', createdAt: '23/09/2026' },
       { key: 'ALU-PRADO-03', firstName: 'Valeria', lastName: 'Nieto Ríos', name: 'Valeria Nieto Ríos', schoolId: 'col4', schoolName: 'EL PRADO', grade: '2º Bachillerato', createdAt: '23/09/2026' }
     ];
+    localStorage.setItem('spsdc_students_initialized', 'true');
     saveRegisteredStudents();
   } else {
-    // Sincronizar nombres actuales de colegios con los alumnos existentes
-    AppState.registeredStudents.forEach(st => {
-      const sch = AppState.schools.find(s => s.id === st.schoolId);
-      if (sch) st.schoolName = sch.name;
-    });
+    AppState.registeredStudents = [];
+  }
+
+  // Intentar cargar students_data.json en segundo plano si existe en el servidor/GitHub Pages
+  fetchAsyncStudentsFile();
+
+  // Sincronizar nombres actuales de colegios con los alumnos existentes
+  AppState.registeredStudents.forEach(st => {
+    const sch = AppState.schools.find(s => s.id === st.schoolId);
+    if (sch) st.schoolName = sch.name;
+  });
+
+  updateCensusSummary();
+}
+
+async function fetchAsyncStudentsFile() {
+  try {
+    const res = await fetch('students_data.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        // Si el censo local estaba vacío o no inicializado, cargar el oficial del archivo
+        const isInit = localStorage.getItem('spsdc_students_initialized');
+        if (!isInit || AppState.registeredStudents.length === 0) {
+          AppState.registeredStudents = data;
+          saveRegisteredStudents();
+          renderRegisteredStudentsTable();
+        }
+      }
+    }
+  } catch(e) {
+    // Archivo students_data.json no presente aún o ejecución local sin servidor
   }
 }
 
 function saveRegisteredStudents() {
+  localStorage.setItem('spsdc_students_initialized', 'true');
   localStorage.setItem('spsdc_registered_students', JSON.stringify(AppState.registeredStudents));
+  updateCensusSummary();
+}
+
+function updateCensusSummary() {
+  const el = document.getElementById('censusStatusSummary');
+  if (el) {
+    const count = AppState.registeredStudents.length;
+    el.innerHTML = `📊 <strong>Censo Oficial: ${count} alumnos registrados</strong> • Estado: <span style="color:var(--emerald-safe); font-weight:700;">💾 Guardado permanentemente en este navegador</span>.<br>Para sincronizar con el otro profesor en otro ordenador, pulsa <strong>«Copiar Código»</strong> o <strong>«Descargar JSON»</strong>.`;
+  }
 }
 
 function generateStudentKey(schoolId) {
@@ -1828,8 +1866,11 @@ function renderRegisteredStudentsTable() {
             ${subCount} ${subCount === 1 ? 'entrega' : 'entregas'}
           </span>
         </td>
-        <td>
-          <button type="button" class="btn-hud btn-hud-secondary" style="padding:4px 10px; font-size:0.75rem; color:var(--rose-danger);" onclick="deleteRegisteredStudent('${s.key}')">
+        <td style="white-space:nowrap;">
+          <button type="button" class="btn-hud btn-hud-secondary" style="padding:4px 8px; font-size:0.75rem; color:var(--cyan-core); margin-right:4px;" onclick="editRegisteredStudent('${s.key}')" title="Editar datos del alumno">
+            ✏️ Editar
+          </button>
+          <button type="button" class="btn-hud btn-hud-secondary" style="padding:4px 8px; font-size:0.75rem; color:var(--rose-danger);" onclick="deleteRegisteredStudent('${s.key}')" title="Dar de baja">
             🗑️ Baja
           </button>
         </td>
@@ -1858,6 +1899,196 @@ function deleteRegisteredStudent(key) {
     AppState.registeredStudents = AppState.registeredStudents.filter(s => s.key !== key);
     saveRegisteredStudents();
     renderRegisteredStudentsTable();
+  }
+}
+
+function clearAllTestStudents() {
+  const count = AppState.registeredStudents.length;
+  if (count === 0) {
+    alert('El censo ya está completamente vacío.');
+    return;
+  }
+  const isDummyOnly = AppState.registeredStudents.every(s => s.key.startsWith('ALU-ANDEL-') || s.key.startsWith('ALU-FUEN-') || s.key.startsWith('ALU-NEWMAN-') || s.key.startsWith('ALU-PRADO-'));
+  
+  const msg = isDummyOnly
+    ? '¿Deseas eliminar los 12 alumnos de prueba para empezar a registrar a los alumnos reales desde cero?'
+    : `⚠️ ATENCIÓN: Se eliminarán los ${count} alumnos registrados actualmente en este navegador.\n\n¿Estás seguro de que deseas vaciar el censo para empezar de cero?`;
+
+  if (confirm(msg)) {
+    AppState.registeredStudents = [];
+    localStorage.setItem('spsdc_students_initialized', 'true');
+    saveRegisteredStudents();
+    renderRegisteredStudentsTable();
+    alert('🗑️ Censo vaciado con éxito.\nYa puedes empezar a crear los perfiles reales de tus alumnos.');
+  }
+}
+
+function editRegisteredStudent(key) {
+  const s = AppState.registeredStudents.find(st => st.key === key);
+  if (!s) return;
+
+  const modal = document.getElementById('editStudentModal');
+  if (!modal) return;
+
+  document.getElementById('editStudentOriginalKey').value = s.key;
+  document.getElementById('editStudentFirstName').value = s.firstName || s.name.split(' ')[0] || '';
+  document.getElementById('editStudentLastName').value = s.lastName || s.name.split(' ').slice(1).join(' ') || '';
+  document.getElementById('editStudentSchool').value = s.schoolId || 'col1';
+  document.getElementById('editStudentGrade').value = s.grade || '4º ESO';
+  document.getElementById('editStudentKey').value = s.key;
+
+  modal.style.display = 'flex';
+  modal.classList.add('active');
+}
+
+function closeEditStudentModal() {
+  const modal = document.getElementById('editStudentModal');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+}
+
+function saveEditedStudent() {
+  const origKey = document.getElementById('editStudentOriginalKey').value;
+  const firstName = document.getElementById('editStudentFirstName').value.trim();
+  const lastName = document.getElementById('editStudentLastName').value.trim();
+  const schoolId = document.getElementById('editStudentSchool').value;
+  const grade = document.getElementById('editStudentGrade').value;
+  const newKey = document.getElementById('editStudentKey').value.trim().toUpperCase();
+
+  if (!firstName || !lastName || !newKey) {
+    alert('Por favor, completa el nombre, los apellidos y la clave del alumno.');
+    return;
+  }
+
+  // Si cambia la clave, comprobar que no colisione con otro
+  if (newKey !== origKey && AppState.registeredStudents.some(s => s.key === newKey)) {
+    alert(`La clave "${newKey}" ya pertenece a otro alumno. Por favor, elige una clave única.`);
+    return;
+  }
+
+  const idx = AppState.registeredStudents.findIndex(s => s.key === origKey);
+  if (idx === -1) return;
+
+  const schoolObj = AppState.schools.find(s => s.id === schoolId);
+
+  AppState.registeredStudents[idx] = {
+    ...AppState.registeredStudents[idx],
+    key: newKey,
+    firstName: firstName,
+    lastName: lastName,
+    name: `${firstName} ${lastName}`,
+    schoolId: schoolId,
+    schoolName: schoolObj ? schoolObj.name : schoolId,
+    grade: grade,
+    updatedAt: new Date().toLocaleDateString('es-ES')
+  };
+
+  saveRegisteredStudents();
+  renderRegisteredStudentsTable();
+  closeEditStudentModal();
+  alert(`✅ Cambios guardados para ${firstName} ${lastName}.\nClave actualizada: ${newKey}`);
+}
+
+function exportStudentsToJSON() {
+  if (AppState.registeredStudents.length === 0) {
+    alert('No hay alumnos registrados para exportar.');
+    return;
+  }
+  const jsonStr = JSON.stringify(AppState.registeredStudents, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `censo_alumnos_spsdc_${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function downloadStudentsDataJson() {
+  const jsonStr = JSON.stringify(AppState.registeredStudents, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'students_data.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  alert('💾 Archivo "students_data.json" descargado.\n\nSi colocas este archivo en la carpeta del proyecto o lo subes a GitHub, el censo se cargará automáticamente en todos los ordenadores y para todos los alumnos.');
+}
+
+function triggerImportStudentsJSON() {
+  const input = document.getElementById('importStudentsFileInput');
+  if (input) input.click();
+}
+
+function handleImportStudentsFile(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      const data = JSON.parse(evt.target.result);
+      if (!Array.isArray(data)) {
+        alert('El archivo no contiene una lista válida de alumnos.');
+        return;
+      }
+      if (confirm(`Se han detectado ${data.length} alumnos en el archivo.\n\n¿Deseas reemplazar el censo actual (${AppState.registeredStudents.length} alumnos) con los datos del archivo?`)) {
+        AppState.registeredStudents = data;
+        saveRegisteredStudents();
+        renderRegisteredStudentsTable();
+        alert(`✅ Censo actualizado con éxito. Ahora hay ${AppState.registeredStudents.length} alumnos registrados.`);
+      }
+    } catch (err) {
+      alert('Error al leer el archivo JSON: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function copyCensusShareCode() {
+  if (AppState.registeredStudents.length === 0) {
+    alert('No hay alumnos registrados actualmente en el censo.');
+    return;
+  }
+  const payload = JSON.stringify(AppState.registeredStudents);
+  const shareCode = btoa(unescape(encodeURIComponent(payload)));
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(shareCode).then(() => {
+      alert(`📋 ¡CÓDIGO DE CENSO COPIADO AL PORTAPAPELES!\n\nPégaselo al otro profesor por WhatsApp o Teams. El otro profesor solo tiene que pulsar «Pegar Código del otro Profesor» en su navegador.`);
+    }).catch(() => {
+      prompt('Copia este código y envíaselo al otro profesor:', shareCode);
+    });
+  } else {
+    prompt('Copia este código y envíaselo al otro profesor:', shareCode);
+  }
+}
+
+function pasteCensusShareCode() {
+  const code = prompt('Pega aquí el código que te ha enviado el otro profesor:');
+  if (!code || !code.trim()) return;
+
+  try {
+    const jsonStr = decodeURIComponent(escape(atob(code.trim())));
+    const data = JSON.parse(jsonStr);
+    if (!Array.isArray(data)) {
+      alert('El código introducido no contiene un formato de censo válido.');
+      return;
+    }
+    if (confirm(`El código contiene ${data.length} alumnos.\n\n¿Deseas cargar este censo en tu navegador?`)) {
+      AppState.registeredStudents = data;
+      saveRegisteredStudents();
+      renderRegisteredStudentsTable();
+      alert(`✅ ¡Censo sincronizado con éxito!\nAhora tienes los ${data.length} alumnos en tu navegador.`);
+    }
+  } catch (err) {
+    alert('❌ Código no válido o corrupto. Asegúrate de copiar todo el texto.');
   }
 }
 
