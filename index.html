@@ -490,22 +490,31 @@
             <input type="range" id="calcRpm" class="rubric-slider" min="0.5" max="8.0" step="0.1" value="1.9">
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px;">
-            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle);">
-              <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Aceleración Centrípeta (SI: m/s²):</div>
-              <div style="font-family:var(--font-hud); font-size:1.5rem; color:var(--cyan-core); font-weight:800;" id="resGravity">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-top:20px;">
+            <div style="background:rgba(12,17,29,0.9); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Aceleración (SI: m/s²):</div>
+              <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--cyan-core); font-weight:800; margin-top:4px;" id="resGravity">
                 9.81 m/s² (1.00 G)
               </div>
+              <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">RFP: 8.34 a 9.81 m/s²</div>
             </div>
-            <div style="background:rgba(12,17,29,0.9); padding:14px; border-radius:8px; border:1px solid var(--border-subtle);">
-              <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Velocidad Tangencial:</div>
-              <div style="font-family:var(--font-hud); font-size:1.5rem; color:var(--text-primary); font-weight:800;" id="resVelocity">
+            <div style="background:rgba(12,17,29,0.9); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Velocidad Tangencial:</div>
+              <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--text-primary); font-weight:800; margin-top:4px;" id="resVelocity">
                 49.7 m/s
               </div>
+              <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;" id="resVelocityKmh">179 km/h</div>
+            </div>
+            <div style="background:rgba(12,17,29,0.9); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
+              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Gradiente Cabeza-Pies:</div>
+              <div style="font-family:var(--font-hud); font-size:1.3rem; color:var(--emerald-safe); font-weight:800; margin-top:4px;" id="resGradient">
+                0.72 %
+              </div>
+              <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:2px;">Límite RFP: &le; 12%</div>
             </div>
           </div>
 
-          <!-- Indicador Coriolis -->
+          <!-- Diagnóstico de Viabilidad Técnica RFP -->
           <div id="coriolisAlert" class="coriolis-indicator coriolis-green">
             🟢 ZONA ÓPTIMA (&lt; 2 rpm): Sin efectos de mareo o cinetosis.
           </div>

@@ -624,6 +624,11 @@
           <div class="res-label">Estado Fisiológico</div>
         </div>
       </div>
+
+      <!-- Diagnóstico y Explicación de Viabilidad -->
+      <div id="calcFeedbackBox" style="margin-top:16px; padding:12px 16px; border-radius:8px; font-size:0.86rem; line-height:1.45; background:rgba(16,185,129,0.12); border:1px solid var(--emerald-safe); color:#34d399;">
+        🟢 <strong>PROPUESTA 100% VIABLE:</strong> Cumple todas las cláusulas del pliego oficial RFP.
+      </div>
     </div>
 
     <!-- Guía de Entregables -->
@@ -802,15 +807,39 @@
       rpmEl.className = rpmPass ? 'res-val pass' : 'res-val fail';
       gradEl.className = gradPass ? 'res-val pass' : 'res-val fail';
 
+      const feedbackBox = document.getElementById('calcFeedbackBox');
       if (rpmPass && gradPass && accelPass) {
-        statusEl.innerText = '¡APROBADO!';
+        statusEl.innerText = '¡VIABLE! (APROBADO)';
         statusEl.className = 'res-val pass';
-      } else if (!accelPass && (rpmPass && gradPass)) {
-        statusEl.innerText = 'FUERA DE RANGO SI';
-        statusEl.className = 'res-val fail';
+        if (feedbackBox) {
+          feedbackBox.style.background = 'rgba(16,185,129,0.12)';
+          feedbackBox.style.borderColor = 'var(--emerald-safe)';
+          feedbackBox.style.color = '#34d399';
+          feedbackBox.innerHTML = `🟢 <strong>DISEÑO 100% VIABLE (APROBADO):</strong> Tu estación cumple los requisitos del RFP FS-M01. Aceleración centrípeta natural (${targetA.toFixed(2)} m/s²), rotación cómoda (${rpm.toFixed(2)} rpm &lt; 3.0) sin mareo de Coriolis y gradiente vertical suave (${gradientPercent.toFixed(2)}% &le; 12%).`;
+        }
       } else {
-        statusEl.innerText = 'RECHAZADO';
+        statusEl.innerText = 'NO VIABLE (RECHAZADO)';
         statusEl.className = 'res-val fail';
+        if (feedbackBox) {
+          feedbackBox.style.background = 'rgba(244,63,94,0.12)';
+          feedbackBox.style.borderColor = 'var(--rose-accent)';
+          feedbackBox.style.color = '#fb7185';
+          let motivos = [];
+          if (!accelPass) {
+            if (targetA < 8.34) {
+              motivos.push(`• <strong>Aceleración insuficiente (${targetA.toFixed(2)} m/s² &lt; 8.34 m/s²):</strong> Gravedad muy baja (&lt; 0.85 G). Provoca atrofia muscular y descalcificación ósea.`);
+            } else {
+              motivos.push(`• <strong>Aceleración excesiva (${targetA.toFixed(2)} m/s² &gt; 9.81 m/s²):</strong> Supera 1.0 G terrestre. Provoca fatiga cardiovascular y sobrecarga en el casco.`);
+            }
+          }
+          if (!rpmPass) {
+            motivos.push(`• <strong>Giro peligroso (${rpm.toFixed(2)} rpm &ge; 3.0 rpm):</strong> Incumple S4.2. Efecto Coriolis severo; produce cinetosis vestibular, náuseas y pérdida de equilibrio.`);
+          }
+          if (!gradPass) {
+            motivos.push(`• <strong>Gradiente excesivo (${gradientPercent.toFixed(2)}% &gt; 12%):</strong> Incumple S4.3. El radio de ${radius} m es muy corto; la sangre bajará violentamente a los pies.`);
+          }
+          feedbackBox.innerHTML = `🔴 <strong>PROPUESTA NO VIABLE (RECHAZADA POR LA FOUNDATION SOCIETY):</strong><br>${motivos.join('<br>')}<br><span style="color:#fecaca; font-size:0.8rem; margin-top:4px; display:inline-block;">💡 <em>Consejo:</em> Aumenta el radio (r) a más de 100-250 m para reducir las rpm y el gradiente manteniendo la gravedad en ~9.8 m/s².</span>`;
+        }
       }
     }
 

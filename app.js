@@ -2135,24 +2135,75 @@ function initCalculators() {
     const gValue = accel / 9.80665; // g's
     // v = ω * r
     const vTangential = omega * r; // m/s
-    const vKmh = vTangential * 3.6;
+    // Gradiente cabeza-pies para astronauta de 1.80 m (cláusula S4.3): 1.80 / r
+    const gradient = (1.80 / r) * 100;
 
     document.getElementById('valRadiusDisplay').textContent = `${r} m`;
     document.getElementById('valRpmDisplay').textContent = `${rpm.toFixed(1)} rpm`;
     document.getElementById('resGravity').textContent = `${accel.toFixed(2)} m/s² (${gValue.toFixed(2)} G)`;
-    document.getElementById('resVelocity').textContent = `${vTangential.toFixed(1)} m/s (${vKmh.toFixed(0)} km/h)`;
+    document.getElementById('resVelocity').textContent = `${vTangential.toFixed(1)} m/s`;
+    const resVelKmh = document.getElementById('resVelocityKmh');
+    if (resVelKmh) resVelKmh.textContent = `${vKmh.toFixed(0)} km/h`;
+    const resGrad = document.getElementById('resGradient');
+    if (resGrad) {
+      resGrad.textContent = `${gradient.toFixed(2)} %`;
+      resGrad.style.color = gradient <= 12.0 ? 'var(--emerald-safe)' : 'var(--rose-danger)';
+    }
 
-    // Indicador Coriolis
+    // Evaluación estricta de Viabilidad Técnica según el Pliego Oficial (RFP)
+    // 1. Aceleración centrípeta en SI: 8.34 a 9.81 m/s² (0.85 a 1.00 G)
+    const accelPass = accel >= 8.34 && accel <= 9.81;
+    // 2. Velocidad de giro: estrictamente < 3.0 rpm (recomendado <= 2.0 rpm)
+    const rpmPass = rpm < 3.0;
+    const rpmOptimal = rpm <= 2.0;
+    // 3. Gradiente cabeza-pies: <= 12%
+    const gradPass = gradient <= 12.0;
+
     const coriolisBox = document.getElementById('coriolisAlert');
-    if (rpm < 2.0) {
-      coriolisBox.className = 'coriolis-indicator coriolis-green';
-      coriolisBox.innerHTML = `🟢 <strong>ZONA ÓPTIMA (&lt; 2 rpm):</strong> Adaptación humana inmediata. Efecto Coriolis imperceptible en movimientos cotidianos.`;
-    } else if (rpm <= 4.0) {
-      coriolisBox.className = 'coriolis-indicator coriolis-amber';
-      coriolisBox.innerHTML = `🟡 <strong>ZONA ACEPTABLE (2 - 4 rpm):</strong> Requiere periodo de aclimatación de 24h. Mareo ligero en giros bruscos de cabeza.`;
-    } else {
-      coriolisBox.className = 'coriolis-indicator coriolis-red';
-      coriolisBox.innerHTML = `🔴 <strong>ZONA PELIGROSA (&gt; 4 rpm):</strong> Cinetosis severa y desorientación vestibular en tripulación normal. Aumenta el radio del hábitat.`;
+    if (coriolisBox) {
+      if (accelPass && rpmPass && gradPass) {
+        if (rpmOptimal) {
+          coriolisBox.className = 'coriolis-indicator coriolis-green';
+          coriolisBox.innerHTML = `🟢 <strong>PROPUESTA 100% VIABLE (APROBADA POR LA FOUNDATION SOCIETY):</strong><br>
+          <span style="font-size:0.82rem; font-weight:normal; line-height:1.4; display:block; margin-top:4px;">
+            ✓ Gravedad en el Sistema Internacional: <strong>${accel.toFixed(2)} m/s²</strong> (cumple rango 8.34 - 9.81 m/s²).<br>
+            ✓ Giro óptimo: <strong>${rpm.toFixed(1)} rpm</strong> (&le; 2.0 rpm; sin mareo de Coriolis ni cinetosis).<br>
+            ✓ Gradiente cabeza-pies: <strong>${gradient.toFixed(2)}%</strong> (&le; 12%; diferencia de peso imperceptible).
+          </span>`;
+        } else {
+          coriolisBox.className = 'coriolis-indicator coriolis-amber';
+          coriolisBox.innerHTML = `🟡 <strong>PROPUESTA VIABLE CON ACLIMATACIÓN (APROBADA):</strong><br>
+          <span style="font-size:0.82rem; font-weight:normal; line-height:1.4; display:block; margin-top:4px;">
+            ✓ Gravedad: <strong>${accel.toFixed(2)} m/s²</strong> (Correcta).<br>
+            ⚠️ Giro de <strong>${rpm.toFixed(1)} rpm</strong> (cerca del límite máximo de 3.0 rpm). Los astronautas requerirán periodo de aclimatación de 24h para evitar ligeros mareos al girar la cabeza.<br>
+            ✓ Gradiente cabeza-pies: <strong>${gradient.toFixed(2)}%</strong> (&le; 12%).
+          </span>`;
+        }
+      } else {
+        coriolisBox.className = 'coriolis-indicator coriolis-red';
+        let fallos = [];
+        if (!accelPass) {
+          if (accel < 8.34) {
+            fallos.push(`❌ <strong>Aceleración insuficiente (${accel.toFixed(2)} m/s² &lt; 8.34 m/s²):</strong> Incumple S4.1. Gravedad demasiado baja (&lt; 0.85 G); provocará atrofia muscular y desmineralización ósea acelerada en Mercurio.`);
+          } else {
+            fallos.push(`❌ <strong>Aceleración excesiva (${accel.toFixed(2)} m/s² &gt; 9.81 m/s²):</strong> Incumple S4.1. Supera la gravedad terrestre (&gt; 1.00 G); genera sobrecarga cardiovascular en la tripulación y tensión innecesaria en el casco.`);
+          }
+        }
+        if (!rpmPass) {
+          fallos.push(`❌ <strong>Giro excesivo (${rpm.toFixed(1)} rpm &ge; 3.0 rpm):</strong> Incumple S4.2. Efecto Coriolis severo; provocará cinetosis vestibular constante, náuseas y pérdida de orientación.`);
+        }
+        if (!gradPass) {
+          fallos.push(`❌ <strong>Gradiente cabeza-pies inaceptable (${gradient.toFixed(2)}% &gt; 12%):</strong> Incumple S4.3. El radio de ${r} m es demasiado pequeño; la sangre descenderá violentamente a los pies provocando síncopes.`);
+        }
+
+        coriolisBox.innerHTML = `🔴 <strong>PROPUESTA NO VIABLE (RECHAZADA POR EL COMITÉ TÉCNICO):</strong><br>
+        <div style="font-size:0.82rem; font-weight:normal; line-height:1.4; margin-top:6px;">
+          ${fallos.join('<br>')}
+        </div>
+        <div style="font-size:0.8rem; color:#fecaca; margin-top:6px; font-weight:bold;">
+          💡 <em>Solución recomendada:</em> Aumenta el radio (r) a más de 100-250 m y ajusta las rpm para situar la aceleración entre 8.34 y 9.81 m/s².
+        </div>`;
+      }
     }
 
     // Animación visual del anillo
