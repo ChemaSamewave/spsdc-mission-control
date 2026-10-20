@@ -83,6 +83,7 @@ Para cumplir con las normas del concurso, cada participante y equipo debe regist
 * **ENTREGA IND-1B (Ciencia de Materiales y Casco Protector):**
   * *Ficha Técnica del Casco Protector Multicapa frente a Mercurio*.
   * Esquema y justificación de capas: aleación estructural (Al-Li, Titanio), escudo térmico reflectante de alta emisividad contra 430 °C, escudo Whipple antimeteoritos y blindaje de polietileno/agua/regolito frente a llamaradas de protones solares.
+  * *Recurso Oficial:* Los alumnos pueden justificar proveedores, propiedades de materiales y costes consultando el [Catálogo Oficial de Subcontratistas de UKSDC](https://uksdc.org/competition-resources/subcontractors/).
   * Formato: Fichero PDF o infografía técnica explicativa.
 * **ENTREGA IND-1C (Oral Communication & Technical Pitch in English):**
   * *Vídeo Individual de Defensa Técnica en Inglés (1 a 2 minutos)*.

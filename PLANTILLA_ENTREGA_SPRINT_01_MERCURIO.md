@@ -52,6 +52,8 @@
 ## 2. 🛡️ ENTREGA IND-1B: FICHA TÉCNICA DEL CASCO MULTICAPA Y ESCUDO SOLAR
 *(A cumplimentar por el alumno responsable de Materiales y Protección Térmica/Radiológica)*
 
+> **Recurso de apoyo para justificar materiales y gastos:** Podéis seleccionar proveedores, propiedades de materiales y estimar costes consultando el [Catálogo Oficial de Subcontratistas de UKSDC](https://uksdc.org/competition-resources/subcontractors/).
+
 * **Nombre del Alumno:** ________________________________________
 
 ### 2.1. Escudo Solar Primario (Sunshield / Parasol Pasivo):
