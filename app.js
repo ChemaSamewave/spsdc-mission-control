@@ -1716,35 +1716,6 @@ async function fetchAsyncStudentsFile() {
   }
 }
 
-  // Sincronizar nombres actuales de colegios con los alumnos existentes
-  AppState.registeredStudents.forEach(st => {
-    const sch = AppState.schools.find(s => s.id === st.schoolId);
-    if (sch) st.schoolName = sch.name;
-  });
-
-  updateCensusSummary();
-}
-
-async function fetchAsyncStudentsFile() {
-  try {
-    const res = await fetch('students_data.json');
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        // Si el censo local estaba vacío o no inicializado, cargar el oficial del archivo
-        const isInit = localStorage.getItem('spsdc_students_initialized');
-        if (!isInit || AppState.registeredStudents.length === 0) {
-          AppState.registeredStudents = data;
-          saveRegisteredStudents();
-          renderRegisteredStudentsTable();
-        }
-      }
-    }
-  } catch(e) {
-    // Archivo students_data.json no presente aún o ejecución local sin servidor
-  }
-}
-
 function saveRegisteredStudents() {
   localStorage.setItem('spsdc_students_initialized', 'true');
   localStorage.setItem('spsdc_registered_students', JSON.stringify(AppState.registeredStudents));
