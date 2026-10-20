@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GUÍA FÁCIL PARA ALUMNOS · SPRINT 01 (MERCURIO) | SPSDC 2026</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 14mm 14mm 14mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 10pt;
+    }
+
+    /* Header */
+    .header {
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .org-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9pt;
+      color: #0284c7;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .main-title {
+      font-size: 18pt;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.15;
+      margin-top: 4px;
+    }
+
+    .badge-date {
+      background: #f0fdf4;
+      border: 1px solid #16a34a;
+      color: #15803d;
+      font-weight: 700;
+      font-size: 8.5pt;
+      padding: 6px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    /* Callout intro */
+    .intro-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 5px solid #0284c7;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 9.5pt;
+    }
+
+    .intro-box strong {
+      color: #0369a1;
+    }
+
+    h2 {
+      font-size: 12pt;
+      font-weight: 800;
+      color: #0f172a;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 4px;
+      margin: 16px 0 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    h3 {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #0369a1;
+      margin: 8px 0 4px 0;
+    }
+
+    /* Grid 2 col */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .card-highlight {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+    }
+
+    .card-warning {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+    }
+
+    ul, ol {
+      padding-left: 18px;
+      margin-bottom: 6px;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    /* Steps */
+    .step-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .step-num {
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 11pt;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-title {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 10pt;
+      margin-bottom: 2px;
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 7.5pt;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      margin-left: 6px;
+    }
+
+    .pill-ind { background: #e0f2fe; color: #0369a1; }
+    .pill-grp { background: #dcfce7; color: #15803d; }
+    .pill-video { background: #fef3c7; color: #b45309; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.5pt;
+      margin: 10px 0;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .alert-box {
+      background: #fff1f2;
+      border: 1.5px solid #f43f5e;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 12px 0;
+      font-size: 9pt;
+      color: #9f1239;
+    }
+
+    .links-box {
+      background: #f8fafc;
+      border: 1.5px dashed #0284c7;
+      border-radius: 6px;
+      padding: 12px;
+      margin: 12px 0;
+    }
+
+    .link-item {
+      margin-bottom: 6px;
+      font-size: 9pt;
+    }
+
+    .link-item a {
+      color: #0284c7;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    .footer {
+      margin-top: 16px;
+      border-top: 1px solid #cbd5e1;
+      padding-top: 8px;
+      font-size: 8pt;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PÁGINA 1 -->
+  <div class="header">
+    <div>
+      <div class="org-title">SPSDC 2026 · Alianza 4 Colegios (Andel · Fuenllana · Newman · El Prado)</div>
+      <div class="main-title">GUÍA RÁPIDA Y CLARA: SPRINT 01</div>
+      <div style="font-size:9.5pt; color:#64748b; font-weight:600;">Estructura de la Estación Espacial HERMES-1 en Mercurio</div>
+    </div>
+    <div class="badge-date">
+      ⏰ Entrega: Viernes, 31 OCTUBRE (23:59 h)
+    </div>
+  </div>
+
+  <div class="intro-box">
+    <strong>👋 ¡Hola equipo de ingenieros!</strong> No os agobiéis con los términos difíciles de la NASA. Este primer sprint consiste en algo muy concreto y divertido: <strong>diseñar la estructura exterior ("el esqueleto") de una estación espacial gigante que orbitará el planeta Mercurio</strong>. Tenéis casi dos semanas (hasta fin de mes) para trabajar con calma y en equipo.
+  </div>
+
+  <h2>🎯 1. ¿Cuáles son los 3 Objetivos que debemos conseguir?</h2>
+  <div class="grid-2">
+    <div class="card card-highlight">
+      <h3>1. Gravedad Artificial (Para no flotar)</h3>
+      <p>Mercurio está lejos y los astronautas vivirán allí mucho tiempo. Para que sus huesos y músculos no se debiliten, <strong>la estación debe girar sobre sí misma</strong> como una rueda gigante para crear gravedad artificial parecida a la de la Tierra (entre <strong>0.85g y 1.0g</strong>).</p>
+      <p style="font-size:8.5pt; color:#64748b; margin-top:4px;"><em>Regla clave:</em> No debe girar a lo loco para no marearse (máximo <strong>menos de 3 vueltas por minuto / 3 rpm</strong>).</p>
+    </div>
+
+    <div class="card card-warning">
+      <h3>2. Escudo Térmico (Para no quemarse)</h3>
+      <p>Mercurio está pegado al Sol: hace un calor extremo de <strong>+430 °C</strong> bajo el sol y <strong>-180 °C</strong> en la sombra, además de radiación solar brutal (9.1 kW/m²).</p>
+      <p style="font-size:8.5pt; color:#64748b; margin-top:4px;"><em>Regla clave:</em> Necesitáis colocar un <strong>gran parasol protector (Sunshield)</strong> por delante y un casco exterior con varias capas de materiales.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>3. Muelle de atraque de naves (Sin dar vueltas)</h3>
+    <p>Las naves de transporte deben poder aparcar sin chocar. Por eso, el puerto de atraque debe estar ubicado justo en el <strong>eje central de giro (a cero gravedad)</strong>, mientras que los dormitorios y gimnasios están en el anillo exterior con gravedad.</p>
+  </div>
+
+  <h2>📝 2. ¿Qué tiene que hacer y entregar cada grupo?</h2>
+  <p style="font-size:9pt; margin-bottom:8px;">Formaréis grupos de <strong>2 a 5 alumnos del mismo colegio</strong>. La entrega se compone de <strong>una parte grupal</strong> y <strong>pequeñas aportaciones individuales</strong>:</p>
+
+  <div class="step-item">
+    <div class="step-num">A</div>
+    <div class="step-content">
+      <div class="step-title">TRABAJO EN GRUPO: Propuesta de la Estación <span class="pill pill-grp">Entrega Grupal GRP-1</span></div>
+      <p style="font-size:9pt; color:#334155;">
+        Entre todos elegís el <strong>nombre de vuestra estación</strong> y su forma (ej. forma de donut/toroide, mancuerna o cilindros). Hacéis un <strong>diseño 3D sencillo</strong> (muy fácil con <em>TinkerCAD</em>, o en <em>Blender/SketchUp</em>) y redactáis una memoria resumen de <strong>3 a 6 páginas</strong> (o una presentación de diapositivas) explicando vuestra estación.
+      </p>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-num">B</div>
+    <div class="step-content">
+      <div class="step-title">FÍSICA: Cálculos de Gravedad <span class="pill pill-ind">Entrega Individual IND-1A</span></div>
+      <p style="font-size:9pt; color:#334155;">
+        Un alumno se encarga de justificar con números el radio de la estación (por ejemplo: $r = 250\text{ m}$) y la velocidad de giro (ejemplo: $1.89\text{ rpm}$). Podéis usar la <strong>calculadora interactiva de nuestra web</strong> para comprobarlo al instante sin fallos.
+      </p>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-num">C</div>
+    <div class="step-content">
+      <div class="step-title">MATERIALES: Ficha del Casco y Escudo Solar <span class="pill pill-ind">Entrega Individual IND-1B</span></div>
+      <p style="font-size:9pt; color:#334155;">
+        Otro alumno explica qué materiales forman el "sándwich" protector del casco: capa reflectante del parasol, cerámica resistente al calor, escudo contra meteoritos pequeños y blindaje contra radiación (agua/polietileno).
+      </p>
+    </div>
+  </div>
+
+  <div class="step-item">
+    <div class="step-num">D</div>
+    <div class="step-content">
+      <div class="step-title">COMUNICACIÓN: Vídeo en Inglés de 1 a 2 minutos <span class="pill pill-video">Entrega Individual IND-1C</span></div>
+      <p style="font-size:9pt; color:#334155;">
+        Cada alumno graba un vídeo muy cortito (1 a 2 min) explicando en inglés la solución que ha pensado.
+      </p>
+      <div class="alert-box" style="margin:6px 0 0 0; padding:6px 10px;">
+        ⚠️ <strong>OBLIGATORIO:</strong> El vídeo debe grabarse <strong>DE PIE Y A CUERPO COMPLETO</strong> (se os debe ver de la cabeza a los pies, proyectando seguridad y postura formal, como en una exposición real ante el tribunal espacial). ¡Nada de vídeos sentados cortados por los hombros!
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA 2 -->
+  <div class="page-break"></div>
+
+  <div class="header" style="margin-top:10px;">
+    <div>
+      <div class="org-title">Recursos de Apoyo e Inspiración</div>
+      <div class="main-title" style="font-size:15pt;">¿DÓNDE ENCONTRAR MATERIAL Y EJEMPLOS?</div>
+    </div>
+    <div class="badge-date">📚 Guía de Consulta</div>
+  </div>
+
+  <h2>🌐 3. Enlaces Oficiales para inspiraros con proyectos reales</h2>
+  <div class="links-box">
+    <div class="link-item">
+      🪐 <strong>Web de la Competición Española (SPSDC):</strong><br>
+      Entrad en nuestro <strong>Mission Control</strong> oficial (abriendo <code>index.html</code> o la <em>Guía Sprint 1</em>). Tenéis la calculadora de fórmulas en directo, el pliego técnico completo y las diapositivas de clase.
+    </div>
+    <div class="link-item" style="margin-top:8px;">
+      🇬🇧 <strong>Web de la Competición Británica (UKSDC - UK Space Design Competition):</strong><br>
+      Visita: <a href="https://uksdc.org/" target="_blank"><strong>https://uksdc.org/</strong></a> y la sección de recursos internacionales en <a href="https://spacesdc.org/" target="_blank"><strong>https://spacesdc.org/</strong></a>.<br>
+      Allí encontraréis propuestas ganadoras de otros años (contratos de estaciones como <em>Olympus</em>, <em>Balder</em>, <em>Columbiat</em> o <em>Bellevistat</em>). Veréis cómo estructuran los planos, las tablas de materiales y la distribución de módulos.
+    </div>
+    <div class="link-item" style="margin-top:8px;">
+      🛠️ <strong>Herramientas Gratuitas Recomendadas para vuestro 3D:</strong>
+      <ul style="margin-top:4px; padding-left:20px;">
+        <li><a href="https://www.tinkercad.com/" target="_blank"><strong>TinkerCAD (Recomendado para empezar):</strong></a> Es 100% online, gratis y en 15 minutos podéis crear un toroide/anillo con cilindros y el parasol. Luego solo tenéis que compartir el enlace público.</li>
+        <li><strong>Blender / OnShape / SketchUp:</strong> Si en vuestro equipo hay alguien con experiencia en diseño 3D, podéis hacer renders más detallados.</li>
+        <li><strong>Canva / Google Slides:</strong> Para maquetar la presentación o memoria técnica con un aspecto profesional.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>🧮 4. Ejemplo Rápido de Números (¡Para no complicaros!)</h2>
+  <p style="font-size:9pt; margin-bottom:8px;">Si no sabéis qué medidas poner a vuestra estación, podéis usar estos valores de referencia estándar aprobados:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Parámetro</th>
+        <th>Valor Recomendado</th>
+        <th>¿Por qué se elige?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Radio de la estación ($r$)</strong></td>
+        <td><strong>250 metros</strong></td>
+        <td>Espacio amplio para tripulación y radio suficiente para giro suave.</td>
+      </tr>
+      <tr>
+        <td><strong>Gravedad en el suelo ($a$)</strong></td>
+        <td><strong>$1.0\text{ g}$ ($9.81\text{ m/s}^2$)</strong></td>
+        <td>Exactamente igual que la gravedad de la Tierra.</td>
+      </tr>
+      <tr>
+        <td><strong>Velocidad de giro</strong></td>
+        <td><strong>$1.89\text{ rpm}$</strong></td>
+        <td>¡Cumple la norma! Es muy inferior al límite de mareo ($< 3\text{ rpm}$).</td>
+      </tr>
+      <tr>
+        <td><strong>Gradiente cabeza-pies</strong></td>
+        <td><strong>$0.72\%$</strong></td>
+        <td>La diferencia de peso entre cabeza y pies es imperceptible ($< 12\%$).</td>
+      </tr>
+      <tr>
+        <td><strong>Escudo Parasol (Sunshield)</strong></td>
+        <td><strong>Disco frontal reflectante</strong></td>
+        <td>Desvía el 95% de la radiación solar directa de Mercurio (9.1 kW/m²).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>📤 5. ¿Dónde y Cómo se Entrega?</h2>
+  <div class="card card-highlight">
+    <p style="font-size:9.5pt; margin-bottom:8px;">
+      <strong>Canal Oficial y Único:</strong> A través del <strong>Buzón de Entrega de nuestra web (Mission Control)</strong>.
+    </p>
+    <ol style="font-size:9pt; padding-left:18px;">
+      <li>Acceded a la pestaña <strong>«📤 Buzón de Entrega»</strong> en la web de Mission Control.</li>
+      <li>Introducid vuestra <strong>clave personal de alumno</strong> (os la facilitará vuestro profesor coordinador).</li>
+      <li>Adjuntad vuestro <strong>PDF</strong> (usad la <em>Plantilla Oficial de Entrega</em> que os hemos facilitado) y pegad los <strong>enlaces</strong> (modelo 3D de TinkerCAD y el vídeo en inglés de YouTube/Drive/Loom).</li>
+      <li>Pulsad <strong>«Enviar Propuesta al Registro de Misión»</strong>. Recibiréis confirmación inmediata.</li>
+    </ol>
+  </div>
+
+  <div class="footer">
+    <span>SPSDC 2026 · Spanish Space Design Competition · Operación Órbita</span>
+    <span>Página 2 de 2 · Plazo de Entrega: 31 de Octubre de 2026</span>
+  </div>
+
+</body>
+</html>

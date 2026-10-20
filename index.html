@@ -50,7 +50,8 @@
       <button class="nav-tab" data-view="submissions">📤 Buzón de Entrega</button>
       <button class="nav-tab" data-view="calculators">🛠️ Calculadoras</button>
       <button class="nav-tab" data-view="december">🤝 Simulación Diciembre</button>
-      <button class="nav-tab" data-view="jury">⚖️ Panel Jurado</button>
+      <button class="nav-tab" style="color:var(--emerald-safe); font-weight:700; border-color:var(--emerald-safe);" onclick="window.open('GUIA_FACIL_SPRINT_01_ALUMNOS.pdf', '_blank')">📄 Guía Alumnos (PDF)</button>
+      <button class="nav-tab" style="color:var(--cyan-core);" onclick="window.open('GUIA_ESTUDIANTE_SPRINT_01.html', '_blank')">📖 Guía Sprint 1</button>
       <button class="nav-tab" style="color:var(--amber-alert);" onclick="window.open('Presentacion_Lanzamiento_Operacion_Orbita.html', '_blank')">📽️ Presentación Alumnos</button>
     </nav>
   </header>
@@ -75,6 +76,9 @@
           <div class="hero-cta-row">
             <button class="btn-hud btn-hud-primary" onclick="navigateTo('submissions')">
               📤 Realizar Entrega de Sprint
+            </button>
+            <button class="btn-hud btn-hud-secondary" onclick="window.open('GUIA_FACIL_SPRINT_01_ALUMNOS.pdf', '_blank')" style="border-color:var(--emerald-safe); color:var(--emerald-safe); font-weight:700; background:rgba(16,185,129,0.12);">
+              📄 Descargar Guía Alumnos (PDF)
             </button>
             <button class="btn-hud btn-hud-secondary" onclick="navigateTo('sprints')">
               📋 Ver Hoja de Ruta de Sprints
@@ -149,17 +153,23 @@
       <div class="hud-panel" style="background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(56,189,248,0.1)); border-color: var(--cyan-core);">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
           <div>
-            <span class="pill-badge">SPRINT 1 EN CURSO • SEPTIEMBRE</span>
+            <span class="pill-badge">SPRINT 1 EN CURSO • OCTUBRE (LÍMITE: 31 OCTUBRE · 23:59 H)</span>
             <h3 style="font-family:var(--font-hud); font-size:1.4rem; color:#fff; margin-top:6px;">
               Structural Engineering: El Esqueleto de la Estación
             </h3>
             <p style="color:var(--text-secondary); font-size:0.92rem; margin-top:4px;">
-              Entregar el diseño básico del hábitat (toroide vs cilindro), cálculo de gravedad artificial centrípeta (g) y blindaje de casco.
+              Entregar el diseño básico del hábitat (toroide vs cilindro), cálculo de gravedad artificial centrípeta (g), blindaje de casco y defensa en inglés.
             </p>
           </div>
-          <div style="display:flex; gap:12px;">
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn-hud btn-hud-secondary" onclick="window.open('GUIA_FACIL_SPRINT_01_ALUMNOS.pdf', '_blank')" style="border-color:var(--emerald-safe); color:var(--emerald-safe); font-weight:700; background:rgba(16,185,129,0.15);">
+              📄 Descargar Guía Alumnos (PDF)
+            </button>
+            <button class="btn-hud btn-hud-secondary" onclick="window.open('GUIA_ESTUDIANTE_SPRINT_01.html', '_blank')">
+              📖 Ver Guía y Calculadora
+            </button>
             <button class="btn-hud btn-hud-secondary" onclick="navigateTo('calculators')">
-              🛠️ Abrir Calculadora de Gravedad
+              🛠️ Calculadora de Gravedad
             </button>
             <button class="btn-hud btn-hud-primary" onclick="prepareSubmissionFor(1)">
               📤 Subir Entrega

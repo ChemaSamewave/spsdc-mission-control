@@ -1,9 +1,11 @@
 # FOUNDATION SOCIETY — CONTRACT FS-M01
 ## REQUEST FOR PROPOSAL (RFP) · SPRINT 01
 ### Structural Engineering: "El Esqueleto" — Mercury Orbit & Surface Operations
-**Código de Concurso:** SPSDC-2026-M01-S  
-**Destino de Misión:** Planeta Mercurio (Órbita de Caloris / Cráteres Polares)  
-**Fecha Límite de Entrega:** Ver cronograma en Mission Control  
+* **Código de Concurso:** SPSDC-2026-M01-S  
+* **Destino de Misión:** Planeta Mercurio (Órbita de Caloris / Cráteres Polares)  
+* **Apertura de Convocatoria:** 20 de Octubre de 2026  
+* **Fecha Límite Improrrogable:** **Viernes, 31 de Octubre de 2026 a las 23:59 h (Hora Peninsular)**  
+* **Canal Oficial de Entrega:** **Buzón de Entrega de la Web Mission Control** (Pestaña *«📤 Buzón de Entrega»*)  
 
 ---
 
@@ -11,20 +13,20 @@
 La *Foundation Society* abre la licitación oficial para el diseño preliminar del asentamiento y estación de transferencia **HERMES-1**, la primera infraestructura permanente de la humanidad en el entorno del **Planeta Mercurio**.
 
 Mercurio representa uno de los entornos más hostiles del Sistema Solar interior:
-* **Proximidad Solar Extrema:** Distancia orbital de solo 0.31 a 0.47 UA. La irradiación solar alcanza los **9.1 kW/m²** (aproximadamente 6.6 veces más intensa que en la Tierra).
-* **Gradientes Térmicos Brutales:** Temperaturas que oscilan entre **-180 °C** en la noche/zonas en sombra hasta **+430 °C** a la luz solar directa.
+* **Proximidad Solar Extrema:** Distancia orbital de solo 0.31 a 0.47 UA. La irradiación solar alcanza los **9.1 kW/m²** (aproximadamente 6.6 veces más intensa que en la órbita terrestre).
+* **Gradientes Térmicos Brutales:** Temperaturas superficiales y estructurales que oscilan entre **-180 °C** en la noche/zonas en sombra hasta **+430 °C** a la luz solar directa.
 * **Radiación y Viento Solar Severo:** Bombardeo constante de viento solar, partículas alfa, protones de alta energía procedentes de llamaradas solares y eyecciones de masa coronal (CME).
-* **Gravedad Natural:** En la superficie mercuriana la gravedad es de $0.38 \text{ g}$ (similar a Marte). Para misiones orbitales y estancias humanas de larga duración, la *Foundation Society* exige **gravedad artificial rotatoria ($\sim 0.9 - 1.0\text{ g}$)** en las áreas residenciales y de trabajo continuo para prevenir la desmineralización ósea y la atrofia muscular.
+* **Gravedad Natural:** En la superficie mercuriana la gravedad es de $0.38 \text{ g}$ (similar a Marte). Para misiones orbitales y estancias humanas de larga duración, la *Foundation Society* exige **gravedad artificial rotatoria ($\sim 0.85 - 1.0\text{ g}$)** en las áreas residenciales y de trabajo continuo para prevenir la desmineralización ósea, atrofia muscular y problemas cardiovasculares.
 
 ---
 
-### 2. FUNCTIONAL REQUIREMENTS (REQUISITOS FUNCIONALES · ESTRUCTURA S1-S4)
+### 2. FUNCTIONAL REQUIREMENTS (REQUISITOS FUNCIONALES OBLIGATORIOS)
 
 Cada propuesta presentada por las compañías contratistas deberá satisfacer obligatoriamente los siguientes requisitos técnicos formales (*"Shall"* = Mandatorio):
 
 #### S1. Geometría y Configuración General (Overall Layout)
-* **S1.1.** La propuesta **SHALL** especificar la geometría macroestructural elegida (Toroide / Stanford Torus, Cilindros O'Neill concéntricos, Esfera de Bernal o Mancuerna / Dumbbell con módulos contrarrotatorios) con dimensiones exteriores claras (radio, longitud y sección transversal).
-* **S1.2.** La propuesta **SHALL** incluir un **Escudo Solar Primario (Sunshield / Parasol Pasivo)** orientado perpendicularmente a la radiación solar para crear un cono de sombra protector que resguarde los módulos habitados del flujo térmico directo de 9.1 kW/m².
+* **S1.1.** La propuesta **SHALL** especificar la geometría macroestructural elegida (Toroide / Stanford Torus, Cilindros O'Neill concéntricos, Esfera de Bernal o Mancuerna / Dumbbell con módulos contrarrotatorios) con dimensiones exteriores claras: radio exterior ($r$), longitud o sección transversal.
+* **S1.2.** La propuesta **SHALL** incluir un **Escudo Solar Primario (Sunshield / Parasol Pasivo)** orientado perpendicularmente a la radiación solar para proyectar un cono de sombra protector que resguarde los módulos habitados del flujo térmico directo de 9.1 kW/m².
 * **S1.3.** La propuesta **SHALL** presentar un despiece de las capas del casco exterior (*Hull Cross-Section*), detallando espesores, materiales (aleaciones Al-Li, titanio, fibra de carbono, cerámicas de alúmina/óxido de circonio) y sistemas de blindaje Whipple antimeteoroides.
 * **S1.4.** La propuesta **SHALL** indicar una estimación preliminar de la **masa seca estructural** de la estación (en toneladas métricas).
 
@@ -39,11 +41,40 @@ Cada propuesta presentada por las compañías contratistas deberá satisfacer ob
 
 ---
 
-### 3. FORMATO Y ENTREGABLES OBLIGATORIOS DEL SPRINT 1
+### 3. FÓRMULAS TÉCNICAS Y EJEMPLO RESUELTO DE GUÍA
 
-Para cumplir con las normas del concurso, cada participante y equipo debe registrar sus entregas en el **Buzón de Misión de la plataforma**:
+Para facilitar el trabajo individual y grupal, los estudiantes deben aplicar las siguientes relaciones cinemáticas y dinámicas:
 
-#### 👤 A. Entregas Individuales (Cada alumno realiza al menos una):
+1. **Velocidad Angular ($\omega$):**
+   $$\omega = \sqrt{\frac{a}{r}} \quad (\text{en rad/s})$$
+   $$\text{rpm} = \omega \cdot \frac{60}{2\pi} \approx \omega \cdot 9.5493$$
+
+2. **Aceleración en los pies ($r_{pies} = r$):**
+   $$a_{pies} = \omega^2 \cdot r$$
+
+3. **Aceleración en la cabeza ($h = 1.80\text{ m} \implies r_{cabeza} = r - 1.80$):**
+   $$a_{cabeza} = \omega^2 \cdot (r - 1.80)$$
+
+4. **Gradiente de gravedad cabeza-pies ($\%$):**
+   $$\text{Gradiente} = \frac{a_{pies} - a_{cabeza}}{a_{pies}} = \frac{r - (r - 1.80)}{r} = \frac{1.80}{r}$$
+   *Para cumplir $\text{Gradiente} \le 12\%$ ($0.12$):*
+   $$r \ge \frac{1.80}{0.12} = 15\text{ metros}$$
+   *(Nota de diseño: para cumplir además que $\text{rpm} < 3.0$, se requiere un radio $r \ge 90\text{ m}$ si se busca $1\text{ g}$).*
+
+#### 💡 Ejemplo de Referencia Aprobado por la Foundation Society:
+* **Radio exterior elegido:** $r = 250\text{ metros}$
+* **Gravedad objetivo en los pies:** $a = 1.00\text{ g} = 9.81\text{ m/s}^2$
+* **Velocidad angular:** $\omega = \sqrt{9.81 / 250} = \sqrt{0.03924} \approx 0.1981\text{ rad/s}$
+* **Rotación en rpm:** $\text{rpm} = 0.1981 \cdot 9.5493 \approx 1.89\text{ rpm}$ *(¡Cumple holgadamente $< 3.0\text{ rpm}$!)*
+* **Gradiente cabeza-pies:** $\Delta g / g = 1.80 / 250 = 0.0072 = 0.72\%$ *(¡Excelente, muy inferior al 12% máximo!)*
+
+---
+
+### 4. FORMATO Y ENTREGABLES OBLIGATORIOS DEL SPRINT 1
+
+Para cumplir con las normas del concurso, cada participante y equipo debe registrar sus entregas antes del **31 de Octubre a las 23:59 h**:
+
+#### 👤 A. Entregas Individuales (Cada alumno realiza al menos una a su elección):
 * **ENTREGA IND-1A (Física y Matemáticas Espaciales):**
   * *Memoria de Cálculo de Gravedad Artificial y Coriolis en Mercurio*.
   * Justificación del radio $r$ (en metros), velocidad angular $\omega$ (en rad/s y en rpm) y gravedad $g$ obtenida.
@@ -51,7 +82,7 @@ Para cumplir con las normas del concurso, cada participante y equipo debe regist
   * Formato: Fichero PDF, Word o Excel con los cálculos y conclusiones justificadas.
 * **ENTREGA IND-1B (Ciencia de Materiales y Casco Protector):**
   * *Ficha Técnica del Casco Protector Multicapa frente a Mercurio*.
-  * Esquema y justificación de capas: aleación estructural, escudo térmico reflectante de alta emisividad contra 430 °C, escudo Whipple antimeteoritos y blindaje de polietileno/agua/regolito frente a llamaradas de protones solares.
+  * Esquema y justificación de capas: aleación estructural (Al-Li, Titanio), escudo térmico reflectante de alta emisividad contra 430 °C, escudo Whipple antimeteoritos y blindaje de polietileno/agua/regolito frente a llamaradas de protones solares.
   * Formato: Fichero PDF o infografía técnica explicativa.
 * **ENTREGA IND-1C (Oral Communication & Technical Pitch in English):**
   * *Vídeo Individual de Defensa Técnica en Inglés (1 a 2 minutos)*.
@@ -61,18 +92,18 @@ Para cumplir con las normas del concurso, cada participante y equipo debe regist
 
 #### 👥 B. Entrega Grupal (Equipos de Alumnos del MISMO Colegio):
 * **ENTREGA GRP-1 (Propuesta Estructural Completa de la Estación en Mercurio):**
-  * Los estudiantes de cada colegio (**ANDEL, FUENLLANA, J.H. NEWMAN o EL PRADO**) formarán equipos de **2 a 5 miembros** (todos del mismo centro).
+  * Los estudiantes de cada colegio (**ANDEL, FUENLLANA, J.H. NEWMAN o EL PRADO**) forman equipos de **2 a 5 miembros** (todos del mismo centro).
   * En esta entrega grupal sintetizan los cálculos de sus miembros y presentan la solución arquitectónica unificada:
     1. **Nombre y concepto de la Estación** de su colegio.
     2. **Planos / Renders / Maqueta 3D:** Boceto digital o enlace a modelo 3D en TinkerCAD / Blender mostrando geometría, radio exterior y ubicación del parasol solar.
     3. **Distribución de módulos:** Plano general de cubiertas con gravedad vs muelles de atraque en el eje central.
     4. **Memoria técnica resumen (3 a 6 páginas o presentación de 5 a 10 diapositivas):** Respondiendo a las cláusulas `S1`, `S2` y `S4` del RFP.
-  * Formato: Archivo PDF unificado + Enlace interactivo (TinkerCAD / Slides) si aplica.
+  * Formato: Archivo PDF unificado + Enlace interactivo (TinkerCAD / Slides / Drive).
 
 ---
 
-### 4. RÚBRICA DE EVALUACIÓN DEL JURADO (100 PUNTOS)
-Las propuestas serán calificadas por el Comité Técnico del Jurado en base a 4 pilares:
+### 5. RÚBRICA DE EVALUACIÓN DEL JURADO (100 PUNTOS)
+Las propuestas serán calificadas por el Comité Técnico del Jurado en base a 4 pilares ponderados al 25%:
 1. **Rigor Técnico y Físico (25%):** Exactitud de las fórmulas de gravedad centrípeta ($a = \omega^2 \cdot r$), cálculo del gradiente cabeza-pies y respeto estricto al límite de Coriolis ($< 3\text{ rpm}$).
 2. **Viabilidad Térmica y Radiológica en Mercurio (25%):** Eficacia del escudo solar (parasol), selección justificada de aleaciones y multicapa para soportar el gradiente $-180^\circ\text{C} / +430^\circ\text{C}$ y la radiación solar masiva (9.1 kW/m²).
 3. **Innovación y Diseño 3D / Planos (25%):** Claridad de los planos, renders, modelos en TinkerCAD o infografías estructurales que permitan visualizar la estación.

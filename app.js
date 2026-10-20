@@ -39,12 +39,12 @@ const AppState = {
     {
       id: 1,
       code: 'SPRINT-01',
-      month: 'SEPTIEMBRE / OCTUBRE',
+      month: 'OCTUBRE (LÍMITE: 31 OCTUBRE)',
       planet: '🪐 DESTINO: PLANETA MERCURIO (HERMES-1)',
       title: 'Structural Engineering: El Esqueleto (Estación en Mercurio)',
       dept: 'Estructura & Materiales · Contrato FS-M01',
       status: 'active',
-      deadline: '2026-10-15',
+      deadline: '2026-10-31',
       summary: 'Diseño estructural de la primera estación orbital y asentamiento en el planeta Mercurio. Retos: radiación solar masiva (9.1 kW/m²), gradientes térmicos (-180°C a +430°C), gravedad artificial rotatoria (0.9-1.0 G) y escudo solar pasivo (Sunshield).',
       deliverables: {
         individual: [
@@ -448,6 +448,18 @@ function openRfpModal(sprintId) {
     if (subtitle) subtitle.innerHTML = 'CONTRACT FS-M01 · FOUNDATION SOCIETY · 🪐 DESTINO: PLANETA MERCURIO (HERMES-1)';
 
     body.innerHTML = `
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+        <a href="GUIA_FACIL_SPRINT_01_ALUMNOS.pdf" target="_blank" class="btn-hud btn-hud-secondary" style="border-color:var(--emerald-safe); color:var(--emerald-safe); font-weight:700; text-decoration:none; padding:8px 16px; background:rgba(16,185,129,0.12);">
+          📄 Descargar Guía en PDF (Lenguaje Sencillo)
+        </a>
+        <a href="GUIA_ESTUDIANTE_SPRINT_01.html" target="_blank" class="btn-hud btn-hud-secondary" style="color:var(--cyan-core); text-decoration:none; padding:8px 16px;">
+          📖 Abrir Guía Web + Calculadora
+        </a>
+        <a href="PLANTILLA_ENTREGA_SPRINT_01_MERCURIO.md" download class="btn-hud btn-hud-primary" style="text-decoration:none; padding:8px 16px;">
+          📥 Descargar Plantilla Oficial (.md)
+        </a>
+      </div>
+
       <div style="background:rgba(245,158,11,0.08); border-left:4px solid var(--amber-alert); padding:14px 18px; border-radius:4px; margin-bottom:20px;">
         <strong style="color:var(--amber-alert); font-family:var(--font-hud);">⚡ CONDICIONES EXTREMAS DE MISIÓN EN MERCURIO:</strong>
         <p style="margin:6px 0 0 0; font-size:0.86rem; color:var(--text-secondary); line-height:1.5;">

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPRINT 01: Structural Engineering · Hermes-1 Mercurio | SPSDC 2026</title>
+  
+  <!-- Tipografía Aeroespacial Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-space: #070b14;
+      --bg-panel: rgba(15, 23, 42, 0.85);
+      --bg-panel-hover: rgba(30, 41, 59, 0.9);
+      --cyan-core: #38bdf8;
+      --cyan-glow: rgba(56, 189, 248, 0.35);
+      --amber-alert: #f59e0b;
+      --emerald-safe: #10b981;
+      --rose-accent: #f43f5e;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-panel: rgba(56, 189, 248, 0.25);
+      --font-hud: 'Orbitron', monospace, sans-serif;
+      --font-body: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-space);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      padding: 0 0 60px 0;
+    }
+
+    /* Top telemetry */
+    .top-telemetry {
+      background: rgba(10, 15, 29, 0.95);
+      border-bottom: 1px solid var(--border-panel);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--emerald-safe);
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+      box-shadow: 0 0 10px var(--emerald-safe);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    /* Hero header */
+    .hero {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(56, 189, 248, 0.12) 100%);
+      border: 1px solid var(--border-panel);
+      border-radius: 16px;
+      padding: 36px;
+      margin-bottom: 30px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--cyan-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: var(--font-hud);
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--cyan-core);
+      border: 1px solid var(--cyan-core);
+    }
+
+    .badge.amber {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amber-alert);
+      border-color: var(--amber-alert);
+    }
+
+    .badge.emerald {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald-safe);
+      border-color: var(--emerald-safe);
+    }
+
+    h1 {
+      font-family: var(--font-hud);
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      line-height: 1.2;
+      margin-bottom: 14px;
+      color: #fff;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .lead-text {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 850px;
+      margin-bottom: 24px;
+    }
+
+    /* Action bar */
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-family: var(--font-hud);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.8);
+      color: #e2e8f0;
+      border: 1px solid var(--border-panel);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: var(--cyan-core);
+    }
+
+    /* Grid & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 14px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--cyan-core);
+    }
+
+    .card-title {
+      font-family: var(--font-hud);
+      font-size: 1.15rem;
+      color: #fff;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title .icon {
+      font-size: 1.4rem;
+    }
+
+    /* Countdown card */
+    .countdown-box {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--amber-alert);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .cd-digits {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 12px 0;
+    }
+
+    .cd-unit {
+      background: rgba(30, 41, 59, 0.8);
+      padding: 10px 16px;
+      border-radius: 8px;
+      min-width: 65px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .cd-val {
+      font-family: var(--font-hud);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--amber-alert);
+    }
+
+    .cd-lbl {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    /* Section styles */
+    .section-title {
+      font-family: var(--font-hud);
+      font-size: 1.4rem;
+      color: #fff;
+      margin: 40px 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-panel);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Interactive Live Gravity Calculator */
+    .calc-container {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.7));
+      border: 1px solid var(--cyan-core);
+      border-radius: 14px;
+      padding: 26px;
+      margin: 24px 0;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+    }
+
+    .calc-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: rgba(10, 15, 29, 0.9);
+      border: 1px solid var(--border-panel);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: var(--font-hud);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--cyan-core);
+      box-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .calc-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      background: rgba(10, 15, 29, 0.7);
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .res-item {
+      text-align: center;
+      padding: 8px;
+    }
+
+    .res-val {
+      font-family: var(--font-hud);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--cyan-core);
+    }
+
+    .res-val.pass { color: var(--emerald-safe); }
+    .res-val.fail { color: var(--rose-accent); }
+
+    .res-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Deliverables Cards */
+    .deliv-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .deliv-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .deliv-code {
+      font-family: var(--font-hud);
+      font-weight: 800;
+      color: var(--cyan-core);
+      font-size: 1rem;
+      background: rgba(56, 189, 248, 0.1);
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    th {
+      font-family: var(--font-hud);
+      font-size: 0.8rem;
+      color: var(--cyan-core);
+      text-transform: uppercase;
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .alert-box {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--amber-alert);
+      padding: 16px 20px;
+      border-radius: 0 10px 10px 0;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .top-telemetry, .action-bar, .countdown-box, .calc-container, button {
+        display: none !important;
+      }
+      .hero, .card, .deliv-card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        color: #000 !important;
+      }
+      h1, h2, h3, .card-title, .deliv-code {
+        color: #000 !important;
+        -webkit-text-fill-color: initial !important;
+      }
+      .badge {
+        border: 1px solid #333 !important;
+        color: #000 !important;
+      }
+      th {
+        background: #eee !important;
+        color: #000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de Telemetría Superior -->
+  <div class="top-telemetry">
+    <div>
+      <span class="pulse-dot"></span>
+      <strong>FOUNDATION SOCIETY</strong> · CONTRATO OFICIAL FS-M01 · SPRINT 01
+    </div>
+    <div style="font-family: var(--font-hud); color: var(--cyan-core);">
+      HERMES-1 MERCURIO | PLAZO: 31 OCT 2026
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Hero Card -->
+    <div class="hero">
+      <div class="badge-row">
+        <span class="badge">🪐 DESTINO: PLANETA MERCURIO</span>
+        <span class="badge amber">LÍMITE: 31 DE OCTUBRE DE 2026</span>
+        <span class="badge emerald">FASE 1: ENTRENAMIENTO</span>
+      </div>
+
+      <h1>SPRINT 01: <span>STRUCTURAL ENGINEERING</span><br>"EL ESQUELETO" DE HERMES-1</h1>
+      <p class="lead-text">
+        Bienvenidos, ingenieros espaciales. La <em>Foundation Society</em> abre formalmente la licitación para diseñar la primera estación orbital y asentamiento permanente de la humanidad en las hostiles cercanías del Sol. Tenéis hasta el <strong>31 de Octubre a las 23:59 h</strong> para trabajar con calma y entregar vuestras memorias de cálculo, diseño del casco y modelos 3D.
+      </p>
+
+      <div class="action-bar">
+        <a href="GUIA_FACIL_SPRINT_01_ALUMNOS.pdf" target="_blank" class="btn btn-primary">
+          📄 Descargar Guía en PDF (Lenguaje Sencillo)
+        </a>
+        <a href="PLANTILLA_ENTREGA_SPRINT_01_MERCURIO.md" download class="btn btn-secondary">
+          📥 Plantilla Oficial (Markdown)
+        </a>
+        <button onclick="window.print()" class="btn btn-secondary">
+          🖨️ Imprimir Página Web
+        </button>
+        <a href="index.html" class="btn btn-secondary">
+          🚀 Abrir Mission Control
+        </a>
+      </div>
+    </div>
+
+    <!-- Panel de Cuenta Atrás -->
+    <div class="countdown-box">
+      <div style="font-family: var(--font-hud); font-size: 0.85rem; color: var(--amber-alert); letter-spacing: 1px;">
+        ⏳ TIEMPO RESTANTE PARA EL CIERRE DEL SPRINT 01 (31 OCTUBRE 2026 · 23:59:00)
+      </div>
+      <div class="cd-digits">
+        <div class="cd-unit">
+          <div class="cd-val" id="dDays">--</div>
+          <div class="cd-lbl">Días</div>
+        </div>
+        <div class="cd-unit">
+          <div class="cd-val" id="dHours">--</div>
+          <div class="cd-lbl">Horas</div>
+        </div>
+        <div class="cd-unit">
+          <div class="cd-val" id="dMins">--</div>
+          <div class="cd-lbl">Min</div>
+        </div>
+        <div class="cd-unit">
+          <div class="cd-val" id="dSecs">--</div>
+          <div class="cd-lbl">Seg</div>
+        </div>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--cyan-core); font-weight:600;">
+        Canal Oficial de Entrega: <a href="index.html" style="color:var(--amber-alert); text-decoration:underline;">Buzón de Entrega en nuestra Web Mission Control</a> (Pestaña 📤 Buzón de Entrega con tu clave de alumno).
+      </div>
+    </div>
+
+    <!-- Grid de Retos Ambientales -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">☀️</span> Proximidad Solar Extrema (0.31 - 0.47 UA)
+        </div>
+        <p style="color:var(--text-secondary); font-size:0.92rem;">
+          La irradiación solar en Mercurio alcanza <strong>9.1 kW/m²</strong> (6.6 veces superior a la de la Tierra). Es <strong>mandatorio</strong> equipar a la estación con un <em>Escudo Solar Parasol (Sunshield pasivo)</em> orientado perpendicularmente a la radiación solar para proyectar una sombra fría sobre las áreas habitadas.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🌡️</span> Gradiente Térmico (-180 °C a +430 °C)
+        </div>
+        <p style="color:var(--text-secondary); font-size:0.92rem;">
+          El casco exterior pasará de la radiación abrasadora diurna (+430 °C) a la noche helada (-180 °C). Los alumnos deben seleccionar materiales cerámicos refractarios, aleaciones Al-Li o titanio, y capas aislantes multicapa (MLI) para mantener el interior a una temperatura humana de <strong>20 °C a 22 °C</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Requisitos Funcionales (Shall) -->
+    <h2 class="section-title">📋 Requisitos Técnicos Obligatorios del Pliego (S1, S2, S4)</h2>
+    
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="color:var(--cyan-core); font-family:var(--font-hud); margin-bottom:10px;">S1. Geometría & Blindaje</h3>
+        <ul style="padding-left: 20px; font-size:0.92rem; color:var(--text-secondary);">
+          <li><strong>S1.1:</strong> Definir la geometría (Toroide, Mancuerna, Cilindros O'Neill) con radio ($r$) y dimensiones.</li>
+          <li><strong>S1.2:</strong> Incluir el <strong>Sunshield Pasivo</strong> que cree un cono de sombra protector.</li>
+          <li><strong>S1.3:</strong> Despiece de capas del casco (*Hull Cross-Section*): cerámicas, escudo Whipple antimeteoritos y blindaje radiológico.</li>
+          <li><strong>S1.4:</strong> Estimación de la <strong>masa seca estructural</strong> (toneladas).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3 style="color:var(--cyan-core); font-family:var(--font-hud); margin-bottom:10px;">S2 & S4. Gravedad & Puertos</h3>
+        <ul style="padding-left: 20px; font-size:0.92rem; color:var(--text-secondary);">
+          <li><strong>S2.1:</strong> Separar cubiertas rotatorias con gravedad de zonas cero-G (muelles y hangares).</li>
+          <li><strong>S2.2:</strong> Ubicar el puerto de acople de naves en el <strong>eje central de rotación</strong>.</li>
+          <li><strong>S4.1:</strong> Gravedad en suelo entre <strong>0.85 g y 1.00 g</strong> ($a = \omega^2 \cdot r$).</li>
+          <li><strong>S4.2:</strong> Velocidad de giro estrictamente <strong>menor a 3.0 rpm</strong> (evita el mareo de Coriolis).</li>
+          <li><strong>S4.3:</strong> Gradiente cabeza-pies de un astronauta de 1.80 m <strong>inferior al 12%</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Calculadora Rápida Interactiva en Vivo -->
+    <div class="calc-container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+        <h3 style="font-family:var(--font-hud); color:#fff; font-size:1.15rem;">
+          🛠️ Comprobador Rápido de Gravedad Artificial y Coriolis
+        </h3>
+        <span class="badge">HERRAMIENTA EN VIVO</span>
+      </div>
+      <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:18px;">
+        Introduce el radio exterior de tu estación y la gravedad que deseas alcanzar para verificar instantáneamente si tu diseño cumple las cláusulas <strong>S4.1, S4.2 y S4.3</strong>:
+      </p>
+
+      <div class="calc-inputs">
+        <div class="form-group">
+          <label for="inputRadius">Radio Exterior $r$ (metros):</label>
+          <input type="number" id="inputRadius" value="250" min="10" max="2000" step="10" oninput="calculateGravity()">
+        </div>
+        <div class="form-group">
+          <label for="inputGravity">Gravedad Deseada en Pies ($g$):</label>
+          <input type="number" id="inputGravity" value="1.0" min="0.5" max="1.5" step="0.05" oninput="calculateGravity()">
+        </div>
+      </div>
+
+      <div class="calc-results">
+        <div class="res-item">
+          <div class="res-val" id="resOmega">0.198 rad/s</div>
+          <div class="res-label">Velocidad Angular ($\omega$)</div>
+        </div>
+        <div class="res-item">
+          <div class="res-val pass" id="resRpm">1.89 rpm</div>
+          <div class="res-label">Rotación (< 3.0 rpm)</div>
+        </div>
+        <div class="res-item">
+          <div class="res-val pass" id="resGradient">0.72 %</div>
+          <div class="res-label">Gradiente Cabeza-Pies (< 12%)</div>
+        </div>
+        <div class="res-item">
+          <div class="res-val pass" id="resStatus">¡APROBADO!</div>
+          <div class="res-label">Estado Fisiológico</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guía de Entregables -->
+    <h2 class="section-title">📦 Entregables Oficiales del Sprint 1</h2>
+
+    <!-- IND-1A -->
+    <div class="deliv-card">
+      <div class="deliv-header">
+        <span class="deliv-code">ENTREGA IND-1A</span>
+        <span class="badge">INDIVIDUAL · FÍSICA Y MATEMÁTICAS</span>
+      </div>
+      <h3 style="color:#fff; font-size:1.1rem; margin-bottom:6px;">Memoria de Cálculo de Gravedad Artificial y Coriolis</h3>
+      <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:10px;">
+        Demostración matemática del radio exterior $r$, velocidad angular $\omega$ y rpm de giro. Cálculo detallado del gradiente cabeza-pies para una persona de 1.80 m y justificación médica contra la cinetosis vestibular.
+      </p>
+      <div style="font-size:0.82rem; color:var(--cyan-core);">
+        📄 Formato: Documento PDF, Word o Excel con fórmulas y desarrollo numérico.
+      </div>
+    </div>
+
+    <!-- IND-1B -->
+    <div class="deliv-card">
+      <div class="deliv-header">
+        <span class="deliv-code">ENTREGA IND-1B</span>
+        <span class="badge">INDIVIDUAL · MATERIALES Y CASCO</span>
+      </div>
+      <h3 style="color:#fff; font-size:1.1rem; margin-bottom:6px;">Ficha Técnica del Casco Multicapa y Blindaje Térmico</h3>
+      <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:10px;">
+        Diseño del escudo solar (Sunshield pasivo), capas del casco exterior (cerámicas Al2O3, aleación Al-Li o Titanio, escudo Whipple antimeteoritos, polietileno o agua contra radiación de tormentas solares).
+      </p>
+      <div style="font-size:0.82rem; color:var(--cyan-core);">
+        📄 Formato: PDF o infografía técnica con tabla de espesores y justificación.
+      </div>
+    </div>
+
+    <!-- IND-1C -->
+    <div class="deliv-card" style="border-color: rgba(245, 158, 11, 0.4);">
+      <div class="deliv-header">
+        <span class="deliv-code" style="color:var(--amber-alert); border-color:var(--amber-alert); background:rgba(245, 158, 11, 0.1);">ENTREGA IND-1C</span>
+        <span class="badge amber">INDIVIDUAL · DEFENSE PITCH IN ENGLISH</span>
+      </div>
+      <h3 style="color:#fff; font-size:1.1rem; margin-bottom:6px;">Vídeo Individual de Defensa Técnica en Inglés (1 a 2 min)</h3>
+      <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:10px;">
+        Exposición oral en inglés simulando la defensa ante el Consejo de la <em>Foundation Society</em>.
+      </p>
+      <div class="alert-box" style="margin: 10px 0;">
+        ⚠️ <strong>REGLA DE ORO DE GRABACIÓN:</strong> El vídeo <strong>DEBE grabarse a CUERPO COMPLETO (de pie, visible de pies a cabeza)</strong> para evaluar la presencia escénica, compostura ejecutiva y lenguaje no verbal. No se admiten vídeos tipo webcam de hombros para arriba.
+      </div>
+      <div style="font-size:0.82rem; color:var(--amber-alert);">
+        📹 Formato: Archivo de vídeo .mp4 o enlace público en Loom, YouTube, Drive o OneDrive.
+      </div>
+    </div>
+
+    <!-- GRP-1 -->
+    <div class="deliv-card" style="border-color: rgba(16, 185, 129, 0.4);">
+      <div class="deliv-header">
+        <span class="deliv-code" style="color:var(--emerald-safe); border-color:var(--emerald-safe); background:rgba(16, 185, 129, 0.1);">ENTREGA GRP-1</span>
+        <span class="badge emerald">GRUPAL · COLEGIO UNIFICADO (2-5 ALUMNOS)</span>
+      </div>
+      <h3 style="color:#fff; font-size:1.1rem; margin-bottom:6px;">Propuesta Estructural Completa y Maqueta 3D</h3>
+      <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:10px;">
+        Los miembros del equipo combinan los cálculos y materiales para entregar la arquitectura final de su colegio:
+      </p>
+      <ul style="padding-left:20px; font-size:0.9rem; color:var(--text-secondary); margin-bottom:10px;">
+        <li>Nombre y concepto de la estación.</li>
+        <li>Plano o modelo 3D en <strong>TinkerCAD, Blender, OnShape o SketchUp</strong>.</li>
+        <li>Distribución de cubiertas presurizadas con gravedad y puertos de atraque en el eje central.</li>
+        <li>Memoria técnica ejecutiva de 3 a 6 páginas (o presentación de diapositivas).</li>
+      </ul>
+      <div style="font-size:0.82rem; color:var(--emerald-safe);">
+        📁 Formato: Archivo PDF unificado + Enlace al modelo 3D interactivo.
+      </div>
+    </div>
+
+    <!-- Rúbrica -->
+    <h2 class="section-title">⚖️ Rúbrica Oficial de Evaluación (100 Puntos)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Criterio Oficial</th>
+          <th>Peso</th>
+          <th>Aspectos Evaluados por el Jurado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Rigor Técnico y Físico</strong></td>
+          <td><span class="badge">25%</span></td>
+          <td>Exactitud en las fórmulas cinemáticas ($a = \omega^2 \cdot r$), cálculo del gradiente cabeza-pies y respeto estricto a las rpm (< 3.0 rpm).</td>
+        </tr>
+        <tr>
+          <td><strong>2. Viabilidad Térmica & Casco</strong></td>
+          <td><span class="badge">25%</span></td>
+          <td>Eficacia del parasol (Sunshield), elección justificada de aleaciones y blindaje multicapa frente a 9.1 kW/m², -180°C/+430°C y protones solares.</td>
+        </tr>
+        <tr>
+          <td><strong>3. Innovación y Diseño 3D</strong></td>
+          <td><span class="badge">25%</span></td>
+          <td>Calidad visual de los planos, renders, modelos en TinkerCAD/Blender y distribución lógica de cubiertas habitables vs muelles cero-G.</td>
+        </tr>
+        <tr>
+          <td><strong>4. Calidad Ejecutiva & Pitch en Inglés</strong></td>
+          <td><span class="badge">25%</span></td>
+          <td>Solidez del vídeo individual IND-1C (encuadre de cuerpo completo, fluidez en inglés técnico), coherencia y presentación ejecutiva de la memoria grupal.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Footer info -->
+    <div style="text-align:center; margin-top:40px; color:var(--text-muted); font-size:0.85rem; border-top:1px solid var(--border-panel); padding-top:20px;">
+      SPSDC 2026 · Alianza Intercolegial (ANDEL · FUENLLANA · J.H. NEWMAN · EL PRADO)<br>
+      Foundation Society · Misión Hermes-1 Mercurio · Contacto y Soporte en Mission Control
+    </div>
+
+  </div>
+
+  <script>
+    // Cuenta atrás al 31 de Octubre de 2026, 23:59:00
+    const targetDate = new Date(2026, 9, 31, 23, 59, 0).getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        document.getElementById('dDays').innerText = '00';
+        document.getElementById('dHours').innerText = '00';
+        document.getElementById('dMins').innerText = '00';
+        document.getElementById('dSecs').innerText = '00';
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('dDays').innerText = String(days).padStart(2, '0');
+      document.getElementById('dHours').innerText = String(hours).padStart(2, '0');
+      document.getElementById('dMins').innerText = String(mins).padStart(2, '0');
+      document.getElementById('dSecs').innerText = String(secs).padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Calculadora interactiva de Gravedad
+    function calculateGravity() {
+      const radius = parseFloat(document.getElementById('inputRadius').value) || 250;
+      const targetG = parseFloat(document.getElementById('inputGravity').value) || 1.0;
+
+      const a_m_s2 = targetG * 9.81;
+      const omega = Math.sqrt(a_m_s2 / radius);
+      const rpm = omega * (60 / (2 * Math.PI));
+      const gradientPercent = (1.80 / radius) * 100;
+
+      const omegaEl = document.getElementById('resOmega');
+      const rpmEl = document.getElementById('resRpm');
+      const gradEl = document.getElementById('resGradient');
+      const statusEl = document.getElementById('resStatus');
+
+      omegaEl.innerText = omega.toFixed(3) + ' rad/s';
+      rpmEl.innerText = rpm.toFixed(2) + ' rpm';
+      gradEl.innerText = gradientPercent.toFixed(2) + ' %';
+
+      const rpmPass = rpm < 3.0;
+      const gradPass = gradientPercent <= 12.0;
+
+      if (rpmPass) {
+        rpmEl.className = 'res-val pass';
+      } else {
+        rpmEl.className = 'res-val fail';
+      }
+
+      if (gradPass) {
+        gradEl.className = 'res-val pass';
+      } else {
+        gradEl.className = 'res-val fail';
+      }
+
+      if (rpmPass && gradPass) {
+        statusEl.innerText = '¡APROBADO!';
+        statusEl.className = 'res-val pass';
+      } else {
+        statusEl.innerText = 'RECHAZADO';
+        statusEl.className = 'res-val fail';
+      }
+    }
+
+    calculateGravity();
+  </script>
+</body>
+</html>
