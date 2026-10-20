@@ -1669,39 +1669,52 @@ function resetToDefaultSchools() {
 
 // GESTIÓN DEL CENSO DE ALUMNOS INSCRITOS
 function loadRegisteredStudents() {
-  const isInitialized = localStorage.getItem('spsdc_students_initialized');
   const saved = localStorage.getItem('spsdc_registered_students');
 
   if (saved !== null) {
     try {
-      AppState.registeredStudents = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      AppState.registeredStudents = Array.isArray(parsed) ? parsed : [];
     } catch (e) {
       AppState.registeredStudents = [];
     }
-  } else if (!isInitialized) {
-    // Solo en la primera apertura si no hay ningún censo guardado previamente
-    AppState.registeredStudents = [
-      { key: 'ALU-ANDEL-01', firstName: 'Lucía', lastName: 'Gómez Fernández', name: 'Lucía Gómez Fernández', schoolId: 'col1', schoolName: 'ANDEL', grade: '4º ESO', createdAt: '23/09/2026' },
-      { key: 'ALU-ANDEL-02', firstName: 'Marcos', lastName: 'Pérez Salazar', name: 'Marcos Pérez Salazar', schoolId: 'col1', schoolName: 'ANDEL', grade: '1º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-ANDEL-03', firstName: 'David', lastName: 'Romero Gil', name: 'David Romero Gil', schoolId: 'col1', schoolName: 'ANDEL', grade: '2º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-FUEN-01', firstName: 'Elena', lastName: 'Santos Vega', name: 'Elena Santos Vega', schoolId: 'col2', schoolName: 'FUENLLANA', grade: '4º ESO', createdAt: '23/09/2026' },
-      { key: 'ALU-FUEN-02', firstName: 'Carlos', lastName: 'Vidal Rivas', name: 'Carlos Vidal Rivas', schoolId: 'col2', schoolName: 'FUENLLANA', grade: '1º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-FUEN-03', firstName: 'Marina', lastName: 'Soler Bravo', name: 'Marina Soler Bravo', schoolId: 'col2', schoolName: 'FUENLLANA', grade: '2º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-NEWMAN-01', firstName: 'Mateo', lastName: 'Navas Ruíz', name: 'Mateo Navas Ruíz', schoolId: 'col3', schoolName: 'J.H. NEWMAN', grade: '4º ESO', createdAt: '23/09/2026' },
-      { key: 'ALU-NEWMAN-02', firstName: 'Clara', lastName: 'Domínguez Cano', name: 'Clara Domínguez Cano', schoolId: 'col3', schoolName: 'J.H. NEWMAN', grade: '1º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-NEWMAN-03', firstName: 'Jorge', lastName: 'Alarcón Gil', name: 'Jorge Alarcón Gil', schoolId: 'col3', schoolName: 'J.H. NEWMAN', grade: '2º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-PRADO-01', firstName: 'Sofía', lastName: 'Morales Chen', name: 'Sofía Morales Chen', schoolId: 'col4', schoolName: 'EL PRADO', grade: '4º ESO', createdAt: '23/09/2026' },
-      { key: 'ALU-PRADO-02', firstName: 'Adrián', lastName: 'Lozano Blanco', name: 'Adrián Lozano Blanco', schoolId: 'col4', schoolName: 'EL PRADO', grade: '1º Bachillerato', createdAt: '23/09/2026' },
-      { key: 'ALU-PRADO-03', firstName: 'Valeria', lastName: 'Nieto Ríos', name: 'Valeria Nieto Ríos', schoolId: 'col4', schoolName: 'EL PRADO', grade: '2º Bachillerato', createdAt: '23/09/2026' }
-    ];
-    localStorage.setItem('spsdc_students_initialized', 'true');
-    saveRegisteredStudents();
   } else {
+    // Primera vez absoluta en este navegador sin datos previos
     AppState.registeredStudents = [];
+    // Solo si no existe ningún censo local guardado, intentar consultar censo precargado
+    fetchAsyncStudentsFile();
   }
 
-  // Intentar cargar students_data.json en segundo plano si existe en el servidor/GitHub Pages
-  fetchAsyncStudentsFile();
+  // Sincronizar nombres actuales de colegios con los alumnos existentes
+  AppState.registeredStudents.forEach(st => {
+    const sch = AppState.schools.find(s => s.id === st.schoolId);
+    if (sch) st.schoolName = sch.name;
+  });
+
+  updateCensusSummary();
+}
+
+async function fetchAsyncStudentsFile() {
+  // Si el usuario ya tiene censo guardado (incluso vacío tras borrar de prueba), NO sobreescribir jamás
+  if (localStorage.getItem('spsdc_registered_students') !== null) {
+    return;
+  }
+  try {
+    const res = await fetch('students_data.json?t=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        if (localStorage.getItem('spsdc_registered_students') === null) {
+          AppState.registeredStudents = data;
+          saveRegisteredStudents();
+          renderRegisteredStudentsTable();
+        }
+      }
+    }
+  } catch(e) {
+    // Archivo students_data.json no presente aún o ejecución local sin servidor
+  }
+}
 
   // Sincronizar nombres actuales de colegios con los alumnos existentes
   AppState.registeredStudents.forEach(st => {
@@ -1908,18 +1921,12 @@ function clearAllTestStudents() {
     alert('El censo ya está completamente vacío.');
     return;
   }
-  const isDummyOnly = AppState.registeredStudents.every(s => s.key.startsWith('ALU-ANDEL-') || s.key.startsWith('ALU-FUEN-') || s.key.startsWith('ALU-NEWMAN-') || s.key.startsWith('ALU-PRADO-'));
-  
-  const msg = isDummyOnly
-    ? '¿Deseas eliminar los 12 alumnos de prueba para empezar a registrar a los alumnos reales desde cero?'
-    : `⚠️ ATENCIÓN: Se eliminarán los ${count} alumnos registrados actualmente en este navegador.\n\n¿Estás seguro de que deseas vaciar el censo para empezar de cero?`;
 
-  if (confirm(msg)) {
+  if (confirm(`⚠️ ¿Deseas vaciar el censo de alumnos (${count} registrados actualmente)?\n\nEsta acción eliminará permanentemente los alumnos de prueba en este navegador para que puedas registrar a los alumnos reales.`)) {
     AppState.registeredStudents = [];
-    localStorage.setItem('spsdc_students_initialized', 'true');
     saveRegisteredStudents();
     renderRegisteredStudentsTable();
-    alert('🗑️ Censo vaciado con éxito.\nYa puedes empezar a crear los perfiles reales de tus alumnos.');
+    alert('🗑️ Censo vaciado con éxito.\nLos alumnos de prueba se han borrado permanentemente y ya no volverán a aparecer.');
   }
 }
 
