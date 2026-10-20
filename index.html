@@ -50,6 +50,7 @@
       <button class="nav-tab" data-view="submissions">📤 Buzón de Entrega</button>
       <button class="nav-tab" data-view="calculators">🛠️ Calculadoras</button>
       <button class="nav-tab" data-view="december">🤝 Simulación Diciembre</button>
+      <button class="nav-tab" data-view="jury" style="color:var(--amber-alert); font-weight:700; border-color:var(--amber-alert);">⚖️ Panel Profesores</button>
       <button class="nav-tab" style="color:var(--emerald-safe); font-weight:700; border-color:var(--emerald-safe);" onclick="window.open('GUIA_FACIL_SPRINT_01_ALUMNOS.pdf', '_blank')">📄 Guía Alumnos (PDF)</button>
       <button class="nav-tab" style="color:var(--cyan-core);" onclick="window.open('GUIA_ESTUDIANTE_SPRINT_01.html', '_blank')">📖 Guía Sprint 1</button>
       <button class="nav-tab" style="color:var(--amber-alert);" onclick="window.open('Presentacion_Lanzamiento_Operacion_Orbita.html', '_blank')">📽️ Presentación Alumnos</button>
@@ -83,7 +84,10 @@
             <button class="btn-hud btn-hud-secondary" onclick="navigateTo('sprints')">
               📋 Ver Hoja de Ruta de Sprints
             </button>
-            <button class="btn-hud btn-hud-amber" onclick="window.open('Presentacion_Lanzamiento_Operacion_Orbita.html', '_blank')">
+            <button class="btn-hud btn-hud-amber" onclick="navigateTo('jury')">
+              ⚖️ Panel Profesores (Jurado)
+            </button>
+            <button class="btn-hud btn-hud-secondary" onclick="window.open('Presentacion_Lanzamiento_Operacion_Orbita.html', '_blank')">
               📽️ Abrir Diapositivas para Clase
             </button>
           </div>
@@ -745,7 +749,7 @@
           Introduce el PIN de evaluación para acceder al panel de corrección, rúbricas y ranking intercolegial.
         </p>
         <div class="form-group">
-          <input type="password" id="juryPinInput" class="form-control" style="text-align:center; font-family:var(--font-hud); font-size:1.3rem; letter-spacing:4px;" placeholder="Introduce el PIN de acceso">
+          <input type="password" id="juryPinInput" class="form-control" style="text-align:center; font-family:var(--font-hud); font-size:1.3rem; letter-spacing:4px;" placeholder="Introduce el PIN de acceso" onkeyup="if(event.key==='Enter') unlockJury()">
         </div>
         <button class="btn-hud btn-hud-primary" style="width:100%; justify-content:center;" onclick="unlockJury()">
           🔓 Desbloquear Panel del Jurado

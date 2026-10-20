@@ -223,6 +223,7 @@ function initCountdown() {
 
 // Navegación entre pestañas de la Web
 function navigateTo(viewId) {
+  if (!viewId) return;
   AppState.activeView = viewId;
   document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
@@ -998,7 +999,9 @@ function setupEventListeners() {
   document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       const view = tab.getAttribute('data-view');
-      navigateTo(view);
+      if (view) {
+        navigateTo(view);
+      }
     });
   });
 
