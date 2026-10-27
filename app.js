@@ -1688,8 +1688,11 @@ function loadRegisteredStudents() {
     AppState.registeredStudents = [];
   }
 
-  // Consultar students_data.json para asegurar sincronización con el servidor
+  // 1. Consultar archivo local/servidor
   fetchAsyncStudentsFile();
+
+  // 2. Sincronizar en vivo con Google Drive en segundo plano
+  syncCensusWithGoogleDrive(false);
 
   // Sincronizar nombres actuales de colegios con los alumnos existentes
   AppState.registeredStudents.forEach(st => {
@@ -1709,7 +1712,7 @@ async function fetchAsyncStudentsFile() {
         // 1. Si este navegador está vacío, cargar automáticamente el censo oficial
         if (AppState.registeredStudents.length === 0) {
           AppState.registeredStudents = data;
-          saveRegisteredStudents();
+          saveRegisteredStudents(true);
           renderRegisteredStudentsTable();
         } else {
           // 2. Si ya tiene alumnos, incorporar los que falten sin duplicar
@@ -1721,7 +1724,7 @@ async function fetchAsyncStudentsFile() {
             }
           });
           if (updated) {
-            saveRegisteredStudents();
+            saveRegisteredStudents(true);
             renderRegisteredStudentsTable();
           }
         }
@@ -1732,17 +1735,131 @@ async function fetchAsyncStudentsFile() {
   }
 }
 
-function saveRegisteredStudents() {
+function saveRegisteredStudents(skipDriveSync) {
   localStorage.setItem('spsdc_students_initialized', 'true');
   localStorage.setItem('spsdc_registered_students', JSON.stringify(AppState.registeredStudents));
   updateCensusSummary();
+
+  // Guardar automáticamente en vivo en Google Drive
+  if (!skipDriveSync) {
+    syncCensusWithGoogleDrive(true);
+  }
+}
+
+let isDriveSyncing = false;
+
+async function syncCensusWithGoogleDrive(pushToDrive, notifyUser) {
+  if (!AppState.cloudWebhookUrl) return;
+  if (isDriveSyncing) return;
+  isDriveSyncing = true;
+
+  updateDriveSyncIndicator('syncing');
+
+  try {
+    if (pushToDrive) {
+      // ENVIAR CAMBIOS A GOOGLE DRIVE
+      const payload = {
+        action: 'saveCensus',
+        students: AppState.registeredStudents,
+        timestamp: new Date().toISOString()
+      };
+
+      const res = await fetch(AppState.cloudWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        updateDriveSyncIndicator('success');
+        if (notifyUser) {
+          alert(`☁️ ¡Sincronizado con Google Drive!\nSe han guardado los ${AppState.registeredStudents.length} alumnos en vivo en tu carpeta 'SPSIN COLEGIOS'.`);
+        }
+      } else {
+        updateDriveSyncIndicator('error');
+      }
+    } else {
+      // OBTENER CAMBIOS DESDE GOOGLE DRIVE
+      let data = null;
+
+      // Intentar primero vía GET
+      try {
+        const res = await fetch(AppState.cloudWebhookUrl + '?action=getCensus&t=' + Date.now());
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json)) data = json;
+        }
+      } catch (getErr) {
+        // Fallback vía POST
+        try {
+          const resPost = await fetch(AppState.cloudWebhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'getCensus' })
+          });
+          if (resPost.ok) {
+            const jsonPost = await resPost.json();
+            if (Array.isArray(jsonPost)) data = jsonPost;
+          }
+        } catch (postErr) {}
+      }
+
+      if (data && Array.isArray(data) && data.length > 0) {
+        const isDifferent = JSON.stringify(data) !== JSON.stringify(AppState.registeredStudents);
+        if (isDifferent) {
+          AppState.registeredStudents = data;
+          saveRegisteredStudents(true);
+          renderRegisteredStudentsTable();
+          updateDriveSyncIndicator('success');
+          if (notifyUser) {
+            alert(`☁️ ¡Censo actualizado en vivo desde Google Drive!\nSe han recibido ${data.length} alumnos.`);
+          }
+        } else {
+          updateDriveSyncIndicator('success');
+          if (notifyUser) {
+            alert(`☁️ El censo ya está 100% sincronizado con Google Drive (${data.length} alumnos al día).`);
+          }
+        }
+      } else {
+        updateDriveSyncIndicator('idle');
+        if (notifyUser) {
+          alert('☁️ Conectado a Google Drive. Censo al día.');
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Google Drive Sync Warning:', err);
+    updateDriveSyncIndicator('offline');
+  } finally {
+    isDriveSyncing = false;
+  }
+}
+
+function updateDriveSyncIndicator(state) {
+  const el = document.getElementById('driveSyncStatusIndicator');
+  if (!el) return;
+
+  if (state === 'syncing') {
+    el.innerHTML = `🔄 Sincronizando con Google Drive...`;
+    el.style.color = 'var(--cyan-core)';
+  } else if (state === 'success') {
+    const timeStr = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    el.innerHTML = `🟢 <strong>Google Drive Conectado</strong> (Sincronizado a las ${timeStr})`;
+    el.style.color = 'var(--emerald-safe)';
+  } else if (state === 'error') {
+    el.innerHTML = `⚠️ Error al contactar con Google Drive`;
+    el.style.color = 'var(--amber-alert)';
+  } else {
+    el.innerHTML = `☁️ Google Drive en vivo`;
+    el.style.color = 'var(--text-secondary)';
+  }
 }
 
 function updateCensusSummary() {
   const el = document.getElementById('censusStatusSummary');
   if (el) {
     const count = AppState.registeredStudents.length;
-    el.innerHTML = `📊 <strong>Censo Oficial: ${count} alumnos registrados</strong> • Estado: <span style="color:var(--emerald-safe); font-weight:700;">💾 Guardado permanentemente en este navegador</span>.<br>Para sincronizar con el otro profesor en otro ordenador, pulsa <strong>«Copiar Código»</strong> o <strong>«Descargar JSON»</strong>.`;
+    el.innerHTML = `📊 <strong>Censo Oficial: ${count} alumnos registrados</strong> • Estado: <span style="color:var(--emerald-safe); font-weight:700;">💾 Guardado en este navegador y en Google Drive</span>.<br><span id="driveSyncStatusIndicator" style="font-size:0.82rem; color:var(--emerald-safe);">🟢 Google Drive sincronizado en vivo</span>`;
   }
 }
 

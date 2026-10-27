@@ -973,17 +973,20 @@
                 </div>
               </div>
               <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" class="btn-hud btn-hud-primary" style="font-size:0.8rem; padding:6px 12px; background:linear-gradient(135deg, #10b981, #059669); border-color:#34d399;" onclick="syncCensusWithGoogleDrive(false, true)">
+                  ☁️ Sincronizar Google Drive
+                </button>
                 <button type="button" class="btn-hud btn-hud-primary" style="font-size:0.8rem; padding:6px 12px;" onclick="copyCensusShareCode()">
-                  📋 Copiar Código para el otro Profesor
+                  📋 Copiar Código
                 </button>
                 <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="openPasteCensusModal()">
-                  📥 Pegar Código del otro Profesor
+                  📥 Pegar Código
                 </button>
                 <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="fetchOfficialCensusFromGithub()">
-                  ☁️ Cargar Censo Oficial Web
+                  🌐 Recargar Censo Web
                 </button>
                 <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="downloadStudentsDataJson()">
-                  💾 Descargar 'students_data.json'
+                  💾 Descargar JSON
                 </button>
               </div>
             </div>
@@ -1283,6 +1286,6 @@
   </div>
 
   <!-- Script principal -->
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>
