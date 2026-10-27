@@ -2035,44 +2035,155 @@ function handleImportStudentsFile(e) {
   e.target.value = '';
 }
 
+function decodeCensusPayload(input) {
+  if (!input || typeof input !== 'string') return null;
+  const raw = input.trim();
+
+  // 1. Intentar si es JSON directo
+  if (raw.startsWith('[') || raw.startsWith('{')) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed && Array.isArray(parsed.students)) return parsed.students;
+    } catch (e) {}
+  }
+
+  // 2. Intentar como Base64 (limpiando todos los espacios, saltos de línea y tabulaciones de WhatsApp o Teams)
+  const cleaned = raw.replace(/\s+/g, '');
+  try {
+    const binary = atob(cleaned);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const decodedText = new TextDecoder('utf-8').decode(bytes);
+    const parsed = JSON.parse(decodedText);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (e) {}
+
+  // 3. Fallback con decodeURIComponent
+  try {
+    const jsonStr = decodeURIComponent(escape(atob(cleaned)));
+    const parsed = JSON.parse(jsonStr);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (e) {}
+
+  return null;
+}
+
 function copyCensusShareCode() {
   if (AppState.registeredStudents.length === 0) {
-    alert('No hay alumnos registrados actualmente en el censo.');
+    alert('No hay alumnos registrados actualmente en este navegador para compartir.');
     return;
   }
   const payload = JSON.stringify(AppState.registeredStudents);
-  const shareCode = btoa(unescape(encodeURIComponent(payload)));
+  let shareCode = '';
+  try {
+    const bytes = new TextEncoder().encode(payload);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    shareCode = btoa(binary);
+  } catch (e) {
+    shareCode = btoa(unescape(encodeURIComponent(payload)));
+  }
+
+  const count = AppState.registeredStudents.length;
 
   if (navigator.clipboard) {
     navigator.clipboard.writeText(shareCode).then(() => {
-      alert(`📋 ¡CÓDIGO DE CENSO COPIADO AL PORTAPAPELES!\n\nPégaselo al otro profesor por WhatsApp o Teams. El otro profesor solo tiene que pulsar «Pegar Código del otro Profesor» en su navegador.`);
+      alert(`📋 ¡CÓDIGO DE CENSO COPIADO (${count} ALUMNOS)!\n\nSe ha copiado a tu portapapeles. Pégaselo al otro profesor por WhatsApp o Teams.\n\nInstrucción para el otro profesor:\n1. Entrar en «⚖️ Panel Profesores» (PIN: SPSS-JURY-2026)\n2. Ir a la pestaña «Censo»\n3. Pulsar «📥 Pegar Código del otro Profesor» y pegar este texto.`);
     }).catch(() => {
-      prompt('Copia este código y envíaselo al otro profesor:', shareCode);
+      showCopyShareCodeInModal(shareCode, count);
     });
   } else {
-    prompt('Copia este código y envíaselo al otro profesor:', shareCode);
+    showCopyShareCodeInModal(shareCode, count);
+  }
+}
+
+function showCopyShareCodeInModal(code, count) {
+  const modal = document.getElementById('syncCensusModal');
+  if (!modal) return;
+  document.getElementById('syncCensusModalTitle').textContent = `📋 Código de Censo para Compartir (${count} alumnos)`;
+  document.getElementById('syncCensusModalDesc').textContent = 'Selecciona y copia todo el texto de la caja inferior y envíaselo al otro profesor:';
+  const textarea = document.getElementById('syncCensusTextarea');
+  if (textarea) {
+    textarea.value = code;
+    textarea.select();
+  }
+  const btn = document.getElementById('btnApplySyncCensus');
+  if (btn) btn.style.display = 'none';
+  modal.style.display = 'flex';
+  modal.classList.add('active');
+}
+
+function openPasteCensusModal() {
+  const modal = document.getElementById('syncCensusModal');
+  if (!modal) return;
+  const textarea = document.getElementById('syncCensusTextarea');
+  if (textarea) textarea.value = '';
+  document.getElementById('syncCensusModalTitle').textContent = '📥 Sincronizar Censo del otro Profesor';
+  document.getElementById('syncCensusModalDesc').textContent = 'Pega a continuación el código que te ha enviado el otro profesor (por WhatsApp o Teams) o directamente el contenido de alumnos:';
+  const btn = document.getElementById('btnApplySyncCensus');
+  if (btn) btn.style.display = 'inline-block';
+  modal.style.display = 'flex';
+  modal.classList.add('active');
+  if (textarea) textarea.focus();
+}
+
+function closeSyncCensusModal() {
+  const modal = document.getElementById('syncCensusModal');
+  if (modal) {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+}
+
+function applySyncCensusFromModal() {
+  const textarea = document.getElementById('syncCensusTextarea');
+  const code = textarea ? textarea.value : '';
+  if (!code || !code.trim()) {
+    alert('Por favor, pega el código antes de pulsar Cargar.');
+    return;
+  }
+
+  const data = decodeCensusPayload(code);
+  if (!data || data.length === 0) {
+    alert('❌ No se ha podido reconocer el código. Asegúrate de haber copiado todo el texto sin omitir caracteres.');
+    return;
+  }
+
+  if (confirm(`Se han detectado ${data.length} alumnos en el código.\n\n¿Deseas guardar este censo oficial en tu navegador?`)) {
+    AppState.registeredStudents = data;
+    saveRegisteredStudents();
+    renderRegisteredStudentsTable();
+    closeSyncCensusModal();
+    alert(`✅ ¡Censo sincronizado con éxito!\nAhora tienes los ${data.length} alumnos oficiales registrados en tu ordenador.`);
   }
 }
 
 function pasteCensusShareCode() {
-  const code = prompt('Pega aquí el código que te ha enviado el otro profesor:');
-  if (!code || !code.trim()) return;
+  openPasteCensusModal();
+}
 
+async function fetchOfficialCensusFromGithub() {
   try {
-    const jsonStr = decodeURIComponent(escape(atob(code.trim())));
-    const data = JSON.parse(jsonStr);
-    if (!Array.isArray(data)) {
-      alert('El código introducido no contiene un formato de censo válido.');
+    const res = await fetch('students_data.json?t=' + Date.now());
+    if (!res.ok) throw new Error('No se pudo descargar el archivo students_data.json');
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) {
+      alert('ℹ️ El archivo students_data.json en el servidor web todavía no tiene alumnos registrados.\n\nPara sincronizar de inmediato, usa «Copiar Código para el otro Profesor» o sube el archivo JSON.');
       return;
     }
-    if (confirm(`El código contiene ${data.length} alumnos.\n\n¿Deseas cargar este censo en tu navegador?`)) {
+    if (confirm(`Se han encontrado ${data.length} alumnos en el servidor oficial.\n\n¿Deseas cargarlos en este navegador?`)) {
       AppState.registeredStudents = data;
       saveRegisteredStudents();
       renderRegisteredStudentsTable();
-      alert(`✅ ¡Censo sincronizado con éxito!\nAhora tienes los ${data.length} alumnos en tu navegador.`);
+      alert(`✅ ¡Censo oficial cargado con éxito!\nAhora tienes los ${data.length} alumnos en tu navegador.`);
     }
   } catch (err) {
-    alert('❌ Código no válido o corrupto. Asegúrate de copiar todo el texto.');
+    alert('Error al consultar el censo oficial en la web: ' + err.message);
   }
 }
 

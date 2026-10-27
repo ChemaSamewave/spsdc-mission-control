@@ -976,8 +976,11 @@
                 <button type="button" class="btn-hud btn-hud-primary" style="font-size:0.8rem; padding:6px 12px;" onclick="copyCensusShareCode()">
                   📋 Copiar Código para el otro Profesor
                 </button>
-                <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="pasteCensusShareCode()">
+                <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="openPasteCensusModal()">
                   📥 Pegar Código del otro Profesor
+                </button>
+                <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="fetchOfficialCensusFromGithub()">
+                  ☁️ Cargar Censo Oficial Web
                 </button>
                 <button type="button" class="btn-hud btn-hud-secondary" style="font-size:0.8rem; padding:6px 12px;" onclick="downloadStudentsDataJson()">
                   💾 Descargar 'students_data.json'
@@ -1251,7 +1254,35 @@
     </div>
   </div>
 
+  <!-- MODAL PARA SINCRONIZAR CENSO ENTRE PROFESORES -->
+  <div class="modal-overlay" id="syncCensusModal" style="display:none;">
+    <div class="modal-content" style="max-width: 580px; padding: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+        <div>
+          <span class="section-tag">SINCRONIZACIÓN ENTRE PROFESORES</span>
+          <h3 style="font-family:var(--font-hud); font-size:1.25rem; color:#fff; margin-top:4px;" id="syncCensusModalTitle">
+            🔄 Sincronizar Censo de Alumnos
+          </h3>
+        </div>
+        <button onclick="closeSyncCensusModal()" class="btn-hud btn-hud-secondary" style="padding:4px 10px;">✕</button>
+      </div>
+
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:12px;" id="syncCensusModalDesc">
+        Pega a continuación el código que te ha enviado el otro profesor (por WhatsApp o Teams) o el contenido del archivo JSON:
+      </p>
+
+      <div class="form-group">
+        <textarea id="syncCensusTextarea" class="form-control" rows="7" style="font-family:monospace; font-size:0.8rem; word-break:break-all;" placeholder="Pega aquí el código..."></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+        <button type="button" class="btn-hud btn-hud-secondary" onclick="closeSyncCensusModal()">Cerrar</button>
+        <button type="button" class="btn-hud btn-hud-primary" id="btnApplySyncCensus" onclick="applySyncCensusFromModal()">📥 Cargar y Guardar Censo</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Script principal -->
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>
