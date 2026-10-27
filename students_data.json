@@ -1,1 +1,222 @@
-[]
+[
+  {
+    "key": "ALU-NEWMAN-01",
+    "name": "Ana Victoria Camino Rincón",
+    "firstName": "Ana",
+    "lastName": "Victoria Camino Rincón",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-02",
+    "name": "Flavio Canepa",
+    "firstName": "Flavio",
+    "lastName": "Canepa",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-03",
+    "name": "Inés Cobo Falzetti",
+    "firstName": "Inés",
+    "lastName": "Cobo Falzetti",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-04",
+    "name": "Miguel De Larrauri Vidal",
+    "firstName": "Miguel",
+    "lastName": "De Larrauri Vidal",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-05",
+    "name": "Olivia de las Heras Velasco",
+    "firstName": "Olivia",
+    "lastName": "de las Heras Velasco",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-06",
+    "name": "Begoña Díaz Rodríguez",
+    "firstName": "Begoña",
+    "lastName": "Díaz Rodríguez",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-07",
+    "name": "Melina Duca Corrales",
+    "firstName": "Melina",
+    "lastName": "Duca Corrales",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-08",
+    "name": "Minji Ester Kang",
+    "firstName": "Minji",
+    "lastName": "Ester Kang",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-09",
+    "name": "Guillermo Fernández Delgado",
+    "firstName": "Guillermo",
+    "lastName": "Fernández Delgado",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-10",
+    "name": "Paula Fresno Calles",
+    "firstName": "Paula",
+    "lastName": "Fresno Calles",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-11",
+    "name": "Erika García García",
+    "firstName": "Erika",
+    "lastName": "García García",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-12",
+    "name": "Alonso García-Asenjo",
+    "firstName": "Alonso",
+    "lastName": "García-Asenjo",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-13",
+    "name": "Inés Martínez Bravo",
+    "firstName": "Inés",
+    "lastName": "Martínez Bravo",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-14",
+    "name": "Carlos Mayoral Gómez",
+    "firstName": "Carlos",
+    "lastName": "Mayoral Gómez",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-15",
+    "name": "Pablo Ortega Palomo",
+    "firstName": "Pablo",
+    "lastName": "Ortega Palomo",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-16",
+    "name": "Aitor Pizarro Cámara",
+    "firstName": "Aitor",
+    "lastName": "Pizarro Cámara",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-17",
+    "name": "Marcos Pozuelo Arenal",
+    "firstName": "Marcos",
+    "lastName": "Pozuelo Arenal",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-18",
+    "name": "Elsa Sánchez Izquierdo",
+    "firstName": "Elsa",
+    "lastName": "Sánchez Izquierdo",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-19",
+    "name": "Adrián Sánchez Rodríguez",
+    "firstName": "Adrián",
+    "lastName": "Sánchez Rodríguez",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-20",
+    "name": "Carmen Villaseca",
+    "firstName": "Carmen",
+    "lastName": "Villaseca",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "ALU-NEWMAN-21",
+    "name": "Lola Zambrana Ventura",
+    "firstName": "Lola",
+    "lastName": "Zambrana Ventura",
+    "schoolId": "col3",
+    "schoolName": "J.H. NEWMAN",
+    "grade": "4º ESO",
+    "createdAt": "26/10/2026"
+  },
+  {
+    "key": "CHEMITA",
+    "firstName": "Chema",
+    "lastName": "Baron Argos",
+    "name": "Chema Baron Argos",
+    "schoolId": "col1",
+    "schoolName": "ANDEL",
+    "grade": "2º Bachillerato",
+    "createdAt": "26/10/2026"
+  }
+]

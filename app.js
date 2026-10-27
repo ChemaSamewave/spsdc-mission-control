@@ -1685,11 +1685,11 @@ function loadRegisteredStudents() {
       AppState.registeredStudents = [];
     }
   } else {
-    // Primera vez absoluta en este navegador sin datos previos
     AppState.registeredStudents = [];
-    // Solo si no existe ningún censo local guardado, intentar consultar censo precargado
-    fetchAsyncStudentsFile();
   }
+
+  // Consultar students_data.json para asegurar sincronización con el servidor
+  fetchAsyncStudentsFile();
 
   // Sincronizar nombres actuales de colegios con los alumnos existentes
   AppState.registeredStudents.forEach(st => {
@@ -1701,19 +1701,29 @@ function loadRegisteredStudents() {
 }
 
 async function fetchAsyncStudentsFile() {
-  // Si el usuario ya tiene censo guardado (incluso vacío tras borrar de prueba), NO sobreescribir jamás
-  if (localStorage.getItem('spsdc_registered_students') !== null) {
-    return;
-  }
   try {
     const res = await fetch('students_data.json?t=' + Date.now());
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
-        if (localStorage.getItem('spsdc_registered_students') === null) {
+        // 1. Si este navegador está vacío, cargar automáticamente el censo oficial
+        if (AppState.registeredStudents.length === 0) {
           AppState.registeredStudents = data;
           saveRegisteredStudents();
           renderRegisteredStudentsTable();
+        } else {
+          // 2. Si ya tiene alumnos, incorporar los que falten sin duplicar
+          let updated = false;
+          data.forEach(officialStudent => {
+            if (!AppState.registeredStudents.some(s => s.key === officialStudent.key)) {
+              AppState.registeredStudents.push(officialStudent);
+              updated = true;
+            }
+          });
+          if (updated) {
+            saveRegisteredStudents();
+            renderRegisteredStudentsTable();
+          }
         }
       }
     }
